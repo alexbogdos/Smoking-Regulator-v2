@@ -45,13 +45,13 @@ class HomePageState extends State<HomePage> {
     final double width = screenWidth * 0.84;
     final double height = screenHeight * 0.94;
 
-    final double pageTitleHeight = height * 0.12;
+    final double pageTitleHeight = height * 0.14;
 
     final double infoTabWidth = width * 0.3;
     final double infoTabHeight = height * 0.16;
 
     final double counterWidth = width;
-    final double counterHeight = height * 0.14;
+    final double counterHeight = height * 0.16;
 
     final double calendarWidth = width;
     final double calendarHeight = height * 0.22;
@@ -82,7 +82,7 @@ class HomePageState extends State<HomePage> {
                   infoTabHeight: infoTabHeight,
                   darkMode: darkMode,
                 ),
-                SizedBox(height: height * 0.06),
+                SizedBox(height: height * 0.03),
                 Counter(
                   key: counterkey,
                   width: counterWidth,
@@ -98,7 +98,7 @@ class HomePageState extends State<HomePage> {
                         .setPopulation(populationValue: population);
                   },
                 ),
-                SizedBox(height: height * 0.06),
+                SizedBox(height: height * 0.05),
                 Calendar(
                   key: calendarkey,
                   width: calendarWidth,
@@ -108,7 +108,7 @@ class HomePageState extends State<HomePage> {
                   disabled:
                       darkMode == false ? CColors.darkGrey : CColors.ligtGrey,
                 ),
-                SizedBox(height: height * 0.072),
+                SizedBox(height: height * 0.06),
                 Button(
                   width: buttonWidth,
                   height: buttonHeight,
@@ -180,6 +180,7 @@ class StatsState extends State<Stats> {
 
   Future<void> retrievePopulation() async {
     final prefs = await SharedPreferences.getInstance();
+    // prefs.clear();
     if (prefs.containsKey("Population")) {
       final int? value = prefs.getInt("Population");
       if (value != null) {
@@ -215,7 +216,7 @@ class StatsState extends State<Stats> {
           boxColor: widget.darkMode == false ? CColors.white : CColors.black,
           textColor: widget.darkMode == false ? CColors.black : CColors.white,
           title: "Day\nAverage",
-          value: (sum / population).round(),
+          value: (sum ~/ population),
         ),
         InfoTab(
           width: widget.infoTabWidth,
@@ -223,7 +224,7 @@ class StatsState extends State<Stats> {
           boxColor: widget.darkMode == false ? CColors.white : CColors.black,
           textColor: widget.darkMode == false ? CColors.black : CColors.white,
           title: "Week\nAverage",
-          value: (sum / population).round() * 7,
+          value: (sum ~/ population) * 7,
         ),
         InfoTab(
           width: widget.infoTabWidth,
@@ -231,7 +232,7 @@ class StatsState extends State<Stats> {
           boxColor: widget.darkMode == false ? CColors.white : CColors.black,
           textColor: widget.darkMode == false ? CColors.black : CColors.white,
           title: "Month\nAverage",
-          value: (sum / population).round() * 30,
+          value: (sum ~/ population) * 30,
         ),
       ],
     );

@@ -268,7 +268,7 @@ class CalendarState extends State<Calendar> {
                     : "Sowing stats from $weekOffset weeks in the past",
             style: GoogleFonts.poppins(
               color: widget.disabled.withOpacity(0.8),
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.w400,
             ),
           ),

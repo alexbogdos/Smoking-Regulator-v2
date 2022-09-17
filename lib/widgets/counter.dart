@@ -46,7 +46,6 @@ class CounterState extends State<Counter> {
   }
 
   Future<void> retrieveCount() async {
-    print(_prefsKey);
     final prefs = await SharedPreferences.getInstance();
 
     if (prefs.containsKey(_prefsKey)) {
@@ -66,7 +65,6 @@ class CounterState extends State<Counter> {
   Future<void> saveCount({required int sumValue}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_prefsKey, count);
-    print(_prefsKey);
 
     if (prefs.containsKey("Sum")) {
       final int? value = prefs.getInt("Sum");
@@ -84,18 +82,22 @@ class CounterState extends State<Counter> {
       final int? value = prefs.getInt("Population");
       final String? lastDate = prefs.getString("LastDate");
       if (value != null) {
-        if (lastDate != DateTime.now().toString().substring(1, 10)) {
+        if (lastDate != DateTime.now().toString().substring(0, 10)) {
           await prefs.setInt("Population", value + 1);
-          widget.setSum((value + 1));
           await prefs.setString(
-              "LastDate", DateTime.now().toString().substring(1, 10));
+              "LastDate", DateTime.now().toString().substring(0, 10));
+          widget.setPopulation((value + 1));
+          print("SS Population: ${value + 1}");
+        } else {
+          // await prefs.setInt("Population", value - 1);
+          widget.setPopulation((value));
+          print("S Population: $value");
         }
-        print("S Population: $value");
       }
     } else {
       await prefs.setInt("Population", 1);
       await prefs.setString(
-          "LastDate", DateTime.now().toString().substring(1, 10));
+          "LastDate", DateTime.now().toString().substring(0, 10));
     }
   }
 
