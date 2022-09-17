@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.smoking_regulator_v2">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="Smoking Regulator"
         android:name="${applicationName}"
