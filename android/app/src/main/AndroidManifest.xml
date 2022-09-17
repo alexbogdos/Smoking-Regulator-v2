@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.smoking_regulator_v2">
    <application
-        android:label="smoking_regulator_v2"
+        android:label="Smoking Regulator"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

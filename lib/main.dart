@@ -1,115 +1,239 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smoking_regulator_v2/custom_colors.dart';
+import 'package:smoking_regulator_v2/widgets/button.dart';
+import 'package:smoking_regulator_v2/widgets/calendar.dart';
+import 'package:smoking_regulator_v2/widgets/counter.dart';
+import 'package:smoking_regulator_v2/widgets/info_tab.dart';
+import 'package:smoking_regulator_v2/widgets/title.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MaterialApp(
+    home: HomePage(),
+    debugShowCheckedModeBanner: false,
+  ));
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  State<HomePage> createState() => HomePageState();
+}
+
+class HomePageState extends State<HomePage> {
+  // statsState.currentState!.refresh();
+
+  // Color Settings
+  late bool darkMode = false;
+  void changeColorMode() {
+    darkMode = !darkMode;
+  }
+
+  final GlobalKey<CounterState> counterkey = GlobalKey();
+  final GlobalKey<CalendarState> calendarkey = GlobalKey();
+  final GlobalKey<StatsState> statsState = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+    // Size Assets
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    final double width = screenWidth * 0.84;
+    final double height = screenHeight * 0.94;
+
+    final double pageTitleHeight = height * 0.12;
+
+    final double infoTabWidth = width * 0.3;
+    final double infoTabHeight = height * 0.16;
+
+    final double counterWidth = width;
+    final double counterHeight = height * 0.14;
+
+    final double calendarWidth = width;
+    final double calendarHeight = height * 0.22;
+
+    final double buttonWidth = width;
+    final double buttonHeight = height * 0.1;
+
+    return Scaffold(
+        backgroundColor:
+            darkMode == false ? CColors.ligtGrey : CColors.darkGrey,
+        body: Align(
+          alignment: const Alignment(0, 0.3),
+          child: Container(
+            // color: Colors.red.withOpacity(0.4),
+            width: width,
+            height: height,
+            child: Column(
+              children: [
+                PageTitle(
+                  width: width,
+                  height: pageTitleHeight,
+                  textColor: darkMode == false ? CColors.black : CColors.white,
+                ),
+                SizedBox(height: height * 0.03),
+                Stats(
+                  key: statsState,
+                  infoTabWidth: infoTabWidth,
+                  infoTabHeight: infoTabHeight,
+                  darkMode: darkMode,
+                ),
+                SizedBox(height: height * 0.06),
+                Counter(
+                  key: counterkey,
+                  width: counterWidth,
+                  height: counterHeight,
+                  textColor: darkMode == false ? CColors.black : CColors.white,
+                  subTextColor:
+                      darkMode == false ? CColors.darkGrey : CColors.ligtGrey,
+                  setSum: (int sum) {
+                    statsState.currentState!.setSum(sumValue: sum);
+                  },
+                  setPopulation: (int population) {
+                    statsState.currentState!
+                        .setPopulation(populationValue: population);
+                  },
+                ),
+                SizedBox(height: height * 0.06),
+                Calendar(
+                  key: calendarkey,
+                  width: calendarWidth,
+                  height: calendarHeight,
+                  background: darkMode == false ? CColors.white : CColors.black,
+                  fill: darkMode == false ? CColors.black : CColors.white,
+                  disabled:
+                      darkMode == false ? CColors.darkGrey : CColors.ligtGrey,
+                ),
+                SizedBox(height: height * 0.072),
+                Button(
+                  width: buttonWidth,
+                  height: buttonHeight,
+                  background: darkMode == false ? CColors.white : CColors.black,
+                  textColor: darkMode == false ? CColors.black : CColors.white,
+                  fill: darkMode == false ? CColors.darkGrey : CColors.ligtGrey,
+                  increase: () {
+                    counterkey.currentState!.increase();
+                  },
+                  decrease: () {
+                    counterkey.currentState!.decrease();
+                  },
+                  refreshCalendar: () {
+                    calendarkey.currentState!.refresh();
+                  },
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class Stats extends StatefulWidget {
+  const Stats({
+    Key? key,
+    required this.infoTabWidth,
+    required this.infoTabHeight,
+    required this.darkMode,
+  }) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  final double infoTabWidth;
+  final double infoTabHeight;
+  final bool darkMode;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<Stats> createState() => StatsState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class StatsState extends State<Stats> {
+  @override
+  void initState() {
+    super.initState();
+    refresh();
+  }
 
-  void _incrementCounter() {
+  void refresh() async {
+    retrieveSum().then((value) => retrievePopulation());
+  }
+
+  late int sum = 0;
+  late int population = 1;
+
+  Future<void> retrieveSum() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (prefs.containsKey("Sum")) {
+      final int? value = prefs.getInt("Sum");
+
+      if (value != null) {
+        sum = value;
+        print("L SUM $value");
+        return;
+      }
+    } else {
+      print("DOES NOT CONTAIN");
+    }
+  }
+
+  Future<void> retrievePopulation() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey("Population")) {
+      final int? value = prefs.getInt("Population");
+      if (value != null) {
+        population = value;
+        print("L POPULATION $value");
+
+        setState(() {});
+        return;
+      }
+    }
+  }
+
+  void setSum({required int sumValue}) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      sum = sumValue;
+    });
+  }
+
+  void setPopulation({required int populationValue}) {
+    setState(() {
+      population = populationValue;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        InfoTab(
+          width: widget.infoTabWidth,
+          height: widget.infoTabHeight,
+          boxColor: widget.darkMode == false ? CColors.white : CColors.black,
+          textColor: widget.darkMode == false ? CColors.black : CColors.white,
+          title: "Day\nAverage",
+          value: (sum / population).round(),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        InfoTab(
+          width: widget.infoTabWidth,
+          height: widget.infoTabHeight,
+          boxColor: widget.darkMode == false ? CColors.white : CColors.black,
+          textColor: widget.darkMode == false ? CColors.black : CColors.white,
+          title: "Week\nAverage",
+          value: (sum / population).round() * 7,
+        ),
+        InfoTab(
+          width: widget.infoTabWidth,
+          height: widget.infoTabHeight,
+          boxColor: widget.darkMode == false ? CColors.white : CColors.black,
+          textColor: widget.darkMode == false ? CColors.black : CColors.white,
+          title: "Month\nAverage",
+          value: (sum / population).round() * 30,
+        ),
+      ],
     );
   }
 }
