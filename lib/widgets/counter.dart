@@ -71,7 +71,6 @@ class CounterState extends State<Counter> {
       if (value != null) {
         await prefs.setInt("Sum", value + sumValue);
         await prefs.setInt("Sum", value + sumValue);
-        print("S SUM: ${value + sumValue}");
         widget.setSum((value + sumValue));
       }
     } else {
@@ -87,11 +86,9 @@ class CounterState extends State<Counter> {
           await prefs.setString(
               "LastDate", DateTime.now().toString().substring(0, 10));
           widget.setPopulation((value + 1));
-          print("SS Population: ${value + 1}");
         } else {
           // await prefs.setInt("Population", value - 1);
           widget.setPopulation((value));
-          print("S Population: $value");
         }
       }
     } else {
@@ -123,7 +120,7 @@ class CounterState extends State<Counter> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       // color: Colors.red.withOpacity(0.4),
       width: widget.width,
       height: widget.height,

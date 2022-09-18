@@ -69,20 +69,20 @@ class CalendarState extends State<Calendar> {
           }
         } else {
           daysBefore += 1;
-          String _date =
+          String kDate =
               DateTime.now().subtract(Duration(days: daysBefore)).toString();
-          _date = _date.substring(0, 10);
-          values[index] = await retrieveCount(key: _date);
+          kDate = kDate.substring(0, 10);
+          values[index] = await retrieveCount(key: kDate);
         }
       }
     } else {
       late int daysBefore = (DateTime.now().weekday - 1) + (offset - 1) * 7;
       for (int index = 6; index >= 0; index--) {
         daysBefore += 1;
-        String _date =
+        String kDate =
             DateTime.now().subtract(Duration(days: daysBefore)).toString();
-        _date = _date.substring(0, 10);
-        values[index] = await retrieveCount(key: _date);
+        kDate = kDate.substring(0, 10);
+        values[index] = await retrieveCount(key: kDate);
       }
     }
 
@@ -107,15 +107,15 @@ class CalendarState extends State<Calendar> {
   //
 
   int getMax({required List<int> list}) {
-    int _max = -1;
+    int kMax = -1;
     for (int val in values) {
-      if (val > _max) {
-        _max = val;
+      if (val > kMax) {
+        kMax = val;
       }
     }
 
-    if (_max > 0) {
-      return _max;
+    if (kMax > 0) {
+      return kMax;
     } else {
       return 1;
     }
@@ -128,29 +128,24 @@ class CalendarState extends State<Calendar> {
       children: [
         Row(
           children: [
-            Container(
+            SizedBox(
               // color: Colors.red.withOpacity(0.4),
               width: widget.width * sidesScaleFactor,
               height: widget.height,
               child: Center(
-                child: TextButton(
+                child: IconButton(
                   onPressed: () {
                     weekOffset += 1;
                     refresh();
                   },
-                  style: TextButton.styleFrom(primary: Colors.red),
-                  child: Text(
-                    "<",
-                    style: GoogleFonts.poppins(
-                      color: widget.disabled.withOpacity(0.8),
-                      fontSize: 52,
-                      fontWeight: FontWeight.w800,
-                    ),
+                  icon: Icon(
+                    Icons.arrow_circle_left_outlined,
+                    color: widget.disabled.withOpacity(0.8),
                   ),
                 ),
               ),
             ),
-            Container(
+            SizedBox(
               // color: Colors.blueAccent.withOpacity(0.4),
               width: widget.width * centerScaleFactor,
               height: widget.height,
@@ -230,25 +225,23 @@ class CalendarState extends State<Calendar> {
                 ],
               ),
             ),
-            Container(
+            SizedBox(
               // color: Colors.red.withOpacity(0.4),
               width: widget.width * sidesScaleFactor,
               height: widget.height,
               child: Center(
-                child: TextButton(
+                child: IconButton(
                   onPressed: () {
                     if (weekOffset > 0) {
                       weekOffset -= 1;
                     }
                     refresh();
                   },
-                  child: Text(
-                    ">",
-                    style: GoogleFonts.poppins(
-                      color: widget.disabled.withOpacity(0.8),
-                      fontSize: 52,
-                      fontWeight: FontWeight.w800,
-                    ),
+                  icon: Icon(
+                    Icons.arrow_circle_right_outlined,
+                    color: weekOffset == 0
+                        ? widget.disabled.withOpacity(0.25)
+                        : widget.disabled.withOpacity(0.8),
                   ),
                 ),
               ),
@@ -262,10 +255,10 @@ class CalendarState extends State<Calendar> {
           alignment: Alignment.bottomCenter,
           child: Text(
             weekOffset == 0
-                ? "Sowing stats from current week"
+                ? "Showing stats from current week"
                 : weekOffset == 1
-                    ? "Sowing stats from $weekOffset week in the past"
-                    : "Sowing stats from $weekOffset weeks in the past",
+                    ? "Showing stats from $weekOffset week in the past"
+                    : "Showing stats from $weekOffset weeks in the past",
             style: GoogleFonts.poppins(
               color: widget.disabled.withOpacity(0.8),
               fontSize: 15,
@@ -308,7 +301,7 @@ class DayCallendar extends StatelessWidget {
   Widget build(BuildContext context) {
     // print("${value!} $max ${value! / max}");
     if (value >= 0) {
-      return Container(
+      return SizedBox(
         // color: Colors.black.withOpacity(0.4),
         width: width,
         height: height,
@@ -367,7 +360,7 @@ class DayCallendar extends StatelessWidget {
         ),
       );
     } else {
-      return Container(
+      return SizedBox(
         // color: Colors.black.withOpacity(0.4),
         width: width,
         height: height,

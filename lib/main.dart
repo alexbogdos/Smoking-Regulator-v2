@@ -24,12 +24,37 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  // statsState.currentState!.refresh();
+  @override
+  void initState() {
+    super.initState();
+    retrieveColorMode();
+  }
 
   // Color Settings
+  Future<void> retrieveColorMode() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (prefs.containsKey("ColorMode")) {
+      final bool? value = prefs.getBool("ColorMode");
+      if (value != null) {
+        setState(() {
+          darkMode = value;
+        });
+      }
+    }
+  }
+
+  Future<void> saveColorMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool("ColorMode", darkMode);
+  }
+
   late bool darkMode = false;
   void changeColorMode() {
-    darkMode = !darkMode;
+    setState(() {
+      darkMode = !darkMode;
+      saveColorMode();
+    });
   }
 
   final GlobalKey<CounterState> counterkey = GlobalKey();
@@ -41,6 +66,8 @@ class HomePageState extends State<HomePage> {
     // Size Assets
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
+
+    // print("W: $screenWidth  H: $screenHeight");
 
     final double width = screenWidth * 0.84;
     final double height = screenHeight * 0.94;
@@ -64,7 +91,7 @@ class HomePageState extends State<HomePage> {
             darkMode == false ? CColors.ligtGrey : CColors.darkGrey,
         body: Align(
           alignment: const Alignment(0, 0.3),
-          child: Container(
+          child: SizedBox(
             // color: Colors.red.withOpacity(0.4),
             width: width,
             height: height,
@@ -74,6 +101,11 @@ class HomePageState extends State<HomePage> {
                   width: width,
                   height: pageTitleHeight,
                   textColor: darkMode == false ? CColors.black : CColors.white,
+                  iconData: darkMode == false
+                      ? Icons.dark_mode
+                      : Icons.dark_mode_outlined,
+                  iconColor: darkMode == true ? CColors.white : CColors.black,
+                  changeColorMode: changeColorMode,
                 ),
                 SizedBox(height: height * 0.03),
                 Stats(
@@ -170,12 +202,9 @@ class StatsState extends State<Stats> {
 
       if (value != null) {
         sum = value;
-        print("L SUM $value");
         return;
       }
-    } else {
-      print("DOES NOT CONTAIN");
-    }
+    } else {}
   }
 
   Future<void> retrievePopulation() async {
@@ -185,7 +214,6 @@ class StatsState extends State<Stats> {
       final int? value = prefs.getInt("Population");
       if (value != null) {
         population = value;
-        print("L POPULATION $value");
 
         setState(() {});
         return;

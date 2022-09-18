@@ -6,6 +6,9 @@ class PageTitle extends StatelessWidget {
       {required this.width,
       required this.height,
       required this.textColor,
+      required this.iconData,
+      required this.iconColor,
+      required this.changeColorMode,
       Key? key})
       : super(key: key);
 
@@ -13,33 +16,52 @@ class PageTitle extends StatelessWidget {
   final double height;
   final Color textColor;
 
-  final String text1 = "Keep Healty";
+  final IconData iconData;
+  final Color iconColor;
+  final Function() changeColorMode;
+
+  final String text1 = "Keep Healthy";
   final String text2 = "Regulate Smoking";
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       // color: textColor.withOpacity(0.4),
       width: width,
       height: height,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Text(
-            text1,
-            style: GoogleFonts.poppins(
-              color: textColor,
-              fontSize: 30,
-              fontWeight: FontWeight.w400,
-            ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                text1,
+                style: GoogleFonts.poppins(
+                  color: textColor,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              Text(
+                text2,
+                style: GoogleFonts.poppins(
+                  color: textColor,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            ],
           ),
-          Text(
-            text2,
-            style: GoogleFonts.poppins(
-              color: textColor,
-              fontSize: 30,
-              fontWeight: FontWeight.w600,
+          Align(
+            alignment: Alignment.topRight,
+            child: IconButton(
+              onPressed: changeColorMode,
+              icon: Icon(
+                iconData,
+                color: iconColor,
+                size: 40,
+              ),
             ),
           )
         ],
