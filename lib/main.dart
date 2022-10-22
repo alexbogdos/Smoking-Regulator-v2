@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smoking_regulator_v2/custom_colors.dart';
+import 'package:smoking_regulator_v2/more_page.dart';
 import 'package:smoking_regulator_v2/widgets/button.dart';
 import 'package:smoking_regulator_v2/widgets/calendar.dart';
 import 'package:smoking_regulator_v2/widgets/counter.dart';
@@ -10,20 +11,20 @@ import 'package:smoking_regulator_v2/widgets/title.dart';
 
 void main() {
   runApp(const MaterialApp(
-    home: HomePage(),
+    home: MainPage(),
     debugShowCheckedModeBanner: false,
   ));
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class MainPage extends StatefulWidget {
+  const MainPage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => HomePageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class HomePageState extends State<HomePage> {
+class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
@@ -57,6 +58,36 @@ class HomePageState extends State<HomePage> {
     });
   }
 
+  final pageController = PageController(initialPage: 0);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: PageView(
+          controller: pageController,
+          children: [
+            HomePage(darkMode: darkMode),
+            MorePage(
+              darkMode: darkMode,
+              changeColorMode: changeColorMode,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key, required this.darkMode}) : super(key: key);
+  final bool darkMode;
+
+  @override
+  State<HomePage> createState() => HomePageState();
+}
+
+class HomePageState extends State<HomePage> {
   final GlobalKey<CounterState> counterkey = GlobalKey();
   final GlobalKey<CalendarState> calendarkey = GlobalKey();
   final GlobalKey<StatsState> statsState = GlobalKey();
@@ -86,9 +117,10 @@ class HomePageState extends State<HomePage> {
     final double buttonWidth = width;
     final double buttonHeight = height * 0.1;
 
+    final bool darkMode = widget.darkMode;
     return Scaffold(
         backgroundColor:
-            darkMode == false ? CColors.ligtGrey : CColors.darkGrey,
+            darkMode == false ? CColors.lightGrey : CColors.darkGrey,
         body: Align(
           alignment: const Alignment(0, 0.3),
           child: SizedBox(
@@ -101,11 +133,6 @@ class HomePageState extends State<HomePage> {
                   width: width,
                   height: pageTitleHeight,
                   textColor: darkMode == false ? CColors.black : CColors.white,
-                  iconData: darkMode == false
-                      ? Icons.dark_mode
-                      : Icons.dark_mode_outlined,
-                  iconColor: darkMode == true ? CColors.white : CColors.black,
-                  changeColorMode: changeColorMode,
                 ),
                 SizedBox(height: height * 0.03),
                 Stats(
@@ -121,7 +148,7 @@ class HomePageState extends State<HomePage> {
                   height: counterHeight,
                   textColor: darkMode == false ? CColors.black : CColors.white,
                   subTextColor:
-                      darkMode == false ? CColors.darkGrey : CColors.ligtGrey,
+                      darkMode == false ? CColors.darkGrey : CColors.lightGrey,
                   setSum: (int sum) {
                     statsState.currentState!.setSum(sumValue: sum);
                   },
@@ -138,7 +165,7 @@ class HomePageState extends State<HomePage> {
                   background: darkMode == false ? CColors.white : CColors.black,
                   fill: darkMode == false ? CColors.black : CColors.white,
                   disabled:
-                      darkMode == false ? CColors.darkGrey : CColors.ligtGrey,
+                      darkMode == false ? CColors.darkGrey : CColors.lightGrey,
                 ),
                 SizedBox(height: height * 0.06),
                 Button(
@@ -146,7 +173,8 @@ class HomePageState extends State<HomePage> {
                   height: buttonHeight,
                   background: darkMode == false ? CColors.white : CColors.black,
                   textColor: darkMode == false ? CColors.black : CColors.white,
-                  fill: darkMode == false ? CColors.darkGrey : CColors.ligtGrey,
+                  fill:
+                      darkMode == false ? CColors.darkGrey : CColors.lightGrey,
                   increase: () {
                     counterkey.currentState!.increase();
                   },
@@ -215,6 +243,23 @@ class StatsState extends State<Stats> {
       if (value != null) {
         population = value;
 
+        if (prefs.containsKey("LastDate")) {
+          final String? lastDate = prefs.getString("LastDate");
+          if (lastDate != DateTime.now().toString().substring(0, 10)) {
+            await prefs.setInt("Population", value + 1);
+            await prefs.setString(
+                "LastDate", DateTime.now().toString().substring(0, 10));
+            population = value + 1;
+          }
+          // else {
+          //   // await prefs.setInt("Population", value - 1);
+          //   setPopulation((value));
+          // }
+        } else {
+          await prefs.setString(
+              "LastDate", DateTime.now().toString().substring(0, 10));
+        }
+
         setState(() {});
         return;
       }
@@ -244,7 +289,7 @@ class StatsState extends State<Stats> {
           boxColor: widget.darkMode == false ? CColors.white : CColors.black,
           textColor: widget.darkMode == false ? CColors.black : CColors.white,
           title: "Day\nAverage",
-          value: (sum ~/ population),
+          value: (sum / population).round(),
         ),
         InfoTab(
           width: widget.infoTabWidth,
@@ -252,7 +297,7 @@ class StatsState extends State<Stats> {
           boxColor: widget.darkMode == false ? CColors.white : CColors.black,
           textColor: widget.darkMode == false ? CColors.black : CColors.white,
           title: "Week\nAverage",
-          value: (sum ~/ population) * 7,
+          value: (sum / population).round() * 7,
         ),
         InfoTab(
           width: widget.infoTabWidth,
@@ -260,7 +305,7 @@ class StatsState extends State<Stats> {
           boxColor: widget.darkMode == false ? CColors.white : CColors.black,
           textColor: widget.darkMode == false ? CColors.black : CColors.white,
           title: "Month\nAverage",
-          value: (sum ~/ population) * 30,
+          value: (sum / population).round() * 30,
         ),
       ],
     );
