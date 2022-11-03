@@ -52,6 +52,15 @@ class CalendarState extends State<Calendar> {
     final String wholeDate = DateTime.now().toString();
     final String date = wholeDate.substring(0, 10);
 
+    // # TO_DO
+    // Let's say that i made an increase
+    // at 00:31 while the 'Day Change' is at 5:30
+    // it should show as a change at the day before
+    // and not be counted in the next day
+    //
+    // It should be only SHOWN this way
+    // and not actually be saved like that
+
     final int currentDayIndex = DateTime.now().weekday - 1;
     if (offset < 0) {
       offset = 0;

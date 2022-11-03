@@ -29,20 +29,73 @@ class Counter extends StatefulWidget {
 class CounterState extends State<Counter> {
   late bool loaded = false;
   late String _prefsKey = "count";
+  late String factoredTime = "0000";
 
   @override
   void initState() {
     super.initState();
-    getPrefsKey();
-    retrieveCount();
+    retrieveFactoredTime().then((value) => getPrefsKey());
   }
 
   // Data Manipulation
-  void getPrefsKey() {
-    final String wholeDate = DateTime.now().toString();
-    final String date = wholeDate.substring(0, 10);
 
-    _prefsKey = date;
+  Future<void> retrieveFactoredTime() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (prefs.containsKey("Factored Time")) {
+      final String? value = prefs.getString("Factored Time");
+
+      if (value != null) {
+        print(value.replaceAll(":", ""));
+
+        factoredTime = value.replaceAll(":", "");
+      }
+    }
+
+    setState(() {});
+  }
+
+  void getPrefsKey() {
+    final DateTime wholeDate = DateTime.now();
+    final String date = wholeDate.toString().substring(0, 16);
+
+    // #TO_DO
+    // Let's say that i made an increase
+    // at 00:31 while the 'Day Change' is at 5:30
+    // it should show as a change at the day before
+    // and not be counted in the next day
+    //
+    // It should be only SHOWN this way
+    // and not actually be saved like that
+
+    // EXPERIMENTAL FEATURE - START
+
+    late String day = date.substring(0, 10);
+    late String hour = date.substring(11, 16);
+
+    hour = hour.replaceAll(":", "");
+
+    final intHour = int.parse(hour);
+
+    // Hypothetical 'Day Change' = 05:30
+    int changeDay = int.parse(factoredTime);
+    print("OK2 ($intHour)($changeDay)($factoredTime)");
+    if (0 <= intHour && intHour < changeDay) {
+      print("OK");
+      day = day.replaceAll("-", "");
+      late int intDay = int.parse(day);
+      intDay = intDay - 1;
+
+      final String kyear = intDay.toString().substring(0, 4);
+      final String kmonth = intDay.toString().substring(4, 6);
+      final String kday = intDay.toString().substring(6, 8);
+      day = "$kyear-$kmonth-$kday";
+    }
+
+    // EXPERIMENTAL FEAUTRE - END
+
+    _prefsKey = day;
+    retrieveCount();
   }
 
   Future<void> retrieveCount() async {
