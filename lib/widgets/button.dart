@@ -23,7 +23,7 @@ class Button extends StatelessWidget {
 
   final Function() increase;
   final Function() decrease;
-  final Function() refreshCalendar;
+  final Function({bool forceBuild}) refreshCalendar;
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +34,11 @@ class Button extends StatelessWidget {
       child: TextButton(
         onPressed: () {
           increase();
-          refreshCalendar();
+          refreshCalendar(forceBuild: true);
         },
         onLongPress: () {
           decrease();
-          refreshCalendar();
+          refreshCalendar(forceBuild: true);
         },
         style: TextButton.styleFrom(
           backgroundColor: background,

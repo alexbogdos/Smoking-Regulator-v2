@@ -2,6 +2,7 @@ import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smoking_regulator_v2/widgets/settings_togle.dart';
 import 'package:tuple/tuple.dart';
 import 'custom_colors.dart';
 
@@ -10,10 +11,15 @@ class MorePage extends StatefulWidget {
     Key? key,
     required this.darkMode,
     required this.changeColorMode,
+    required this.factoredTimeString,
+    required this.updateFactoredTime,
   }) : super(key: key);
 
   final bool darkMode;
   final Function() changeColorMode;
+
+  final String factoredTimeString;
+  final Function({required String newFactoredTime}) updateFactoredTime;
 
   @override
   State<MorePage> createState() => _MorePageState();
@@ -23,7 +29,7 @@ class _MorePageState extends State<MorePage> {
   @override
   void initState() {
     super.initState();
-    retrieveFactoredTime();
+    // retrieveFactoredTime();
   }
 
   late Tuple2 factoredTime = const Tuple2(0, 0);
@@ -42,6 +48,11 @@ class _MorePageState extends State<MorePage> {
     final double pageTitleHeight = height * 0.14;
 
     final double toggleHeight = height * 0.08;
+
+    final String val = widget.factoredTimeString.replaceAll(":", "");
+    final String val1 = val.substring(0, 2);
+    final String val2 = val.substring(2, 4);
+    factoredTime = Tuple2(int.parse(val1), int.parse(val2));
 
     return Scaffold(
       backgroundColor:
@@ -86,6 +97,9 @@ class _MorePageState extends State<MorePage> {
                 action: () {
                   showBottomPicker(context: context, initialTime: factoredTime);
                 },
+                secondaryAction: () {
+                  setFactoredTime(value: "00:00");
+                },
               ),
             ],
           ),
@@ -95,6 +109,7 @@ class _MorePageState extends State<MorePage> {
   }
 
   Future<void> setFactoredTime({required String value}) async {
+    widget.updateFactoredTime(newFactoredTime: value.replaceAll(":", ""));
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString("Factored Time", value);
 
@@ -106,23 +121,23 @@ class _MorePageState extends State<MorePage> {
     });
   }
 
-  Future<void> retrieveFactoredTime() async {
-    final prefs = await SharedPreferences.getInstance();
+  // Future<void> retrieveFactoredTime() async {
+  //   final prefs = await SharedPreferences.getInstance();
 
-    if (prefs.containsKey("Factored Time")) {
-      final String? value = prefs.getString("Factored Time");
+  //   if (prefs.containsKey("Factored Time")) {
+  //     final String? value = prefs.getString("Factored Time");
 
-      if (value != null) {
-        final String val1 = value.substring(0, 2);
-        final String val2 = value.substring(3, 5);
-        final Tuple2 tuple = Tuple2(int.parse(val1), int.parse(val2));
+  //     if (value != null) {
+  //       final String val1 = value.substring(0, 2);
+  //       final String val2 = value.substring(3, 5);
+  //       final Tuple2 tuple = Tuple2(int.parse(val1), int.parse(val2));
 
-        factoredTime = tuple;
-      }
-    }
+  //       factoredTime = tuple;
+  //     }
+  //   }
 
-    setState(() {});
-  }
+  //   setState(() {});
+  // }
 
   String displayFactoredTime() {
     int value1 = factoredTime.item1;
@@ -175,85 +190,5 @@ class _MorePageState extends State<MorePage> {
         setFactoredTime(value: value);
       },
     ).show(context);
-  }
-}
-
-class Toggle extends StatelessWidget {
-  const Toggle({
-    Key? key,
-    required this.width,
-    required this.toggleHeight,
-    required this.darkMode,
-    required this.title,
-    required this.value,
-    required this.action,
-  }) : super(key: key);
-
-  final double width;
-  final double toggleHeight;
-  final bool darkMode;
-
-  final String title;
-  final String value;
-  final Function() action;
-
-  @override
-  Widget build(BuildContext context) {
-    final double box1Width = width * 0.582;
-    final double lineWidth = width * 0.006;
-    final double box2Width = width * 0.412;
-
-    return Container(
-      width: width,
-      height: toggleHeight,
-      decoration: BoxDecoration(
-        color: darkMode == false ? CColors.white : CColors.black,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: box1Width,
-            alignment: Alignment.center,
-            child: Text(
-              title,
-              style: GoogleFonts.poppins(
-                color: darkMode == false ? CColors.black : CColors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-          Container(
-            color: darkMode == false ? CColors.black : CColors.white,
-            width: lineWidth,
-          ),
-          Material(
-            type: MaterialType.transparency,
-            child: InkWell(
-              splashColor:
-                  darkMode == false ? CColors.darkGrey : CColors.lightGrey,
-              onTap: action,
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(15),
-                bottomRight: Radius.circular(15),
-              ),
-              child: Container(
-                width: box2Width,
-                alignment: Alignment.center,
-                child: Text(
-                  value,
-                  style: GoogleFonts.poppins(
-                    color: darkMode == false ? CColors.black : CColors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

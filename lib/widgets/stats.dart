@@ -20,6 +20,8 @@ class Stats extends StatefulWidget {
 }
 
 class StatsState extends State<Stats> {
+  late bool done = false;
+
   @override
   void initState() {
     super.initState();
@@ -27,7 +29,10 @@ class StatsState extends State<Stats> {
   }
 
   void refresh() async {
-    retrieveSum().then((value) => retrievePopulation());
+    retrieveSum()
+        .then((value) => retrievePopulation().then((value) => setState(() {
+              done = true;
+            })));
   }
 
   late int sum = 0;
@@ -91,34 +96,54 @@ class StatsState extends State<Stats> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        InfoTab(
-          width: widget.infoTabWidth,
-          height: widget.infoTabHeight,
-          boxColor: widget.darkMode == false ? CColors.white : CColors.black,
-          textColor: widget.darkMode == false ? CColors.black : CColors.white,
-          title: "Day\nAverage",
-          value: (sum / population).round(),
-        ),
-        InfoTab(
-          width: widget.infoTabWidth,
-          height: widget.infoTabHeight,
-          boxColor: widget.darkMode == false ? CColors.white : CColors.black,
-          textColor: widget.darkMode == false ? CColors.black : CColors.white,
-          title: "Week\nAverage",
-          value: (sum / population).round() * 7,
-        ),
-        InfoTab(
-          width: widget.infoTabWidth,
-          height: widget.infoTabHeight,
-          boxColor: widget.darkMode == false ? CColors.white : CColors.black,
-          textColor: widget.darkMode == false ? CColors.black : CColors.white,
-          title: "Month\nAverage",
-          value: (sum / population).round() * 30,
-        ),
-      ],
-    );
+    return done
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              InfoTab(
+                width: widget.infoTabWidth,
+                height: widget.infoTabHeight,
+                boxColor:
+                    widget.darkMode == false ? CColors.white : CColors.black,
+                textColor:
+                    widget.darkMode == false ? CColors.black : CColors.white,
+                title: "Day\nAverage",
+                value: (sum / population).round(),
+              ),
+              InfoTab(
+                width: widget.infoTabWidth,
+                height: widget.infoTabHeight,
+                boxColor:
+                    widget.darkMode == false ? CColors.white : CColors.black,
+                textColor:
+                    widget.darkMode == false ? CColors.black : CColors.white,
+                title: "Week\nAverage",
+                value: (sum / population).round() * 7,
+              ),
+              InfoTab(
+                width: widget.infoTabWidth,
+                height: widget.infoTabHeight,
+                boxColor:
+                    widget.darkMode == false ? CColors.white : CColors.black,
+                textColor:
+                    widget.darkMode == false ? CColors.black : CColors.white,
+                title: "Month\nAverage",
+                value: (sum / population).round() * 30,
+              ),
+            ],
+          )
+        : Container(
+            width: widget.infoTabWidth * 3,
+            height: widget.infoTabHeight,
+            decoration: BoxDecoration(
+              color: widget.darkMode == false ? CColors.white : CColors.black,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: CircularProgressIndicator(
+                color: widget.darkMode == false ? CColors.black : CColors.white,
+              ),
+            ),
+          );
   }
 }
