@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smoking_regulator_v2/widgets/day_calendar.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({
+    Key? key,
     required this.width,
     required this.height,
     required this.background,
     required this.fill,
     required this.disabled,
-    Key? key,
+    required this.factoredTime,
   }) : super(key: key);
 
   final double width;
@@ -18,6 +20,8 @@ class Calendar extends StatefulWidget {
   final Color background;
   final Color fill;
   final Color disabled;
+
+  final String factoredTime;
 
   @override
   State<Calendar> createState() => CalendarState();
@@ -30,9 +34,53 @@ class CalendarState extends State<Calendar> {
     getDataPerDay(0);
   }
 
+  late int pastWeekOffset = 0;
   late int weekOffset = 0;
-  void refresh() async {
+  void refresh({bool forceBuild = false}) async {
+    if (pastWeekOffset == weekOffset && forceBuild == false) {
+      return;
+    }
+
+    if (forceBuild) {
+      late bool isCase2 = false;
+      late bool isCase0 = true;
+
+      late String wholeDate = DateTime.now().toString();
+      late String date = wholeDate.substring(0, 10);
+      late int currentDayIndex = DateTime.now().weekday - 1;
+
+      late String hour = wholeDate.substring(11, 16);
+      hour = hour.replaceAll(":", "");
+      final intHour = int.parse(hour);
+      int changeDay = int.parse(widget.factoredTime);
+
+      if ((0000 <= changeDay && changeDay < 1200) &&
+          (0000 <= intHour && intHour < changeDay)) {
+        values[currentDayIndex] = -1;
+
+        currentDayIndex -= 1;
+        wholeDate = DateTime.now().subtract(const Duration(days: 1)).toString();
+        date = wholeDate.substring(0, 10);
+        isCase0 = false;
+      } else if (1200 <= changeDay &&
+          (1200 <= intHour && changeDay <= intHour)) {
+        currentDayIndex += 1;
+        wholeDate = DateTime.now().add(const Duration(days: 1)).toString();
+        date = wholeDate.substring(0, 10);
+        isCase2 = true;
+        isCase0 = false;
+      }
+
+      final newCount =
+          await retrieveCount(key: date, isCase2: isCase2, isCase0: isCase0);
+      setState(() {
+        values[currentDayIndex] = newCount;
+      });
+      return;
+    }
+
     await getDataPerDay(weekOffset);
+    pastWeekOffset = weekOffset;
   }
 
   final double centerScaleFactor = 0.74;
@@ -50,18 +98,9 @@ class CalendarState extends State<Calendar> {
 
   Future<void> getDataPerDay(int offset) async {
     final String wholeDate = DateTime.now().toString();
-    final String date = wholeDate.substring(0, 10);
+    late String date = wholeDate.substring(0, 10);
 
-    // # TO_DO
-    // Let's say that i made an increase
-    // at 00:31 while the 'Day Change' is at 5:30
-    // it should show as a change at the day before
-    // and not be counted in the next day
-    //
-    // It should be only SHOWN this way
-    // and not actually be saved like that
-
-    final int currentDayIndex = DateTime.now().weekday - 1;
+    final int currentDayIndex = DateTime.now().weekday - 1; // + startingOffset;
     if (offset < 0) {
       offset = 0;
     }
@@ -84,6 +123,9 @@ class CalendarState extends State<Calendar> {
           values[index] = await retrieveCount(key: kDate);
         }
       }
+      // setState(() {
+      refresh(forceBuild: true);
+      // });
     } else {
       late int daysBefore = (DateTime.now().weekday - 1) + (offset - 1) * 7;
       for (int index = 6; index >= 0; index--) {
@@ -98,7 +140,8 @@ class CalendarState extends State<Calendar> {
     setState(() {});
   }
 
-  Future<int> retrieveCount({required String key}) async {
+  Future<int> retrieveCount(
+      {required String key, bool isCase2 = false, bool isCase0 = false}) async {
     final prefs = await SharedPreferences.getInstance();
 
     if (prefs.containsKey(key)) {
@@ -108,12 +151,11 @@ class CalendarState extends State<Calendar> {
       }
     }
 
+    if (isCase2 || isCase0) {
+      return 0;
+    }
     return -1;
   }
-
-  //
-  //
-  //
 
   int getMax({required List<int> list}) {
     int kMax = -1;
@@ -243,8 +285,8 @@ class CalendarState extends State<Calendar> {
                   onPressed: () {
                     if (weekOffset > 0) {
                       weekOffset -= 1;
+                      refresh();
                     }
-                    refresh();
                   },
                   icon: Icon(
                     Icons.arrow_circle_right_outlined,
@@ -277,129 +319,5 @@ class CalendarState extends State<Calendar> {
         ),
       ],
     );
-  }
-}
-
-class DayCallendar extends StatelessWidget {
-  const DayCallendar({
-    required this.width,
-    required this.height,
-    required this.symbol,
-    required this.background,
-    required this.fill,
-    required this.disabled,
-    required this.max,
-    required this.value,
-    Key? key,
-  }) : super(key: key);
-
-  final double width;
-  final double height;
-
-  final String symbol;
-  final Color background;
-  final Color fill;
-  final Color disabled;
-
-  final int max;
-  final int value;
-
-  final double heightOffset = 34;
-
-  @override
-  Widget build(BuildContext context) {
-    // print("${value!} $max ${value! / max}");
-    if (value >= 0) {
-      return SizedBox(
-        // color: Colors.black.withOpacity(0.4),
-        width: width,
-        height: height,
-        child: Column(
-          children: [
-            Container(
-              // color: Colors.red.withOpacity(0.4),
-              width: width,
-              height: height * 0.2,
-              alignment: Alignment.center,
-              child: Text(
-                symbol,
-                style: GoogleFonts.poppins(
-                  color: disabled,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-            ),
-            Container(
-              width: width,
-              height: height * 0.8,
-              decoration: BoxDecoration(
-                color: background,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                children: [
-                  Container(
-                    width: width,
-                    height: (height * 0.6) * (value / max),
-                    decoration: BoxDecoration(
-                      color: fill,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  Container(
-                    // color: Colors.red.withOpacity(0.4),
-                    width: width,
-                    height: (height * 0.6) * (value / max) + heightOffset,
-                    alignment: const Alignment(0, -0.94),
-                    child: Text(
-                      value.toString(),
-                      style: GoogleFonts.poppins(
-                        color: fill,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      );
-    } else {
-      return SizedBox(
-        // color: Colors.black.withOpacity(0.4),
-        width: width,
-        height: height,
-        child: Column(
-          children: [
-            Container(
-              // color: Colors.red.withOpacity(0.4),
-              width: width,
-              height: height * 0.2,
-              alignment: Alignment.center,
-              child: Text(
-                symbol,
-                style: GoogleFonts.poppins(
-                  color: disabled,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-            ),
-            Container(
-              width: width,
-              height: height * 0.8,
-              decoration: BoxDecoration(
-                color: disabled.withOpacity(0.16),
-                borderRadius: BorderRadius.circular(8),
-              ),
-            )
-          ],
-        ),
-      );
-    }
   }
 }

@@ -25,10 +25,31 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final PageController pageController = PageController(initialPage: 0);
+  late String factoredTime = "0000";
+
+  late int progressDone = 0;
+  late bool done = false;
+
   @override
   void initState() {
     super.initState();
-    retrieveColorMode();
+    retrieveData();
+  }
+
+  void increaseProgress() {
+    progressDone += 1;
+
+    if (progressDone == 2) {
+      setState(() {
+        done = true;
+      });
+    }
+  }
+
+  Future<void> retrieveData() async {
+    retrieveColorMode().then((value) => increaseProgress());
+    retrieveFactoredTime().then((value) => increaseProgress());
   }
 
   // Color Settings
@@ -58,30 +79,61 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  final pageController = PageController(initialPage: 0);
+  // Change Day Time Settings
+  Future<void> retrieveFactoredTime() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (prefs.containsKey("Factored Time")) {
+      final String? value = prefs.getString("Factored Time");
+
+      if (value != null) {
+        factoredTime = value.replaceAll(":", "");
+      }
+    }
+
+    setState(() {});
+  }
+
+  void updateFactoredTime({required String newFactoredTime}) {
+    setState(() {
+      factoredTime = newFactoredTime;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CColors.black,
       body: Center(
-        child: PageView(
-          controller: pageController,
-          children: [
-            HomePage(darkMode: darkMode),
-            MorePage(
-              darkMode: darkMode,
-              changeColorMode: changeColorMode,
-            )
-          ],
-        ),
+        child: done
+            ? PageView(
+                controller: pageController,
+                children: [
+                  HomePage(
+                    darkMode: darkMode,
+                    factoredTime: factoredTime,
+                  ),
+                  MorePage(
+                    darkMode: darkMode,
+                    changeColorMode: changeColorMode,
+                    factoredTimeString: factoredTime,
+                    updateFactoredTime: updateFactoredTime,
+                  )
+                ],
+              )
+            : const CircularProgressIndicator(
+                color: CColors.white,
+              ),
       ),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.darkMode}) : super(key: key);
+  const HomePage({Key? key, required this.darkMode, required this.factoredTime})
+      : super(key: key);
   final bool darkMode;
+  final String factoredTime;
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -156,6 +208,7 @@ class HomePageState extends State<HomePage> {
                     statsState.currentState!
                         .setPopulation(populationValue: population);
                   },
+                  factoredTime: widget.factoredTime,
                 ),
                 SizedBox(height: height * 0.05),
                 Calendar(
@@ -166,6 +219,7 @@ class HomePageState extends State<HomePage> {
                   fill: darkMode == false ? CColors.black : CColors.white,
                   disabled:
                       darkMode == false ? CColors.darkGrey : CColors.lightGrey,
+                  factoredTime: widget.factoredTime,
                 ),
                 SizedBox(height: height * 0.06),
                 Button(
@@ -181,8 +235,8 @@ class HomePageState extends State<HomePage> {
                   decrease: () {
                     counterkey.currentState!.decrease();
                   },
-                  refreshCalendar: () {
-                    calendarkey.currentState!.refresh();
+                  refreshCalendar: ({bool forceBuild = false}) {
+                    calendarkey.currentState!.refresh(forceBuild: forceBuild);
                   },
                 ),
               ],

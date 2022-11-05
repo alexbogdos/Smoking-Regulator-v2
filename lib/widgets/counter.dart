@@ -10,6 +10,7 @@ class Counter extends StatefulWidget {
     required this.subTextColor,
     required this.setSum,
     required this.setPopulation,
+    required this.factoredTime,
     Key? key,
   }) : super(key: key);
 
@@ -22,6 +23,8 @@ class Counter extends StatefulWidget {
   final Function(int value) setSum;
   final Function(int value) setPopulation;
 
+  final String factoredTime;
+
   @override
   State<Counter> createState() => CounterState();
 }
@@ -29,30 +32,11 @@ class Counter extends StatefulWidget {
 class CounterState extends State<Counter> {
   late bool loaded = false;
   late String _prefsKey = "count";
-  late String factoredTime = "0000";
 
   @override
   void initState() {
     super.initState();
-    retrieveFactoredTime().then((value) => getPrefsKey());
-  }
-
-  // Data Manipulation
-
-  Future<void> retrieveFactoredTime() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (prefs.containsKey("Factored Time")) {
-      final String? value = prefs.getString("Factored Time");
-
-      if (value != null) {
-        print(value.replaceAll(":", ""));
-
-        factoredTime = value.replaceAll(":", "");
-      }
-    }
-
-    setState(() {});
+    getPrefsKey();
   }
 
   void getPrefsKey() {
@@ -72,24 +56,33 @@ class CounterState extends State<Counter> {
 
     late String day = date.substring(0, 10);
     late String hour = date.substring(11, 16);
-
     hour = hour.replaceAll(":", "");
 
     final intHour = int.parse(hour);
+    if (widget.factoredTime != "0000") {
+      int changeDay = int.parse(widget.factoredTime);
 
-    // Hypothetical 'Day Change' = 05:30
-    int changeDay = int.parse(factoredTime);
-    print("OK2 ($intHour)($changeDay)($factoredTime)");
-    if (0 <= intHour && intHour < changeDay) {
-      print("OK");
-      day = day.replaceAll("-", "");
-      late int intDay = int.parse(day);
-      intDay = intDay - 1;
+      if ((0000 <= changeDay && changeDay < 1200) &&
+          (0000 <= intHour && intHour < changeDay)) {
+        day = day.replaceAll("-", "");
+        late int intDay = int.parse(day);
+        intDay = intDay - 1;
 
-      final String kyear = intDay.toString().substring(0, 4);
-      final String kmonth = intDay.toString().substring(4, 6);
-      final String kday = intDay.toString().substring(6, 8);
-      day = "$kyear-$kmonth-$kday";
+        final String kyear = intDay.toString().substring(0, 4);
+        final String kmonth = intDay.toString().substring(4, 6);
+        final String kday = intDay.toString().substring(6, 8);
+        day = "$kyear-$kmonth-$kday";
+      } else if (1200 <= changeDay &&
+          (1200 <= intHour && changeDay <= intHour)) {
+        day = day.replaceAll("-", "");
+        late int intDay = int.parse(day);
+        intDay = intDay + 1;
+
+        final String kyear = intDay.toString().substring(0, 4);
+        final String kmonth = intDay.toString().substring(4, 6);
+        final String kday = intDay.toString().substring(6, 8);
+        day = "$kyear-$kmonth-$kday";
+      }
     }
 
     // EXPERIMENTAL FEAUTRE - END
