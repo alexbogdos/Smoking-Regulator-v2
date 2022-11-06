@@ -56,7 +56,7 @@ class _MorePageState extends State<MorePage> {
 
     return Scaffold(
       backgroundColor:
-          widget.darkMode == false ? CColors.lightGrey : CColors.darkGrey,
+          widget.darkMode == false ? CColors.lightGrey : CColors.black,
       body: Align(
         alignment: const Alignment(0, 0.3),
         child: SizedBox(

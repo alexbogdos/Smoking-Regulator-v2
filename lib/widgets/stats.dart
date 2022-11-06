@@ -104,7 +104,7 @@ class StatsState extends State<Stats> {
                 width: widget.infoTabWidth,
                 height: widget.infoTabHeight,
                 boxColor:
-                    widget.darkMode == false ? CColors.white : CColors.black,
+                    widget.darkMode == false ? CColors.white : CColors.darkGrey,
                 textColor:
                     widget.darkMode == false ? CColors.black : CColors.white,
                 title: "Day\nAverage",
@@ -114,7 +114,7 @@ class StatsState extends State<Stats> {
                 width: widget.infoTabWidth,
                 height: widget.infoTabHeight,
                 boxColor:
-                    widget.darkMode == false ? CColors.white : CColors.black,
+                    widget.darkMode == false ? CColors.white : CColors.darkGrey,
                 textColor:
                     widget.darkMode == false ? CColors.black : CColors.white,
                 title: "Week\nAverage",
@@ -124,7 +124,7 @@ class StatsState extends State<Stats> {
                 width: widget.infoTabWidth,
                 height: widget.infoTabHeight,
                 boxColor:
-                    widget.darkMode == false ? CColors.white : CColors.black,
+                    widget.darkMode == false ? CColors.white : CColors.darkGrey,
                 textColor:
                     widget.darkMode == false ? CColors.black : CColors.white,
                 title: "Month\nAverage",
@@ -133,10 +133,11 @@ class StatsState extends State<Stats> {
             ],
           )
         : Container(
-            width: widget.infoTabWidth * 3,
+            width: double.infinity,
             height: widget.infoTabHeight,
             decoration: BoxDecoration(
-              color: widget.darkMode == false ? CColors.white : CColors.black,
+              color:
+                  widget.darkMode == false ? CColors.white : CColors.darkGrey,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(

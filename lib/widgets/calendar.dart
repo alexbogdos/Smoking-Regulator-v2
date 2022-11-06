@@ -28,10 +28,22 @@ class Calendar extends StatefulWidget {
 }
 
 class CalendarState extends State<Calendar> {
+  bool loaded = false;
+
   @override
   void initState() {
     super.initState();
-    getDataPerDay(0);
+    getDataAtStart();
+  }
+
+  void getDataAtStart() {
+    getDataPerDay(0).then((value) => setLoaded());
+  }
+
+  void setLoaded() {
+    setState(() {
+      loaded = true;
+    });
   }
 
   late int pastWeekOffset = 0;
@@ -57,25 +69,35 @@ class CalendarState extends State<Calendar> {
       if ((0000 <= changeDay && changeDay < 1200) &&
           (0000 <= intHour && intHour < changeDay)) {
         values[currentDayIndex] = -1;
-
-        currentDayIndex -= 1;
-        wholeDate = DateTime.now().subtract(const Duration(days: 1)).toString();
-        date = wholeDate.substring(0, 10);
-        isCase0 = false;
+        if (currentDayIndex > 0) {
+          currentDayIndex -= 1;
+          wholeDate =
+              DateTime.now().subtract(const Duration(days: 1)).toString();
+          date = wholeDate.substring(0, 10);
+          isCase0 = false;
+        } else {
+          getDataPerDay(1);
+          weekOffset = 1;
+          return;
+        }
       } else if (1200 <= changeDay &&
           (1200 <= intHour && changeDay <= intHour)) {
-        currentDayIndex += 1;
-        wholeDate = DateTime.now().add(const Duration(days: 1)).toString();
-        date = wholeDate.substring(0, 10);
-        isCase2 = true;
-        isCase0 = false;
+        if (currentDayIndex < 6) {
+          currentDayIndex += 1;
+          wholeDate = DateTime.now().add(const Duration(days: 1)).toString();
+          date = wholeDate.substring(0, 10);
+          isCase2 = true;
+          isCase0 = false;
+        }
       }
 
       final newCount =
           await retrieveCount(key: date, isCase2: isCase2, isCase0: isCase0);
-      setState(() {
-        values[currentDayIndex] = newCount;
-      });
+      if (weekOffset == 0) {
+        setState(() {
+          values[currentDayIndex] = newCount;
+        });
+      }
       return;
     }
 
@@ -98,9 +120,9 @@ class CalendarState extends State<Calendar> {
 
   Future<void> getDataPerDay(int offset) async {
     final String wholeDate = DateTime.now().toString();
-    late String date = wholeDate.substring(0, 10);
+    final String date = wholeDate.substring(0, 10);
 
-    final int currentDayIndex = DateTime.now().weekday - 1; // + startingOffset;
+    final int currentDayIndex = DateTime.now().weekday - 1;
     if (offset < 0) {
       offset = 0;
     }
@@ -128,6 +150,8 @@ class CalendarState extends State<Calendar> {
       // });
     } else {
       late int daysBefore = (DateTime.now().weekday - 1) + (offset - 1) * 7;
+      // print(DateTime.now().weekday);
+      // print(daysBefore);
       for (int index = 6; index >= 0; index--) {
         daysBefore += 1;
         String kDate =
@@ -175,149 +199,163 @@ class CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
     final int max = getMax(list: values);
-    return Column(
-      children: [
-        Row(
-          children: [
-            SizedBox(
-              // color: Colors.red.withOpacity(0.4),
-              width: widget.width * sidesScaleFactor,
-              height: widget.height,
-              child: Center(
-                child: IconButton(
-                  onPressed: () {
-                    weekOffset += 1;
-                    refresh();
-                  },
-                  icon: Icon(
-                    Icons.arrow_circle_left_outlined,
-                    color: widget.disabled.withOpacity(0.8),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              // color: Colors.blueAccent.withOpacity(0.4),
-              width: widget.width * centerScaleFactor,
-              height: widget.height,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+    return loaded
+        ? Column(
+            children: [
+              Row(
                 children: [
-                  DayCallendar(
-                    width: widget.width * dayCalendarWidthFactor,
-                    height: widget.height * dayCalendarHeightFactor,
-                    symbol: "M",
-                    background: widget.background,
-                    fill: widget.fill,
-                    disabled: widget.disabled,
-                    max: max,
-                    value: values[0],
+                  SizedBox(
+                    // color: Colors.red.withOpacity(0.4),
+                    width: widget.width * sidesScaleFactor,
+                    height: widget.height,
+                    child: Center(
+                      child: IconButton(
+                        onPressed: () {
+                          weekOffset += 1;
+                          refresh();
+                        },
+                        icon: Icon(
+                          Icons.arrow_circle_left_outlined,
+                          color: widget.disabled.withOpacity(0.8),
+                        ),
+                      ),
+                    ),
                   ),
-                  DayCallendar(
-                    width: widget.width * dayCalendarWidthFactor,
-                    height: widget.height * dayCalendarHeightFactor,
-                    symbol: "T",
-                    background: widget.background,
-                    fill: widget.fill,
-                    disabled: widget.disabled,
-                    max: max,
-                    value: values[1],
+                  SizedBox(
+                    // color: Colors.blueAccent.withOpacity(0.4),
+                    width: widget.width * centerScaleFactor,
+                    height: widget.height,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        DayCallendar(
+                          width: widget.width * dayCalendarWidthFactor,
+                          height: widget.height * dayCalendarHeightFactor,
+                          symbol: "M",
+                          background: widget.background,
+                          fill: widget.fill,
+                          disabled: widget.disabled,
+                          max: max,
+                          value: values[0],
+                        ),
+                        DayCallendar(
+                          width: widget.width * dayCalendarWidthFactor,
+                          height: widget.height * dayCalendarHeightFactor,
+                          symbol: "T",
+                          background: widget.background,
+                          fill: widget.fill,
+                          disabled: widget.disabled,
+                          max: max,
+                          value: values[1],
+                        ),
+                        DayCallendar(
+                          width: widget.width * dayCalendarWidthFactor,
+                          height: widget.height * dayCalendarHeightFactor,
+                          symbol: "W",
+                          background: widget.background,
+                          fill: widget.fill,
+                          disabled: widget.disabled,
+                          max: max,
+                          value: values[2],
+                        ),
+                        DayCallendar(
+                          width: widget.width * dayCalendarWidthFactor,
+                          height: widget.height * dayCalendarHeightFactor,
+                          symbol: "T",
+                          background: widget.background,
+                          fill: widget.fill,
+                          disabled: widget.disabled,
+                          max: max,
+                          value: values[3],
+                        ),
+                        DayCallendar(
+                          width: widget.width * dayCalendarWidthFactor,
+                          height: widget.height * dayCalendarHeightFactor,
+                          symbol: "F",
+                          background: widget.background,
+                          fill: widget.fill,
+                          disabled: widget.disabled,
+                          max: max,
+                          value: values[4],
+                        ),
+                        DayCallendar(
+                          width: widget.width * dayCalendarWidthFactor,
+                          height: widget.height * dayCalendarHeightFactor,
+                          symbol: "S",
+                          background: widget.background,
+                          fill: widget.fill,
+                          disabled: widget.disabled,
+                          max: max,
+                          value: values[5],
+                        ),
+                        DayCallendar(
+                          width: widget.width * dayCalendarWidthFactor,
+                          height: widget.height * dayCalendarHeightFactor,
+                          symbol: "S",
+                          background: widget.background,
+                          fill: widget.fill,
+                          disabled: widget.disabled,
+                          max: max,
+                          value: values[6],
+                        ),
+                      ],
+                    ),
                   ),
-                  DayCallendar(
-                    width: widget.width * dayCalendarWidthFactor,
-                    height: widget.height * dayCalendarHeightFactor,
-                    symbol: "W",
-                    background: widget.background,
-                    fill: widget.fill,
-                    disabled: widget.disabled,
-                    max: max,
-                    value: values[2],
-                  ),
-                  DayCallendar(
-                    width: widget.width * dayCalendarWidthFactor,
-                    height: widget.height * dayCalendarHeightFactor,
-                    symbol: "T",
-                    background: widget.background,
-                    fill: widget.fill,
-                    disabled: widget.disabled,
-                    max: max,
-                    value: values[3],
-                  ),
-                  DayCallendar(
-                    width: widget.width * dayCalendarWidthFactor,
-                    height: widget.height * dayCalendarHeightFactor,
-                    symbol: "F",
-                    background: widget.background,
-                    fill: widget.fill,
-                    disabled: widget.disabled,
-                    max: max,
-                    value: values[4],
-                  ),
-                  DayCallendar(
-                    width: widget.width * dayCalendarWidthFactor,
-                    height: widget.height * dayCalendarHeightFactor,
-                    symbol: "S",
-                    background: widget.background,
-                    fill: widget.fill,
-                    disabled: widget.disabled,
-                    max: max,
-                    value: values[5],
-                  ),
-                  DayCallendar(
-                    width: widget.width * dayCalendarWidthFactor,
-                    height: widget.height * dayCalendarHeightFactor,
-                    symbol: "S",
-                    background: widget.background,
-                    fill: widget.fill,
-                    disabled: widget.disabled,
-                    max: max,
-                    value: values[6],
+                  SizedBox(
+                    // color: Colors.red.withOpacity(0.4),
+                    width: widget.width * sidesScaleFactor,
+                    height: widget.height,
+                    child: Center(
+                      child: IconButton(
+                        onPressed: () {
+                          if (weekOffset > 0) {
+                            weekOffset -= 1;
+                            refresh();
+                          }
+                        },
+                        icon: Icon(
+                          Icons.arrow_circle_right_outlined,
+                          color: weekOffset == 0
+                              ? widget.disabled.withOpacity(0.25)
+                              : widget.disabled.withOpacity(0.8),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
-            ),
-            SizedBox(
-              // color: Colors.red.withOpacity(0.4),
-              width: widget.width * sidesScaleFactor,
-              height: widget.height,
-              child: Center(
-                child: IconButton(
-                  onPressed: () {
-                    if (weekOffset > 0) {
-                      weekOffset -= 1;
-                      refresh();
-                    }
-                  },
-                  icon: Icon(
-                    Icons.arrow_circle_right_outlined,
-                    color: weekOffset == 0
-                        ? widget.disabled.withOpacity(0.25)
-                        : widget.disabled.withOpacity(0.8),
+              Container(
+                // color: Colors.yellowAccent.withOpacity(0.4),
+                width: widget.width,
+                height: widget.height * bottomScaleFactor,
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  weekOffset == 0
+                      ? "Showing stats from current week"
+                      : weekOffset == 1
+                          ? "Showing stats from $weekOffset week in the past"
+                          : "Showing stats from $weekOffset weeks in the past",
+                  style: GoogleFonts.poppins(
+                    color: widget.disabled.withOpacity(0.8),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ),
+            ],
+          )
+        : Container(
+            height: widget.height + widget.height * bottomScaleFactor,
+            decoration: BoxDecoration(
+              color: widget.background,
+              borderRadius: BorderRadius.circular(12),
             ),
-          ],
-        ),
-        Container(
-          // color: Colors.yellowAccent.withOpacity(0.4),
-          width: widget.width,
-          height: widget.height * bottomScaleFactor,
-          alignment: Alignment.bottomCenter,
-          child: Text(
-            weekOffset == 0
-                ? "Showing stats from current week"
-                : weekOffset == 1
-                    ? "Showing stats from $weekOffset week in the past"
-                    : "Showing stats from $weekOffset weeks in the past",
-            style: GoogleFonts.poppins(
-              color: widget.disabled.withOpacity(0.8),
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: widget.fill,
+              ),
             ),
-          ),
-        ),
-      ],
-    );
+          );
   }
 }

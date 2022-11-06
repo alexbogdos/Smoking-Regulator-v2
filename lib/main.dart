@@ -171,8 +171,7 @@ class HomePageState extends State<HomePage> {
 
     final bool darkMode = widget.darkMode;
     return Scaffold(
-        backgroundColor:
-            darkMode == false ? CColors.lightGrey : CColors.darkGrey,
+        backgroundColor: darkMode == false ? CColors.lightGrey : CColors.black,
         body: Align(
           alignment: const Alignment(0, 0.3),
           child: SizedBox(
@@ -215,7 +214,8 @@ class HomePageState extends State<HomePage> {
                   key: calendarkey,
                   width: calendarWidth,
                   height: calendarHeight,
-                  background: darkMode == false ? CColors.white : CColors.black,
+                  background:
+                      darkMode == false ? CColors.white : CColors.darkGrey,
                   fill: darkMode == false ? CColors.black : CColors.white,
                   disabled:
                       darkMode == false ? CColors.darkGrey : CColors.lightGrey,
@@ -225,7 +225,8 @@ class HomePageState extends State<HomePage> {
                 Button(
                   width: buttonWidth,
                   height: buttonHeight,
-                  background: darkMode == false ? CColors.white : CColors.black,
+                  background:
+                      darkMode == false ? CColors.white : CColors.darkGrey,
                   textColor: darkMode == false ? CColors.black : CColors.white,
                   fill:
                       darkMode == false ? CColors.darkGrey : CColors.lightGrey,

@@ -33,7 +33,7 @@ class Toggle extends StatelessWidget {
       width: width,
       height: toggleHeight,
       decoration: BoxDecoration(
-        color: darkMode == false ? CColors.white : CColors.black,
+        color: darkMode == false ? CColors.white : CColors.darkGrey,
         borderRadius: BorderRadius.circular(15),
       ),
       child: Row(
