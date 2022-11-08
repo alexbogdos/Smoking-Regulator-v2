@@ -1,41 +1,58 @@
 import 'package:flutter/foundation.dart';
 
 class DTools {
-  bool intIsBigger({
-    required int number1,
-    required int number2,
-    bool equals = true,
-  }) {
-    if (equals) {
-      return number1 >= number2;
-    }
-    return number1 > number2;
-  }
-
-  int stringDateToInt({required String date}) {
+  List<int> toIntYMD({required String date}) {
     date = date.replaceAll("-", "");
 
-    return int.parse(date);
+    final int year = int.parse(date.substring(0, 4));
+    final int month = int.parse(date.substring(4, 6));
+    final int day = int.parse(date.substring(6, 8));
+
+    return [year, month, day];
   }
 
-  String dateToString({required DateTime date}) {
+  String toStr({required DateTime date}) {
     return date.toString().substring(0, 10);
   }
 
-  bool dateIsBigger({
-    required DateTime date1,
-    required String date2,
-    bool equals = false,
-  }) {
-    int val2 = stringDateToInt(date: dateToString(date: date1));
-    int val1 = stringDateToInt(date: date2);
+  bool dateIsBigger(
+      {required DateTime date1,
+      required String date2,
+      bool equals = false,
+      bool toLog = false}) {
+    List<int> list1 = toIntYMD(date: toStr(date: date1));
+    List<int> list2 = toIntYMD(date: date2);
 
-    log(
-      title: "DateTime.now() > lastDate",
-      value: "intIsBigger(number1: val1, number2: val2, equals: equals)",
-    );
+    if (toLog) {
+      log(title: "Date Now", value: toStr(date: date1));
+      log(title: "Last Date", value: date2);
 
-    return intIsBigger(number1: val1, number2: val2, equals: equals);
+      log(
+        title: "Is Bigger",
+        value: dateIsBigger(date1: date1, date2: date2, toLog: false),
+      );
+    }
+
+    // [0] = year  [1] = month  [2] = day
+    if (list1[0] > list2[0]) {
+      return true;
+    } else if (list1[0] < list2[0]) {
+      return false;
+    } else {
+      if (list1[1] > list2[1]) {
+        return true;
+      } else if (list1[1] < list2[1]) {
+        return false;
+      } else {
+        if (list1[2] > list2[2]) {
+          return true;
+        } else if (list1[2] < list2[2]) {
+          return false;
+        } else {
+          return equals;
+        }
+      }
+    }
   }
 }
 

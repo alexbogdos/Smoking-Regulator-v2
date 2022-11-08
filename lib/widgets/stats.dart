@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smoking_regulator_v2/custom_colors.dart';
+import 'package:smoking_regulator_v2/widgets/custom_functions.dart';
 import 'package:smoking_regulator_v2/widgets/info_tab.dart';
 
 class Stats extends StatefulWidget {
@@ -61,10 +62,11 @@ class StatsState extends State<Stats> {
 
         if (prefs.containsKey("LastDate")) {
           final String? lastDate = prefs.getString("LastDate");
-          if (lastDate != DateTime.now().toString().substring(0, 10)) {
+          // lastDate != DateTime.now().toString().substring(0, 10)
+          if (DTools().dateIsBigger(date1: DateTime.now(), date2: lastDate!)) {
             await prefs.setInt("Population", value + 1);
             await prefs.setString(
-                "LastDate", DateTime.now().toString().substring(0, 10));
+                "LastDate", DTools().toStr(date: DateTime.now()));
             population = value + 1;
           }
           // else {
@@ -73,7 +75,7 @@ class StatsState extends State<Stats> {
           // }
         } else {
           await prefs.setString(
-              "LastDate", DateTime.now().toString().substring(0, 10));
+              "LastDate", DTools().toStr(date: DateTime.now()));
         }
 
         setState(() {});
@@ -83,12 +85,14 @@ class StatsState extends State<Stats> {
   }
 
   void setSum({required int sumValue}) {
+    log(title: "Sum", value: sumValue);
     setState(() {
       sum = sumValue;
     });
   }
 
   void setPopulation({required int populationValue}) {
+    log(title: "Population", value: populationValue);
     setState(() {
       population = populationValue;
     });
