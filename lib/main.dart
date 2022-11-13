@@ -25,11 +25,15 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  // Page Controller for scroling between the MainPage and MorePage
   final PageController pageController = PageController(initialPage: 0);
+  // factoredTime: contains the time at which the day
+  // should change
   late String factoredTime = "0000";
 
+  // Related with the asychornous loading of the data
   late int progressDone = 0;
-  late bool done = false;
+  late bool loaded = false;
 
   @override
   void initState() {
@@ -37,12 +41,15 @@ class _MainPageState extends State<MainPage> {
     retrieveData();
   }
 
+  // Increase the @progressDone, meaning that an asychronous
+  // function is completed
   void increaseProgress() {
     progressDone += 1;
 
     if (progressDone == 2) {
       setState(() {
-        done = true;
+        //! loaded = true;
+        loaded = true;
       });
     }
   }
@@ -105,7 +112,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       backgroundColor: CColors.black,
       body: Center(
-        child: done
+        child: loaded
             ? PageView(
                 controller: pageController,
                 children: [
@@ -150,8 +157,6 @@ class HomePageState extends State<HomePage> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    // print("W: $screenWidth  H: $screenHeight");
-
     final double width = screenWidth * 0.84;
     final double height = screenHeight * 0.94;
 
@@ -169,80 +174,79 @@ class HomePageState extends State<HomePage> {
     final double buttonWidth = width;
     final double buttonHeight = height * 0.1;
 
+    // Color Mode Assets
     final bool darkMode = widget.darkMode;
     return Scaffold(
-        backgroundColor: darkMode == false ? CColors.lightGrey : CColors.black,
-        body: Align(
-          alignment: const Alignment(0, 0.3),
-          child: SizedBox(
-            // color: Colors.red.withOpacity(0.4),
-            width: width,
-            height: height,
-            child: Column(
-              children: [
-                PageTitle(
-                  width: width,
-                  height: pageTitleHeight,
-                  textColor: darkMode == false ? CColors.black : CColors.white,
-                ),
-                SizedBox(height: height * 0.03),
-                Stats(
-                  key: statsState,
-                  infoTabWidth: infoTabWidth,
-                  infoTabHeight: infoTabHeight,
-                  darkMode: darkMode,
-                ),
-                SizedBox(height: height * 0.03),
-                Counter(
-                  key: counterkey,
-                  width: counterWidth,
-                  height: counterHeight,
-                  textColor: darkMode == false ? CColors.black : CColors.white,
-                  subTextColor:
-                      darkMode == false ? CColors.darkGrey : CColors.lightGrey,
-                  setSum: (int sum) {
-                    statsState.currentState!.setSum(sumValue: sum);
-                  },
-                  setPopulation: (int population) {
-                    statsState.currentState!
-                        .setPopulation(populationValue: population);
-                  },
-                  factoredTime: widget.factoredTime,
-                ),
-                SizedBox(height: height * 0.05),
-                Calendar(
-                  key: calendarkey,
-                  width: calendarWidth,
-                  height: calendarHeight,
-                  background:
-                      darkMode == false ? CColors.white : CColors.darkGrey,
-                  fill: darkMode == false ? CColors.black : CColors.white,
-                  disabled:
-                      darkMode == false ? CColors.darkGrey : CColors.lightGrey,
-                  factoredTime: widget.factoredTime,
-                ),
-                SizedBox(height: height * 0.06),
-                Button(
-                  width: buttonWidth,
-                  height: buttonHeight,
-                  background:
-                      darkMode == false ? CColors.white : CColors.darkGrey,
-                  textColor: darkMode == false ? CColors.black : CColors.white,
-                  fill:
-                      darkMode == false ? CColors.darkGrey : CColors.lightGrey,
-                  increase: () {
-                    counterkey.currentState!.increase();
-                  },
-                  decrease: () {
-                    counterkey.currentState!.decrease();
-                  },
-                  refreshCalendar: ({bool forceBuild = false}) {
-                    calendarkey.currentState!.refresh(forceBuild: forceBuild);
-                  },
-                ),
-              ],
-            ),
+      backgroundColor: getColor(darkMode, CColors.lightGrey, CColors.black),
+      body: Align(
+        alignment: const Alignment(0, 0.3),
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: Column(
+            children: [
+              SizedBox(height: height * 0.02),
+              PageTitle(
+                width: width,
+                height: pageTitleHeight,
+                textColor: getColor(darkMode, CColors.black, CColors.white),
+              ),
+              SizedBox(height: height * 0.01),
+              Stats(
+                key: statsState,
+                infoTabWidth: infoTabWidth,
+                infoTabHeight: infoTabHeight,
+                darkMode: darkMode,
+              ),
+              SizedBox(height: height * 0.05),
+              Counter(
+                key: counterkey,
+                width: counterWidth,
+                height: counterHeight,
+                textColor: getColor(darkMode, CColors.black, CColors.white),
+                subTextColor:
+                    getColor(darkMode, CColors.darkGrey, CColors.lightGrey),
+                setSum: (int sum) {
+                  statsState.currentState!.setSum(sumValue: sum);
+                },
+                setPopulation: (int population) {
+                  statsState.currentState!
+                      .setPopulation(populationValue: population);
+                },
+                factoredTime: widget.factoredTime,
+              ),
+              SizedBox(height: height * 0.03),
+              Calendar(
+                key: calendarkey,
+                width: calendarWidth,
+                height: calendarHeight,
+                background: getColor(darkMode, CColors.white, CColors.darkGrey),
+                fill: getColor(darkMode, CColors.black, CColors.white),
+                disabled:
+                    getColor(darkMode, CColors.darkGrey, CColors.lightGrey),
+                factoredTime: widget.factoredTime,
+              ),
+              SizedBox(height: height * 0.06),
+              Button(
+                width: buttonWidth,
+                height: buttonHeight,
+                background: getColor(darkMode, CColors.white, CColors.darkGrey),
+                textColor: getColor(darkMode, CColors.black, CColors.white),
+                fill: getColor(darkMode, CColors.darkGrey, CColors.lightGrey),
+                increase: () {
+                  counterkey.currentState!.increase();
+                },
+                decrease: () {
+                  counterkey.currentState!.decrease();
+                },
+                refreshCalendar: ({bool forceBuild = false}) {
+                  calendarkey.currentState!.refresh(forceBuild: forceBuild);
+                },
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

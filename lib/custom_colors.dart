@@ -6,3 +6,11 @@ class CColors {
   static const Color darkGrey = Color.fromARGB(255, 104, 104, 104);
   static const Color black = Color.fromARGB(255, 20, 24, 27);
 }
+
+// Get corresponding color according to the color mode
+Color getColor(bool darkMode, Color light, Color dark) {
+  if (darkMode == false) {
+    return light;
+  }
+  return dark;
+}

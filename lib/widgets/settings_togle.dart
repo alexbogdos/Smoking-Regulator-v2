@@ -29,12 +29,15 @@ class Toggle extends StatelessWidget {
     final double lineWidth = width * 0.006;
     final double box2Width = width * 0.412;
 
+    const double radius = 30;
+    const double fontSize = 20;
+
     return Container(
       width: width,
       height: toggleHeight,
       decoration: BoxDecoration(
-        color: darkMode == false ? CColors.white : CColors.darkGrey,
-        borderRadius: BorderRadius.circular(15),
+        color: getColor(darkMode, CColors.white, CColors.darkGrey),
+        borderRadius: BorderRadius.circular(radius),
       ),
       child: Row(
         children: [
@@ -44,26 +47,26 @@ class Toggle extends StatelessWidget {
             child: Text(
               title,
               style: GoogleFonts.poppins(
-                color: darkMode == false ? CColors.black : CColors.white,
-                fontSize: 18,
+                color: getColor(darkMode, CColors.black, CColors.white),
+                fontSize: fontSize,
                 fontWeight: FontWeight.w400,
               ),
             ),
           ),
           Container(
-            color: darkMode == false ? CColors.black : CColors.white,
+            color: getColor(darkMode, CColors.lightGrey, CColors.black),
             width: lineWidth,
           ),
           Material(
             type: MaterialType.transparency,
             child: InkWell(
               splashColor:
-                  darkMode == false ? CColors.darkGrey : CColors.lightGrey,
+                  getColor(darkMode, CColors.darkGrey, CColors.lightGrey),
               onTap: action,
               onLongPress: secondaryAction,
               borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(15),
-                bottomRight: Radius.circular(15),
+                topRight: Radius.circular(radius),
+                bottomRight: Radius.circular(radius),
               ),
               child: Container(
                 width: box2Width,
@@ -71,9 +74,9 @@ class Toggle extends StatelessWidget {
                 child: Text(
                   value,
                   style: GoogleFonts.poppins(
-                    color: darkMode == false ? CColors.black : CColors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    color: getColor(darkMode, CColors.black, CColors.white),
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),

@@ -27,6 +27,8 @@ class Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const String text = "Increase";
+
     return SizedBox(
       // color: Colors.red,
       width: width,
@@ -48,7 +50,7 @@ class Button extends StatelessWidget {
           ),
         ),
         child: Text(
-          "Increase",
+          text,
           style: GoogleFonts.poppins(
             color: textColor,
             fontSize: 32,

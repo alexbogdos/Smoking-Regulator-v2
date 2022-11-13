@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -28,7 +27,7 @@ class InfoTab extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
         color: boxColor,
       ),
       child: Padding(
@@ -40,7 +39,7 @@ class InfoTab extends StatelessWidget {
               title,
               style: GoogleFonts.poppins(
                 color: textColor,
-                fontSize: 18,
+                fontSize: 19,
                 fontWeight: FontWeight.w400,
               ),
               textAlign: TextAlign.center,
@@ -49,7 +48,7 @@ class InfoTab extends StatelessWidget {
               value.toString(),
               style: GoogleFonts.poppins(
                 color: textColor,
-                fontSize: 26,
+                fontSize: 28,
                 fontWeight: FontWeight.w500,
               ),
             )

@@ -42,6 +42,7 @@ class CalendarState extends State<Calendar> {
 
   void setLoaded() {
     setState(() {
+      //! loaded = true;
       loaded = true;
     });
   }
@@ -196,6 +197,36 @@ class CalendarState extends State<Calendar> {
     }
   }
 
+  String getText() {
+    if (weekOffset == 0) {
+      return "Showing stats from current week";
+    } else if (weekOffset == 1) {
+      return "Showing stats from $weekOffset week in the past";
+    } else {
+      return "Showing stats from $weekOffset weeks in the past";
+    }
+  }
+
+  Widget instansiateDC({
+    required String symbol,
+    required int value,
+    required int max,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: DayCallendar(
+        width: widget.width * 0.076,
+        height: widget.height * dayCalendarHeightFactor,
+        symbol: symbol,
+        background: widget.background,
+        fill: widget.fill,
+        disabled: widget.disabled,
+        max: max,
+        value: value,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final int max = getMax(list: values);
@@ -216,7 +247,7 @@ class CalendarState extends State<Calendar> {
                           refresh();
                         },
                         icon: Icon(
-                          Icons.arrow_circle_left_outlined,
+                          Icons.arrow_back_ios_new_rounded,
                           color: widget.disabled.withOpacity(0.8),
                         ),
                       ),
@@ -227,77 +258,42 @@ class CalendarState extends State<Calendar> {
                     width: widget.width * centerScaleFactor,
                     height: widget.height,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        DayCallendar(
-                          width: widget.width * dayCalendarWidthFactor,
-                          height: widget.height * dayCalendarHeightFactor,
+                        instansiateDC(
                           symbol: "M",
-                          background: widget.background,
-                          fill: widget.fill,
-                          disabled: widget.disabled,
-                          max: max,
                           value: values[0],
-                        ),
-                        DayCallendar(
-                          width: widget.width * dayCalendarWidthFactor,
-                          height: widget.height * dayCalendarHeightFactor,
-                          symbol: "T",
-                          background: widget.background,
-                          fill: widget.fill,
-                          disabled: widget.disabled,
                           max: max,
+                        ),
+                        instansiateDC(
+                          symbol: "T",
                           value: values[1],
+                          max: max,
                         ),
-                        DayCallendar(
-                          width: widget.width * dayCalendarWidthFactor,
-                          height: widget.height * dayCalendarHeightFactor,
+                        instansiateDC(
                           symbol: "W",
-                          background: widget.background,
-                          fill: widget.fill,
-                          disabled: widget.disabled,
-                          max: max,
                           value: values[2],
+                          max: max,
                         ),
-                        DayCallendar(
-                          width: widget.width * dayCalendarWidthFactor,
-                          height: widget.height * dayCalendarHeightFactor,
+                        instansiateDC(
                           symbol: "T",
-                          background: widget.background,
-                          fill: widget.fill,
-                          disabled: widget.disabled,
-                          max: max,
                           value: values[3],
+                          max: max,
                         ),
-                        DayCallendar(
-                          width: widget.width * dayCalendarWidthFactor,
-                          height: widget.height * dayCalendarHeightFactor,
+                        instansiateDC(
                           symbol: "F",
-                          background: widget.background,
-                          fill: widget.fill,
-                          disabled: widget.disabled,
-                          max: max,
                           value: values[4],
-                        ),
-                        DayCallendar(
-                          width: widget.width * dayCalendarWidthFactor,
-                          height: widget.height * dayCalendarHeightFactor,
-                          symbol: "S",
-                          background: widget.background,
-                          fill: widget.fill,
-                          disabled: widget.disabled,
                           max: max,
+                        ),
+                        instansiateDC(
+                          symbol: "S",
                           value: values[5],
-                        ),
-                        DayCallendar(
-                          width: widget.width * dayCalendarWidthFactor,
-                          height: widget.height * dayCalendarHeightFactor,
-                          symbol: "S",
-                          background: widget.background,
-                          fill: widget.fill,
-                          disabled: widget.disabled,
                           max: max,
+                        ),
+                        instansiateDC(
+                          symbol: "S",
                           value: values[6],
+                          max: max,
                         ),
                       ],
                     ),
@@ -315,7 +311,7 @@ class CalendarState extends State<Calendar> {
                           }
                         },
                         icon: Icon(
-                          Icons.arrow_circle_right_outlined,
+                          Icons.arrow_forward_ios_rounded,
                           color: weekOffset == 0
                               ? widget.disabled.withOpacity(0.25)
                               : widget.disabled.withOpacity(0.8),
@@ -331,11 +327,7 @@ class CalendarState extends State<Calendar> {
                 height: widget.height * bottomScaleFactor,
                 alignment: Alignment.bottomCenter,
                 child: Text(
-                  weekOffset == 0
-                      ? "Showing stats from current week"
-                      : weekOffset == 1
-                          ? "Showing stats from $weekOffset week in the past"
-                          : "Showing stats from $weekOffset weeks in the past",
+                  getText(),
                   style: GoogleFonts.poppins(
                     color: widget.disabled.withOpacity(0.8),
                     fontSize: 15,

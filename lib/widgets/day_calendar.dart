@@ -25,20 +25,20 @@ class DayCallendar extends StatelessWidget {
   final int max;
   final int value;
 
-  final double heightOffset = 34;
+  final double heightOffset = 32;
+
+  final double symbolSize = 18;
+  final double valueSize = 20;
 
   @override
   Widget build(BuildContext context) {
-    // print("${value!} $max ${value! / max}");
     if (value >= 0) {
       return SizedBox(
-        // color: Colors.black.withOpacity(0.4),
         width: width,
         height: height,
         child: Column(
           children: [
             Container(
-              // color: Colors.red.withOpacity(0.4),
               width: width,
               height: height * 0.2,
               alignment: Alignment.center,
@@ -46,7 +46,7 @@ class DayCallendar extends StatelessWidget {
                 symbol,
                 style: GoogleFonts.poppins(
                   color: disabled,
-                  fontSize: 22,
+                  fontSize: symbolSize,
                   fontWeight: FontWeight.w300,
                 ),
               ),
@@ -78,7 +78,7 @@ class DayCallendar extends StatelessWidget {
                       value.toString(),
                       style: GoogleFonts.poppins(
                         color: fill,
-                        fontSize: 22,
+                        fontSize: valueSize,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -105,7 +105,7 @@ class DayCallendar extends StatelessWidget {
                 symbol,
                 style: GoogleFonts.poppins(
                   color: disabled,
-                  fontSize: 22,
+                  fontSize: symbolSize,
                   fontWeight: FontWeight.w300,
                 ),
               ),

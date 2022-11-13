@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smoking_regulator_v2/custom_colors.dart';
-import 'package:smoking_regulator_v2/widgets/custom_functions.dart';
+import 'package:smoking_regulator_v2/custom_functions.dart';
 import 'package:smoking_regulator_v2/widgets/info_tab.dart';
 
 class Stats extends StatefulWidget {
@@ -21,7 +21,7 @@ class Stats extends StatefulWidget {
 }
 
 class StatsState extends State<Stats> {
-  late bool done = false;
+  late bool loaded = false;
 
   @override
   void initState() {
@@ -30,10 +30,16 @@ class StatsState extends State<Stats> {
   }
 
   void refresh() async {
-    retrieveSum()
-        .then((value) => retrievePopulation().then((value) => setState(() {
-              done = true;
-            })));
+    retrieveSum().then(
+      (value) => retrievePopulation().then(
+        (value) => setState(
+          () {
+            //! loaded = true;
+            loaded = true;
+          },
+        ),
+      ),
+    );
   }
 
   late int sum = 0;
@@ -49,7 +55,7 @@ class StatsState extends State<Stats> {
         sum = value;
         return;
       }
-    } else {}
+    }
   }
 
   Future<void> retrievePopulation() async {
@@ -62,17 +68,12 @@ class StatsState extends State<Stats> {
 
         if (prefs.containsKey("LastDate")) {
           final String? lastDate = prefs.getString("LastDate");
-          // lastDate != DateTime.now().toString().substring(0, 10)
           if (DTools().dateIsBigger(date1: DateTime.now(), date2: lastDate!)) {
             await prefs.setInt("Population", value + 1);
             await prefs.setString(
                 "LastDate", DTools().toStr(date: DateTime.now()));
             population = value + 1;
           }
-          // else {
-          //   // await prefs.setInt("Population", value - 1);
-          //   setPopulation((value));
-          // }
         } else {
           await prefs.setString(
               "LastDate", DTools().toStr(date: DateTime.now()));
@@ -100,7 +101,9 @@ class StatsState extends State<Stats> {
 
   @override
   Widget build(BuildContext context) {
-    return done
+    final divValue = sum / population;
+
+    return loaded
         ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -108,31 +111,31 @@ class StatsState extends State<Stats> {
                 width: widget.infoTabWidth,
                 height: widget.infoTabHeight,
                 boxColor:
-                    widget.darkMode == false ? CColors.white : CColors.darkGrey,
+                    getColor(widget.darkMode, CColors.white, CColors.darkGrey),
                 textColor:
-                    widget.darkMode == false ? CColors.black : CColors.white,
+                    getColor(widget.darkMode, CColors.black, CColors.white),
                 title: "Day\nAverage",
-                value: (sum / population).round(),
+                value: divValue.round(),
               ),
               InfoTab(
                 width: widget.infoTabWidth,
                 height: widget.infoTabHeight,
                 boxColor:
-                    widget.darkMode == false ? CColors.white : CColors.darkGrey,
+                    getColor(widget.darkMode, CColors.white, CColors.darkGrey),
                 textColor:
-                    widget.darkMode == false ? CColors.black : CColors.white,
+                    getColor(widget.darkMode, CColors.black, CColors.white),
                 title: "Week\nAverage",
-                value: (sum / population).round() * 7,
+                value: divValue.round() * 7,
               ),
               InfoTab(
                 width: widget.infoTabWidth,
                 height: widget.infoTabHeight,
                 boxColor:
-                    widget.darkMode == false ? CColors.white : CColors.darkGrey,
+                    getColor(widget.darkMode, CColors.white, CColors.darkGrey),
                 textColor:
-                    widget.darkMode == false ? CColors.black : CColors.white,
+                    getColor(widget.darkMode, CColors.black, CColors.white),
                 title: "Month\nAverage",
-                value: (sum / population).round() * 30,
+                value: divValue.round() * 30,
               ),
             ],
           )
@@ -140,13 +143,12 @@ class StatsState extends State<Stats> {
             width: double.infinity,
             height: widget.infoTabHeight,
             decoration: BoxDecoration(
-              color:
-                  widget.darkMode == false ? CColors.white : CColors.darkGrey,
+              color: getColor(widget.darkMode, CColors.white, CColors.darkGrey),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
               child: CircularProgressIndicator(
-                color: widget.darkMode == false ? CColors.black : CColors.white,
+                color: getColor(widget.darkMode, CColors.black, CColors.white),
               ),
             ),
           );

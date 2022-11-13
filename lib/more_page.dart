@@ -2,9 +2,9 @@ import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smoking_regulator_v2/custom_colors.dart';
 import 'package:smoking_regulator_v2/widgets/settings_togle.dart';
 import 'package:tuple/tuple.dart';
-import 'custom_colors.dart';
 
 class MorePage extends StatefulWidget {
   const MorePage({
@@ -36,18 +36,18 @@ class _MorePageState extends State<MorePage> {
 
   @override
   Widget build(BuildContext context) {
+    const String pageTitle = "More";
+
     // Size Assets
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-
-    // print("W: $screenWidth  H: $screenHeight");
 
     final double width = screenWidth * 0.84;
     final double height = screenHeight * 0.94;
 
     final double pageTitleHeight = height * 0.14;
 
-    final double toggleHeight = height * 0.08;
+    final double toggleHeight = height * 0.07;
 
     final String val = widget.factoredTimeString.replaceAll(":", "");
     final String val1 = val.substring(0, 2);
@@ -56,29 +56,26 @@ class _MorePageState extends State<MorePage> {
 
     return Scaffold(
       backgroundColor:
-          widget.darkMode == false ? CColors.lightGrey : CColors.black,
+          getColor(widget.darkMode, CColors.lightGrey, CColors.black),
       body: Align(
-        alignment: const Alignment(0, 0.3),
+        alignment: const Alignment(0, 0.9),
         child: SizedBox(
-          // width: width,
           height: height,
           child: Column(
             children: [
               SizedBox(
-                // color: Colors.red,
                 height: pageTitleHeight,
                 child: Text(
-                  "More",
+                  pageTitle,
                   style: GoogleFonts.poppins(
-                    color: widget.darkMode == false
-                        ? CColors.black
-                        : CColors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.w600,
+                    color:
+                        getColor(widget.darkMode, CColors.black, CColors.white),
+                    fontSize: 34,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-              SizedBox(height: height * 0.03),
+              SizedBox(height: height * 0.011),
               Toggle(
                 width: width,
                 toggleHeight: toggleHeight,

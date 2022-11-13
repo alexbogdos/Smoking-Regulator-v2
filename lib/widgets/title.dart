@@ -15,6 +15,7 @@ class PageTitle extends StatelessWidget {
 
   final String text1 = "Keep Healthy";
   final String text2 = "Regulate Smoking";
+  final double size = 34;
 
   @override
   Widget build(BuildContext context) {
@@ -30,16 +31,17 @@ class PageTitle extends StatelessWidget {
             text1,
             style: GoogleFonts.poppins(
               color: textColor,
-              fontSize: 30,
+              fontSize: size,
               fontWeight: FontWeight.w400,
+              wordSpacing: 0,
             ),
           ),
           Text(
             text2,
             style: GoogleFonts.poppins(
               color: textColor,
-              fontSize: 30,
-              fontWeight: FontWeight.w600,
+              fontSize: size,
+              fontWeight: FontWeight.w500,
             ),
           )
         ],

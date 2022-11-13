@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smoking_regulator_v2/widgets/custom_functions.dart';
+import 'package:smoking_regulator_v2/custom_functions.dart';
 
 class Counter extends StatefulWidget {
   const Counter({
@@ -43,15 +43,6 @@ class CounterState extends State<Counter> {
   void getPrefsKey() {
     final DateTime wholeDate = DateTime.now();
     final String date = wholeDate.toString().substring(0, 16);
-
-    // #TO_DO
-    // Let's say that i made an increase
-    // at 00:31 while the 'Day Change' is at 5:30
-    // it should show as a change at the day before
-    // and not be counted in the next day
-    //
-    // It should be only SHOWN this way
-    // and not actually be saved like that
 
     // EXPERIMENTAL FEATURE - START
 
@@ -105,6 +96,7 @@ class CounterState extends State<Counter> {
     // await Future.delayed(const Duration(seconds: 3));
 
     setState(() {
+      //! loaded = true;
       loaded = true;
     });
   }
@@ -165,10 +157,11 @@ class CounterState extends State<Counter> {
     });
   }
 
+  final String text = "Cigaretes Smoked Today";
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      // color: Colors.red.withOpacity(0.4),
       width: widget.width,
       height: widget.height,
       child: Column(
@@ -190,7 +183,7 @@ class CounterState extends State<Counter> {
                   ),
                 ),
           Text(
-            "Cigaretes Smoked Today",
+            text,
             style: GoogleFonts.poppins(
               color: widget.subTextColor.withOpacity(0.8),
               fontSize: 18,
