@@ -149,6 +149,7 @@ class DayCallendarState extends State<DayCallendar> {
               width: widget.width,
               height: widget.height * 0.8,
               decoration: BoxDecoration(
+                color: widget.disabled.withOpacity(0.16),
                 borderRadius: BorderRadius.circular(8),
               ),
             )
