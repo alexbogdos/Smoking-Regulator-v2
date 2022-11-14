@@ -86,14 +86,14 @@ class StatsState extends State<Stats> {
   }
 
   void setSum({required int sumValue}) {
-    log(title: "Sum", value: sumValue);
+    // log(title: "Sum", value: sumValue);
     setState(() {
       sum = sumValue;
     });
   }
 
   void setPopulation({required int populationValue}) {
-    log(title: "Population", value: populationValue);
+    // log(title: "Population", value: populationValue);
     setState(() {
       population = populationValue;
     });

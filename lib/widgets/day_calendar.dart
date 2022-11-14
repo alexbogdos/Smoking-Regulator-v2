@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class DayCallendar extends StatelessWidget {
+class DayCallendar extends StatefulWidget {
   const DayCallendar({
     required this.width,
     required this.height,
@@ -11,6 +11,7 @@ class DayCallendar extends StatelessWidget {
     required this.disabled,
     required this.max,
     required this.value,
+    required this.oldHeight,
     Key? key,
   }) : super(key: key);
 
@@ -25,59 +26,93 @@ class DayCallendar extends StatelessWidget {
   final int max;
   final int value;
 
-  final double heightOffset = 32;
+  final double oldHeight;
 
+  @override
+  State<DayCallendar> createState() => DayCallendarState();
+}
+
+class DayCallendarState extends State<DayCallendar> {
+  // Size Variables
+  final double heightOffset = 32;
   final double symbolSize = 18;
   final double valueSize = 20;
 
+  // Animation Variables
+  late bool finishedAnimation = false;
+  final Duration animationDuration = const Duration(milliseconds: 250);
+  final Duration delayDuration = const Duration(milliseconds: 10);
+  final Curve curve = Curves.easeInOut;
+
+  Future<void> animate() async {
+    Future.delayed(delayDuration, () {
+      setState(() {
+        finishedAnimation = true;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (value >= 0) {
+    if (widget.value >= 0) {
+      final double newHeight =
+          (widget.height * 0.6) * (widget.value / widget.max);
+      if (finishedAnimation == false) {
+        animate();
+      }
+
       return SizedBox(
-        width: width,
-        height: height,
+        width: widget.width,
+        height: widget.height,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
-              width: width,
-              height: height * 0.2,
+              width: widget.width,
+              height: widget.height * 0.2,
               alignment: Alignment.center,
               child: Text(
-                symbol,
+                widget.symbol,
                 style: GoogleFonts.poppins(
-                  color: disabled,
+                  color: widget.disabled,
                   fontSize: symbolSize,
                   fontWeight: FontWeight.w300,
                 ),
               ),
             ),
             Container(
-              width: width,
-              height: height * 0.8,
+              width: widget.width,
+              height: widget.height * 0.8,
               decoration: BoxDecoration(
-                color: background,
+                color: widget.background,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
-                  Container(
-                    width: width,
-                    height: (height * 0.6) * (value / max),
+                  AnimatedContainer(
+                    duration: animationDuration,
+                    curve: curve,
+                    width: widget.width,
+                    height: finishedAnimation ? newHeight : widget.oldHeight,
                     decoration: BoxDecoration(
-                      color: fill,
+                      color: widget.fill,
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  Container(
+                  AnimatedContainer(
                     // color: Colors.red.withOpacity(0.4),
-                    width: width,
-                    height: (height * 0.6) * (value / max) + heightOffset,
+                    duration: animationDuration,
+                    curve: curve,
+                    width: widget.width,
+                    height: finishedAnimation
+                        ? newHeight + heightOffset
+                        : widget.oldHeight + heightOffset,
                     alignment: const Alignment(0, -0.94),
                     child: Text(
-                      value.toString(),
+                      widget.value.toString(),
                       style: GoogleFonts.poppins(
-                        color: fill,
+                        color: widget.fill,
                         fontSize: valueSize,
                         fontWeight: FontWeight.w400,
                       ),
@@ -92,29 +127,28 @@ class DayCallendar extends StatelessWidget {
     } else {
       return SizedBox(
         // color: Colors.black.withOpacity(0.4),
-        width: width,
-        height: height,
+        width: widget.width,
+        height: widget.height,
         child: Column(
           children: [
             Container(
               // color: Colors.red.withOpacity(0.4),
-              width: width,
-              height: height * 0.2,
+              width: widget.width,
+              height: widget.height * 0.2,
               alignment: Alignment.center,
               child: Text(
-                symbol,
+                widget.symbol,
                 style: GoogleFonts.poppins(
-                  color: disabled,
+                  color: widget.disabled,
                   fontSize: symbolSize,
                   fontWeight: FontWeight.w300,
                 ),
               ),
             ),
             Container(
-              width: width,
-              height: height * 0.8,
+              width: widget.width,
+              height: widget.height * 0.8,
               decoration: BoxDecoration(
-                color: disabled.withOpacity(0.16),
                 borderRadius: BorderRadius.circular(8),
               ),
             )
