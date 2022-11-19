@@ -7,7 +7,8 @@ class Toggle extends StatelessWidget {
     Key? key,
     required this.width,
     required this.toggleHeight,
-    required this.darkMode,
+    required this.colorMode,
+    required this.isAmoled,
     required this.title,
     required this.value,
     required this.action,
@@ -16,7 +17,8 @@ class Toggle extends StatelessWidget {
 
   final double width;
   final double toggleHeight;
-  final bool darkMode;
+  final String colorMode;
+  final bool isAmoled;
 
   final String title;
   final String value;
@@ -36,32 +38,56 @@ class Toggle extends StatelessWidget {
       width: width,
       height: toggleHeight,
       decoration: BoxDecoration(
-        color: getColor(darkMode, CColors.white, CColors.darkGrey),
+        color: getColor(
+          colorMode: colorMode,
+          isAmoled: isAmoled,
+          light: CColors.white,
+          dark: CColors.darkGrey,
+          amoled: CColors.dark,
+        ),
         borderRadius: BorderRadius.circular(radius),
       ),
       child: Row(
         children: [
           Container(
             width: box1Width,
-            alignment: Alignment.center,
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(left: box1Width * 0.2),
             child: Text(
               title,
               style: GoogleFonts.poppins(
-                color: getColor(darkMode, CColors.black, CColors.white),
+                color: getColor(
+                  colorMode: colorMode,
+                  isAmoled: isAmoled,
+                  light: CColors.dark,
+                  dark: CColors.white,
+                  amoled: CColors.white,
+                ),
                 fontSize: fontSize,
                 fontWeight: FontWeight.w400,
               ),
             ),
           ),
           Container(
-            color: getColor(darkMode, CColors.lightGrey, CColors.black),
+            color: getColor(
+              colorMode: colorMode,
+              isAmoled: isAmoled,
+              light: CColors.lightGrey,
+              dark: CColors.dark,
+              amoled: CColors.black,
+            ),
             width: lineWidth,
           ),
           Material(
             type: MaterialType.transparency,
             child: InkWell(
-              splashColor:
-                  getColor(darkMode, CColors.darkGrey, CColors.lightGrey),
+              splashColor: getColor(
+                colorMode: colorMode,
+                isAmoled: isAmoled,
+                light: CColors.dark,
+                dark: CColors.lightGrey,
+                amoled: CColors.white,
+              ),
               onTap: action,
               onLongPress: secondaryAction,
               borderRadius: const BorderRadius.only(
@@ -74,7 +100,13 @@ class Toggle extends StatelessWidget {
                 child: Text(
                   value,
                   style: GoogleFonts.poppins(
-                    color: getColor(darkMode, CColors.black, CColors.white),
+                    color: getColor(
+                      colorMode: colorMode,
+                      isAmoled: isAmoled,
+                      light: CColors.dark,
+                      dark: CColors.white,
+                      amoled: CColors.white,
+                    ),
                     fontSize: fontSize,
                     fontWeight: FontWeight.w500,
                   ),

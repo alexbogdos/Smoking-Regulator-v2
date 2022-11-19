@@ -15,23 +15,13 @@ class DTools {
     return date.toString().substring(0, 10);
   }
 
-  bool dateIsBigger(
-      {required DateTime date1,
-      required String date2,
-      bool equals = false,
-      bool toLog = false}) {
+  bool dateIsBigger({
+    required DateTime date1,
+    required String date2,
+    bool equals = false,
+  }) {
     List<int> list1 = toIntYMD(date: toStr(date: date1));
     List<int> list2 = toIntYMD(date: date2);
-
-    if (toLog) {
-      log(title: "Date Now", value: toStr(date: date1));
-      log(title: "Last Date", value: date2);
-
-      log(
-        title: "Is Bigger",
-        value: dateIsBigger(date1: date1, date2: date2, toLog: false),
-      );
-    }
 
     // [0] = year  [1] = month  [2] = day
     if (list1[0] > list2[0]) {

@@ -46,7 +46,7 @@ class _MainPageState extends State<MainPage> {
   void increaseProgress() {
     progressDone += 1;
 
-    if (progressDone == 2) {
+    if (progressDone == 3) {
       setState(() {
         //! loaded = true;
         loaded = true;
@@ -56,6 +56,7 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> retrieveData() async {
     retrieveColorMode().then((value) => increaseProgress());
+    retrieveAmoledMode().then((value) => increaseProgress());
     retrieveFactoredTime().then((value) => increaseProgress());
   }
 
@@ -64,10 +65,10 @@ class _MainPageState extends State<MainPage> {
     final prefs = await SharedPreferences.getInstance();
 
     if (prefs.containsKey("ColorMode")) {
-      final bool? value = prefs.getBool("ColorMode");
+      final String? value = prefs.getString("ColorMode");
       if (value != null) {
         setState(() {
-          darkMode = value;
+          colorMode = value;
         });
       }
     }
@@ -75,14 +76,42 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> saveColorMode() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool("ColorMode", darkMode);
+    prefs.setString("ColorMode", colorMode);
   }
 
-  late bool darkMode = false;
+  late String colorMode = "Light";
   void changeColorMode() {
     setState(() {
-      darkMode = !darkMode;
+      colorMode = cycleColorMode(colorMode: colorMode);
       saveColorMode();
+    });
+  }
+
+  // Amoled Color Mode
+  // Color Settings
+  Future<void> retrieveAmoledMode() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (prefs.containsKey("isAmoled")) {
+      final bool? value = prefs.getBool("isAmoled");
+      if (value != null) {
+        setState(() {
+          isAmoled = value;
+        });
+      }
+    }
+  }
+
+  Future<void> saveAmoledMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool("isAmoled", isAmoled);
+  }
+
+  late bool isAmoled = false;
+  void changeAmoledMode() {
+    setState(() {
+      isAmoled = !isAmoled;
+      saveAmoledMode();
     });
   }
 
@@ -117,12 +146,15 @@ class _MainPageState extends State<MainPage> {
                 controller: pageController,
                 children: [
                   HomePage(
-                    darkMode: darkMode,
+                    colorMode: colorMode,
+                    isAmoled: isAmoled,
                     factoredTime: factoredTime,
                   ),
                   MorePage(
-                    darkMode: darkMode,
+                    colorMode: colorMode,
+                    isAmoled: isAmoled,
                     changeColorMode: changeColorMode,
+                    changeAmoledMode: changeAmoledMode,
                     factoredTimeString: factoredTime,
                     updateFactoredTime: updateFactoredTime,
                   )
@@ -137,9 +169,14 @@ class _MainPageState extends State<MainPage> {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.darkMode, required this.factoredTime})
+  const HomePage(
+      {Key? key,
+      required this.colorMode,
+      required this.isAmoled,
+      required this.factoredTime})
       : super(key: key);
-  final bool darkMode;
+  final String colorMode;
+  final bool isAmoled;
   final String factoredTime;
 
   @override
@@ -175,9 +212,16 @@ class HomePageState extends State<HomePage> {
     final double buttonHeight = height * 0.1;
 
     // Color Mode Assets
-    final bool darkMode = widget.darkMode;
+    final String colorMode = widget.colorMode;
+    final bool isAmoled = widget.isAmoled;
     return Scaffold(
-      backgroundColor: getColor(darkMode, CColors.lightGrey, CColors.black),
+      backgroundColor: getColor(
+        colorMode: colorMode,
+        isAmoled: isAmoled,
+        light: CColors.lightGrey,
+        dark: CColors.dark,
+        amoled: CColors.black,
+      ),
       body: Align(
         alignment: const Alignment(0, 0.3),
         child: SizedBox(
@@ -189,23 +233,40 @@ class HomePageState extends State<HomePage> {
               PageTitle(
                 width: width,
                 height: pageTitleHeight,
-                textColor: getColor(darkMode, CColors.black, CColors.white),
+                textColor: getColor(
+                  colorMode: colorMode,
+                  isAmoled: isAmoled,
+                  light: CColors.dark,
+                  dark: CColors.white,
+                  amoled: CColors.lightGrey,
+                ),
               ),
               SizedBox(height: height * 0.01),
               Stats(
                 key: statsState,
                 infoTabWidth: infoTabWidth,
                 infoTabHeight: infoTabHeight,
-                darkMode: darkMode,
+                colorMode: colorMode,
+                isAmoled: isAmoled,
               ),
               SizedBox(height: height * 0.05),
               Counter(
                 key: counterkey,
                 width: counterWidth,
                 height: counterHeight,
-                textColor: getColor(darkMode, CColors.black, CColors.white),
-                subTextColor:
-                    getColor(darkMode, CColors.darkGrey, CColors.lightGrey),
+                textColor: getColor(
+                  colorMode: colorMode,
+                  isAmoled: isAmoled,
+                  light: CColors.dark,
+                  dark: CColors.white,
+                  amoled: CColors.lightGrey,
+                ),
+                subTextColor: getColor(
+                    colorMode: colorMode,
+                    isAmoled: isAmoled,
+                    light: CColors.darkGrey,
+                    dark: CColors.lightGrey,
+                    amoled: CColors.darkGrey),
                 setSum: (int sum) {
                   statsState.currentState!.setSum(sumValue: sum);
                 },
@@ -220,19 +281,68 @@ class HomePageState extends State<HomePage> {
                 key: calendarkey,
                 width: calendarWidth,
                 height: calendarHeight,
-                background: getColor(darkMode, CColors.white, CColors.darkGrey),
-                fill: getColor(darkMode, CColors.black, CColors.white),
-                disabled:
-                    getColor(darkMode, CColors.darkGrey, CColors.lightGrey),
+                background: getColor(
+                  colorMode: colorMode,
+                  isAmoled: isAmoled,
+                  light: CColors.white,
+                  dark: CColors.darkGrey,
+                  amoled: CColors.dark,
+                ),
+                fill: getColor(
+                  colorMode: colorMode,
+                  isAmoled: isAmoled,
+                  light: CColors.dark,
+                  dark: CColors.white,
+                  amoled: CColors.lightGrey,
+                ),
+                disabled: getColor(
+                  colorMode: colorMode,
+                  isAmoled: isAmoled,
+                  light: CColors.darkGrey,
+                  dark: CColors.lightGrey,
+                  amoled: CColors.darkGrey,
+                ),
+                symbol: getColor(
+                  colorMode: colorMode,
+                  isAmoled: isAmoled,
+                  light: CColors.darkGrey,
+                  dark: CColors.lightGrey,
+                  amoled: CColors.lightGrey,
+                ),
+                subText: getColor(
+                  colorMode: colorMode,
+                  isAmoled: isAmoled,
+                  light: CColors.darkGrey,
+                  dark: CColors.lightGrey,
+                  amoled: CColors.darkGrey,
+                ),
                 factoredTime: widget.factoredTime,
               ),
               SizedBox(height: height * 0.06),
               Button(
                 width: buttonWidth,
                 height: buttonHeight,
-                background: getColor(darkMode, CColors.white, CColors.darkGrey),
-                textColor: getColor(darkMode, CColors.black, CColors.white),
-                fill: getColor(darkMode, CColors.darkGrey, CColors.lightGrey),
+                background: getColor(
+                  colorMode: colorMode,
+                  isAmoled: isAmoled,
+                  light: CColors.white,
+                  dark: CColors.darkGrey,
+                  amoled: CColors.dark,
+                ),
+                textColor: getColor(
+                  colorMode: colorMode,
+                  isAmoled: isAmoled,
+                  light: CColors.dark,
+                  dark: CColors.white,
+                  amoled: CColors.lightGrey,
+                ),
+                fill: getColor(
+                  colorMode: colorMode,
+                  isAmoled: isAmoled,
+                  light: CColors.darkGrey,
+                  dark: CColors.lightGrey,
+                  amoled: CColors.lightGrey,
+                ),
                 increase: () {
                   counterkey.currentState!.increase();
                 },

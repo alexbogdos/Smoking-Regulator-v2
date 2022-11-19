@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smoking_regulator_v2/custom_functions.dart';
 import 'package:smoking_regulator_v2/widgets/day_calendar.dart';
 
 class Calendar extends StatefulWidget {
@@ -12,6 +11,8 @@ class Calendar extends StatefulWidget {
     required this.background,
     required this.fill,
     required this.disabled,
+    required this.symbol,
+    required this.subText,
     required this.factoredTime,
   }) : super(key: key);
 
@@ -21,6 +22,8 @@ class Calendar extends StatefulWidget {
   final Color background;
   final Color fill;
   final Color disabled;
+  final Color symbol;
+  final Color subText;
 
   final String factoredTime;
 
@@ -263,6 +266,7 @@ class CalendarState extends State<Calendar> {
         background: widget.background,
         fill: widget.fill,
         disabled: widget.disabled,
+        symbolColor: widget.symbol,
         max: max,
         value: value,
         oldHeight: oldHeight,
@@ -293,7 +297,7 @@ class CalendarState extends State<Calendar> {
                         },
                         icon: Icon(
                           Icons.arrow_back_ios_new_rounded,
-                          color: widget.disabled.withOpacity(0.8),
+                          color: widget.subText.withOpacity(0.8),
                         ),
                       ),
                     ),
@@ -367,8 +371,8 @@ class CalendarState extends State<Calendar> {
                           Icons.arrow_forward_ios_rounded,
                           color:
                               weekOffset == 0 || (weekOffset == 1 && caseHELL)
-                                  ? widget.disabled.withOpacity(0.25)
-                                  : widget.disabled.withOpacity(0.8),
+                                  ? widget.subText.withOpacity(0.25)
+                                  : widget.subText.withOpacity(0.8),
                         ),
                       ),
                     ),
@@ -383,7 +387,7 @@ class CalendarState extends State<Calendar> {
                 child: Text(
                   getText(),
                   style: GoogleFonts.poppins(
-                    color: widget.disabled.withOpacity(0.8),
+                    color: widget.subText.withOpacity(0.8),
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
                   ),

@@ -9,6 +9,7 @@ class DayCallendar extends StatefulWidget {
     required this.background,
     required this.fill,
     required this.disabled,
+    required this.symbolColor,
     required this.max,
     required this.value,
     required this.oldHeight,
@@ -22,6 +23,7 @@ class DayCallendar extends StatefulWidget {
   final Color background;
   final Color fill;
   final Color disabled;
+  final Color symbolColor;
 
   final int max;
   final int value;
@@ -74,7 +76,7 @@ class DayCallendarState extends State<DayCallendar> {
               child: Text(
                 widget.symbol,
                 style: GoogleFonts.poppins(
-                  color: widget.disabled,
+                  color: widget.symbolColor,
                   fontSize: symbolSize,
                   fontWeight: FontWeight.w300,
                 ),
@@ -139,7 +141,7 @@ class DayCallendarState extends State<DayCallendar> {
               child: Text(
                 widget.symbol,
                 style: GoogleFonts.poppins(
-                  color: widget.disabled,
+                  color: widget.symbolColor,
                   fontSize: symbolSize,
                   fontWeight: FontWeight.w300,
                 ),

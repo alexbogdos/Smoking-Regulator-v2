@@ -9,14 +9,18 @@ import 'package:tuple/tuple.dart';
 class MorePage extends StatefulWidget {
   const MorePage({
     Key? key,
-    required this.darkMode,
+    required this.colorMode,
+    required this.isAmoled,
     required this.changeColorMode,
+    required this.changeAmoledMode,
     required this.factoredTimeString,
     required this.updateFactoredTime,
   }) : super(key: key);
 
-  final bool darkMode;
+  final String colorMode;
+  final bool isAmoled;
   final Function() changeColorMode;
+  final Function() changeAmoledMode;
 
   final String factoredTimeString;
   final Function({required String newFactoredTime}) updateFactoredTime;
@@ -49,14 +53,21 @@ class _MorePageState extends State<MorePage> {
 
     final double toggleHeight = height * 0.07;
 
+    final double spaceBetween = height * 0.016;
+
     final String val = widget.factoredTimeString.replaceAll(":", "");
     final String val1 = val.substring(0, 2);
     final String val2 = val.substring(2, 4);
     factoredTime = Tuple2(int.parse(val1), int.parse(val2));
 
     return Scaffold(
-      backgroundColor:
-          getColor(widget.darkMode, CColors.lightGrey, CColors.black),
+      backgroundColor: getColor(
+        colorMode: widget.colorMode,
+        isAmoled: widget.isAmoled,
+        light: CColors.lightGrey,
+        dark: CColors.dark,
+        amoled: CColors.black,
+      ),
       body: Align(
         alignment: const Alignment(0, 0.9),
         child: SizedBox(
@@ -68,8 +79,13 @@ class _MorePageState extends State<MorePage> {
                 child: Text(
                   pageTitle,
                   style: GoogleFonts.poppins(
-                    color:
-                        getColor(widget.darkMode, CColors.black, CColors.white),
+                    color: getColor(
+                      colorMode: widget.colorMode,
+                      isAmoled: widget.isAmoled,
+                      light: CColors.dark,
+                      dark: CColors.white,
+                      amoled: CColors.white,
+                    ),
                     fontSize: 34,
                     fontWeight: FontWeight.w500,
                   ),
@@ -79,16 +95,28 @@ class _MorePageState extends State<MorePage> {
               Toggle(
                 width: width,
                 toggleHeight: toggleHeight,
-                darkMode: widget.darkMode,
+                colorMode: widget.colorMode,
+                isAmoled: widget.isAmoled,
                 title: "Color Mode",
-                value: widget.darkMode == false ? "Light" : "Dark",
+                value: widget.colorMode,
                 action: widget.changeColorMode,
               ),
-              SizedBox(height: height * 0.03),
+              SizedBox(height: spaceBetween),
               Toggle(
                 width: width,
                 toggleHeight: toggleHeight,
-                darkMode: widget.darkMode,
+                colorMode: widget.colorMode,
+                isAmoled: widget.isAmoled,
+                title: "Amoled",
+                value: widget.isAmoled ? "On" : "Off",
+                action: widget.changeAmoledMode,
+              ),
+              SizedBox(height: spaceBetween),
+              Toggle(
+                width: width,
+                toggleHeight: toggleHeight,
+                colorMode: widget.colorMode,
+                isAmoled: widget.isAmoled,
                 title: "Day Change",
                 value: displayFactoredTime(),
                 action: () {
@@ -167,21 +195,56 @@ class _MorePageState extends State<MorePage> {
         initialTime.item2,
       ),
       titleStyle: GoogleFonts.poppins(
-        color: widget.darkMode == false ? CColors.black : CColors.white,
+        color: getColor(
+          colorMode: widget.colorMode,
+          isAmoled: widget.isAmoled,
+          light: CColors.dark,
+          dark: CColors.white,
+          amoled: CColors.white,
+        ),
         fontSize: 14,
         fontWeight: FontWeight.w400,
       ),
       use24hFormat: true,
       pickerTextStyle: GoogleFonts.poppins(
-        color: widget.darkMode == false ? CColors.black : CColors.white,
+        color: getColor(
+          colorMode: widget.colorMode,
+          isAmoled: widget.isAmoled,
+          light: CColors.dark,
+          dark: CColors.white,
+          amoled: CColors.white,
+        ),
         fontSize: 14,
         fontWeight: FontWeight.w300,
       ),
-      closeIconColor: widget.darkMode == false ? CColors.black : CColors.white,
-      iconColor: widget.darkMode == false ? CColors.white : CColors.black,
-      backgroundColor: widget.darkMode == false ? CColors.white : CColors.black,
-      buttonSingleColor:
-          widget.darkMode == false ? CColors.black : CColors.white,
+      closeIconColor: getColor(
+        colorMode: widget.colorMode,
+        isAmoled: widget.isAmoled,
+        light: CColors.dark,
+        dark: CColors.white,
+        amoled: CColors.lightGrey,
+      ),
+      iconColor: getColor(
+        colorMode: widget.colorMode,
+        isAmoled: widget.isAmoled,
+        light: CColors.white,
+        dark: CColors.dark,
+        amoled: CColors.black,
+      ),
+      backgroundColor: getColor(
+        colorMode: widget.colorMode,
+        isAmoled: widget.isAmoled,
+        light: CColors.white,
+        dark: CColors.dark,
+        amoled: CColors.dark.withOpacity(0.25),
+      ),
+      buttonSingleColor: getColor(
+        colorMode: widget.colorMode,
+        isAmoled: widget.isAmoled,
+        light: CColors.dark,
+        dark: CColors.white,
+        amoled: CColors.lightGrey,
+      ),
       onSubmit: (p0) {
         final String value = p0.toString().substring(12, 17);
         setFactoredTime(value: value);

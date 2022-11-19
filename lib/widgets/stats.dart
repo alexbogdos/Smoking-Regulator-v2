@@ -9,12 +9,14 @@ class Stats extends StatefulWidget {
     Key? key,
     required this.infoTabWidth,
     required this.infoTabHeight,
-    required this.darkMode,
+    required this.colorMode,
+    required this.isAmoled,
   }) : super(key: key);
 
   final double infoTabWidth;
   final double infoTabHeight;
-  final bool darkMode;
+  final String colorMode;
+  final bool isAmoled;
 
   @override
   State<Stats> createState() => StatsState();
@@ -110,30 +112,60 @@ class StatsState extends State<Stats> {
               InfoTab(
                 width: widget.infoTabWidth,
                 height: widget.infoTabHeight,
-                boxColor:
-                    getColor(widget.darkMode, CColors.white, CColors.darkGrey),
-                textColor:
-                    getColor(widget.darkMode, CColors.black, CColors.white),
+                boxColor: getColor(
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  light: CColors.white,
+                  dark: CColors.darkGrey,
+                  amoled: CColors.dark,
+                ),
+                textColor: getColor(
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  light: CColors.dark,
+                  dark: CColors.white,
+                  amoled: CColors.lightGrey,
+                ),
                 title: "Day\nAverage",
                 value: divValue.round(),
               ),
               InfoTab(
                 width: widget.infoTabWidth,
                 height: widget.infoTabHeight,
-                boxColor:
-                    getColor(widget.darkMode, CColors.white, CColors.darkGrey),
-                textColor:
-                    getColor(widget.darkMode, CColors.black, CColors.white),
+                boxColor: getColor(
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  light: CColors.white,
+                  dark: CColors.darkGrey,
+                  amoled: CColors.dark,
+                ),
+                textColor: getColor(
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  light: CColors.dark,
+                  dark: CColors.white,
+                  amoled: CColors.lightGrey,
+                ),
                 title: "Week\nAverage",
                 value: divValue.round() * 7,
               ),
               InfoTab(
                 width: widget.infoTabWidth,
                 height: widget.infoTabHeight,
-                boxColor:
-                    getColor(widget.darkMode, CColors.white, CColors.darkGrey),
-                textColor:
-                    getColor(widget.darkMode, CColors.black, CColors.white),
+                boxColor: getColor(
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  light: CColors.white,
+                  dark: CColors.darkGrey,
+                  amoled: CColors.dark,
+                ),
+                textColor: getColor(
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  light: CColors.dark,
+                  dark: CColors.white,
+                  amoled: CColors.lightGrey,
+                ),
                 title: "Month\nAverage",
                 value: divValue.round() * 30,
               ),
@@ -143,12 +175,24 @@ class StatsState extends State<Stats> {
             width: double.infinity,
             height: widget.infoTabHeight,
             decoration: BoxDecoration(
-              color: getColor(widget.darkMode, CColors.white, CColors.darkGrey),
+              color: getColor(
+                colorMode: widget.colorMode,
+                isAmoled: widget.isAmoled,
+                light: CColors.white,
+                dark: CColors.darkGrey,
+                amoled: CColors.dark,
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
               child: CircularProgressIndicator(
-                color: getColor(widget.darkMode, CColors.black, CColors.white),
+                color: getColor(
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  light: CColors.dark,
+                  dark: CColors.white,
+                  amoled: CColors.lightGrey,
+                ),
               ),
             ),
           );
