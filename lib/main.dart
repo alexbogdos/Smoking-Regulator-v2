@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smoking_regulator_v2/custom_colors.dart';
+import 'package:smoking_regulator_v2/custom_functions.dart';
 import 'package:smoking_regulator_v2/more_page.dart';
 import 'package:smoking_regulator_v2/widgets/button.dart';
 import 'package:smoking_regulator_v2/widgets/calendar.dart';
@@ -31,6 +32,10 @@ class _MainPageState extends State<MainPage> {
   // should change
   late String factoredTime = "0000";
 
+  // firstDate: the date at which the app
+  // was first launched
+  late String firstDate = "2022-09-16";
+
   // Related with the asychornous loading of the data
   late int progressDone = 0;
   late bool loaded = false;
@@ -46,7 +51,7 @@ class _MainPageState extends State<MainPage> {
   void increaseProgress() {
     progressDone += 1;
 
-    if (progressDone == 3) {
+    if (progressDone == 4) {
       setState(() {
         //! loaded = true;
         loaded = true;
@@ -58,6 +63,7 @@ class _MainPageState extends State<MainPage> {
     retrieveColorMode().then((value) => increaseProgress());
     retrieveAmoledMode().then((value) => increaseProgress());
     retrieveFactoredTime().then((value) => increaseProgress());
+    retrieveFirstDate().then((value) => increaseProgress());
   }
 
   // Color Settings
@@ -67,9 +73,7 @@ class _MainPageState extends State<MainPage> {
     if (prefs.containsKey("ColorMode")) {
       final String? value = prefs.getString("ColorMode");
       if (value != null) {
-        setState(() {
-          colorMode = value;
-        });
+        colorMode = value;
       }
     }
   }
@@ -95,9 +99,7 @@ class _MainPageState extends State<MainPage> {
     if (prefs.containsKey("isAmoled")) {
       final bool? value = prefs.getBool("isAmoled");
       if (value != null) {
-        setState(() {
-          isAmoled = value;
-        });
+        isAmoled = value;
       }
     }
   }
@@ -126,14 +128,29 @@ class _MainPageState extends State<MainPage> {
         factoredTime = value.replaceAll(":", "");
       }
     }
-
-    setState(() {});
   }
 
   void updateFactoredTime({required String newFactoredTime}) {
     setState(() {
       factoredTime = newFactoredTime;
     });
+  }
+
+  // Date of first app launch
+  Future<void> retrieveFirstDate() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (prefs.containsKey("First Date")) {
+      final String? value = prefs.getString("First Date");
+
+      if (value != null) {
+        firstDate = value;
+      }
+    } else {
+      final DateTime dateNow = DateTime.now();
+      final String dateString = DTools().toStr(date: dateNow);
+      prefs.setString("First Date", dateString);
+    }
   }
 
   @override
@@ -149,6 +166,7 @@ class _MainPageState extends State<MainPage> {
                     colorMode: colorMode,
                     isAmoled: isAmoled,
                     factoredTime: factoredTime,
+                    firstDate: firstDate,
                   ),
                   MorePage(
                     colorMode: colorMode,
@@ -169,15 +187,17 @@ class _MainPageState extends State<MainPage> {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage(
-      {Key? key,
-      required this.colorMode,
-      required this.isAmoled,
-      required this.factoredTime})
-      : super(key: key);
+  const HomePage({
+    Key? key,
+    required this.colorMode,
+    required this.isAmoled,
+    required this.factoredTime,
+    required this.firstDate,
+  }) : super(key: key);
   final String colorMode;
   final bool isAmoled;
   final String factoredTime;
+  final String firstDate;
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -317,6 +337,7 @@ class HomePageState extends State<HomePage> {
                   amoled: CColors.darkGrey,
                 ),
                 factoredTime: widget.factoredTime,
+                firstDate: widget.firstDate,
               ),
               SizedBox(height: height * 0.06),
               Button(

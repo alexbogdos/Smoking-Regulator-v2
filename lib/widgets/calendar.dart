@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smoking_regulator_v2/custom_functions.dart';
 import 'package:smoking_regulator_v2/widgets/day_calendar.dart';
 
 class Calendar extends StatefulWidget {
@@ -14,6 +15,7 @@ class Calendar extends StatefulWidget {
     required this.symbol,
     required this.subText,
     required this.factoredTime,
+    required this.firstDate,
   }) : super(key: key);
 
   final double width;
@@ -26,6 +28,7 @@ class Calendar extends StatefulWidget {
   final Color subText;
 
   final String factoredTime;
+  final String firstDate;
 
   @override
   State<Calendar> createState() => CalendarState();
@@ -62,6 +65,7 @@ class CalendarState extends State<Calendar> {
 
   late int pastWeekOffset = 0;
   late int weekOffset = 0;
+  late String firstDateofWeek = "";
   Future<void> refresh({bool forceBuild = false}) async {
     // if (pastWeekOffset == weekOffset && forceBuild == false) {
     //   return;
@@ -146,6 +150,7 @@ class CalendarState extends State<Calendar> {
       }
     }
   }
+
   //
   //
   //
@@ -290,10 +295,17 @@ class CalendarState extends State<Calendar> {
                     width: widget.width * sidesScaleFactor,
                     height: widget.height,
                     child: Center(
+                      //! Left Button
                       child: IconButton(
                         onPressed: () {
+                          log(title: "FDW", value: firstDateofWeek);
+                          log(title: "FD", value: widget.firstDate);
+                          // if (DTools().dateIsBigger_String(
+                          // date1: firstDateofWeek,
+                          // date2: widget.firstDate)) {
                           weekOffset += 1;
                           refresh();
+                          // }
                         },
                         icon: Icon(
                           Icons.arrow_back_ios_new_rounded,
@@ -359,6 +371,7 @@ class CalendarState extends State<Calendar> {
                     width: widget.width * sidesScaleFactor,
                     height: widget.height,
                     child: Center(
+                      //! Right Button
                       child: IconButton(
                         onPressed: () {
                           if (weekOffset > 0 &&

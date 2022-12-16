@@ -15,14 +15,10 @@ class DTools {
     return date.toString().substring(0, 10);
   }
 
-  bool dateIsBigger({
-    required DateTime date1,
-    required String date2,
-    bool equals = false,
-  }) {
-    List<int> list1 = toIntYMD(date: toStr(date: date1));
-    List<int> list2 = toIntYMD(date: date2);
-
+  bool _bigger(
+      {required List<int> list1,
+      required List<int> list2,
+      bool equals = false}) {
     // [0] = year  [1] = month  [2] = day
     if (list1[0] > list2[0]) {
       return true;
@@ -43,6 +39,28 @@ class DTools {
         }
       }
     }
+  }
+
+  bool dateIsBigger({
+    required DateTime date1,
+    required String date2,
+    bool equals = false,
+  }) {
+    List<int> list1 = toIntYMD(date: toStr(date: date1));
+    List<int> list2 = toIntYMD(date: date2);
+
+    return _bigger(list1: list1, list2: list2, equals: equals);
+  }
+
+  bool dateIsBigger_String({
+    required String date1,
+    required String date2,
+    bool equals = false,
+  }) {
+    List<int> list1 = toIntYMD(date: date1);
+    List<int> list2 = toIntYMD(date: date2);
+
+    return _bigger(list1: list1, list2: list2, equals: equals);
   }
 }
 
