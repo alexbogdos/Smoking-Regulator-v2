@@ -52,7 +52,7 @@ class DTools {
     return _bigger(list1: list1, list2: list2, equals: equals);
   }
 
-  bool dateIsBigger_String({
+  bool dateBiggerString({
     required String date1,
     required String date2,
     bool equals = false,
