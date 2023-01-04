@@ -138,6 +138,7 @@ class CounterState extends State<Counter> {
   }
 
   late int count = 0;
+  late int limit = 10;
 
   void increase() {
     setState(() {
@@ -159,6 +160,20 @@ class CounterState extends State<Counter> {
 
   final String text = "Cigaretes Smoked Today";
 
+  Color getTextColor(int count, int limit, List<Color> colors) {
+    if (count == 0) {
+      return colors[0];
+    }
+
+    if (count < limit * 0.6) {
+      return colors[1];
+    } else if (count < limit * 0.9) {
+      return colors[2];
+    } else {
+      return colors[3];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -171,7 +186,17 @@ class CounterState extends State<Counter> {
               ? Text(
                   count.toString(),
                   style: GoogleFonts.poppins(
-                    color: widget.textColor,
+                    color: getTextColor(
+                      count,
+                      limit,
+                      [
+                        widget.textColor,
+                        const Color(0xFF54ba89),
+                        const Color(0xFFFFAB40),
+                        const Color(0xFFFF5252)
+                      ],
+                    ),
+                    decoration: count > limit ? TextDecoration.underline : null,
                     fontSize: 56,
                     fontWeight: FontWeight.w500,
                   ),
