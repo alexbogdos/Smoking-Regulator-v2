@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smoking_regulator_v2/custom_colors.dart';
-import 'package:smoking_regulator_v2/custom_functions.dart';
+import 'package:smoking_regulator_v2/systems/custom_colors.dart';
+import 'package:smoking_regulator_v2/systems/custom_functions.dart';
 import 'package:smoking_regulator_v2/widgets/info_tab.dart';
 
 class Stats extends StatefulWidget {
@@ -70,15 +70,13 @@ class StatsState extends State<Stats> {
 
         if (prefs.containsKey("LastDate")) {
           final String? lastDate = prefs.getString("LastDate");
-          if (DTools().dateIsBigger(date1: DateTime.now(), date2: lastDate!)) {
+          if (dateIsBigger(date1: DateTime.now(), date2: lastDate!)) {
             await prefs.setInt("Population", value + 1);
-            await prefs.setString(
-                "LastDate", DTools().toStr(date: DateTime.now()));
+            await prefs.setString("LastDate", toStr(date: DateTime.now()));
             population = value + 1;
           }
         } else {
-          await prefs.setString(
-              "LastDate", DTools().toStr(date: DateTime.now()));
+          await prefs.setString("LastDate", toStr(date: DateTime.now()));
         }
 
         setState(() {});

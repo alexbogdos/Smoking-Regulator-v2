@@ -2,7 +2,7 @@ import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smoking_regulator_v2/custom_colors.dart';
+import 'package:smoking_regulator_v2/systems/custom_colors.dart';
 import 'package:smoking_regulator_v2/widgets/settings_togle.dart';
 import 'package:tuple/tuple.dart';
 

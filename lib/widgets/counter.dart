@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smoking_regulator_v2/custom_functions.dart';
+import 'package:smoking_regulator_v2/systems/custom_functions.dart';
 
 class Counter extends StatefulWidget {
   const Counter({
@@ -121,10 +121,9 @@ class CounterState extends State<Counter> {
       final int? value = prefs.getInt("Population");
       final String? lastDate = prefs.getString("LastDate");
       if (value != null) {
-        if (DTools().dateIsBigger(date1: DateTime.now(), date2: lastDate!)) {
+        if (dateIsBigger(date1: DateTime.now(), date2: lastDate!)) {
           await prefs.setInt("Population", value + 1);
-          await prefs.setString(
-              "LastDate", DTools().toStr(date: DateTime.now()));
+          await prefs.setString("LastDate", toStr(date: DateTime.now()));
           widget.setPopulation((value + 1));
         } else {
           // await prefs.setInt("Population", value - 1);
@@ -133,7 +132,7 @@ class CounterState extends State<Counter> {
       }
     } else {
       await prefs.setInt("Population", 1);
-      await prefs.setString("LastDate", DTools().toStr(date: DateTime.now()));
+      await prefs.setString("LastDate", toStr(date: DateTime.now()));
     }
   }
 

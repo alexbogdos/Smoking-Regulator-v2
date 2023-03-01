@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smoking_regulator_v2/custom_functions.dart';
+import 'package:smoking_regulator_v2/systems/custom_functions.dart';
 import 'package:smoking_regulator_v2/widgets/day_calendar.dart';
 
 class Calendar extends StatefulWidget {
