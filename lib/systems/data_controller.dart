@@ -16,8 +16,7 @@ class DataController {
     return data[key];
   }
 
-  Future<void> setSettings(
-      {required String key, required dynamic value}) async {
+  Future<void> setSetting({required String key, required dynamic value}) async {
     settings[key] = value;
     await saveSystem.save(filename: saveSystem.settings, data: settings);
   }
@@ -46,14 +45,72 @@ class DataController {
     return value;
   }
 
-  String defaultFirstDate = getDatetoString(DateTime.now());
   String getFirstDate() {
-    if (getfromData(key: "FirstDate") == null) {
-      setData(key: "FirstDate", value: defaultFirstDate);
-      return defaultFirstDate;
+    String defaultValue = datetoString(getDateTime(this));
+    if (getfromSettings(key: "FirstDate") == null) {
+      setSetting(key: "FirstDate", value: defaultValue);
+      return defaultValue;
     }
 
-    return getfromData(key: "FirstDate");
+    return getfromSettings(key: "FirstDate");
+  }
+
+  String getLastDate() {
+    String defaultValue = datetoString(getDateTime(this));
+    if (getfromSettings(key: "LastDate") == null) {
+      setSetting(key: "LastDate", value: defaultValue);
+      return defaultValue;
+    }
+
+    return getfromSettings(key: "LastDate");
+  }
+
+  int getLastWeekDay() {
+    if (getfromSettings(key: "LastWeekDay") == null) {
+      setSetting(key: "LastWeekDay", value: 0);
+      return 0;
+    }
+
+    return getfromSettings(key: "LastWeekDay");
+  }
+
+  int getWeekGroup() {
+    if (getfromSettings(key: "WeekGroup") == null) {
+      setSetting(key: "WeekGroup", value: 0);
+      return 0;
+    }
+
+    return getfromSettings(key: "WeekGroup");
+  }
+
+  Map<String, dynamic>? getDayData(String date) {
+    if (getfromData(key: date) == null) {
+      return null;
+    }
+
+    log(
+        title: "Data Controller (getDayData)",
+        value: "$date : ${getfromData(key: date)}");
+    return getfromData(key: date);
+  }
+
+  int getCountSum() {
+    if (getfromSettings(key: "CountSum") == null) {
+      setSetting(key: "CountSum", value: 0);
+      return 0;
+    }
+
+    return getfromSettings(key: "CountSum");
+  }
+
+  int defaultLimit = 5;
+  int getLimit() {
+    if (getfromSettings(key: "limit") == null) {
+      setSetting(key: "limit", value: defaultLimit);
+      return defaultLimit;
+    }
+
+    return getfromSettings(key: "limit");
   }
 
   // ----- Loading System ---------------
@@ -86,6 +143,24 @@ class DataController {
     } else {
       data = {};
       log(title: "Data Controller (loadData)", value: "Did not load");
+    }
+  }
+
+  // ----- Checks ---------------
+  Future<void> performChecks() async {
+    checkWeekGroup();
+  }
+
+  void checkWeekGroup() {
+    int weekday = getDateTime(this).weekday;
+    String lastDate = getLastDate();
+
+    bool weekdayIsBefore = weekday <= getLastWeekDay();
+    bool datesDifferent =
+        dateTimeIsBigger(getDateTime(this), DateTime.parse(lastDate));
+    if (weekdayIsBefore && datesDifferent) {
+      int group = getWeekGroup() + 1;
+      setSetting(key: "WeekGroup", value: group);
     }
   }
 }

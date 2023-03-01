@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:smoking_regulator_v2/systems/count_controller.dart';
 import 'package:smoking_regulator_v2/systems/custom_colors.dart';
 import 'package:smoking_regulator_v2/pages/more_page.dart';
 import 'package:smoking_regulator_v2/pages/home_page.dart';
@@ -24,8 +25,11 @@ class _MainPageState extends State<MainPage> {
   // Data Controller
   final DataController dataController = DataController();
 
+  // Count Controller
+  late CountController countController;
+
   // Page Controller for scroling between the MainPage and MorePage
-  final PageController pageController = PageController(initialPage: 1);
+  final PageController pageController = PageController(initialPage: 0);
 
   // Keep check if data finished loading
   late bool loaded = false;
@@ -33,8 +37,23 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    grantPermissions().then(
-        (value) => dataController.load().then((value) => finishLoading()));
+    grantPermissions().then((value) => dataController.load().then((value) =>
+        dataController.performChecks().then((value) => finishLoading())));
+  }
+
+  void updateCounter() {
+    void refreshState() {
+      setState(() {
+        int limit = dataController.getLimit();
+
+        countController = CountController(
+          limit: limit,
+          dataController: dataController,
+        );
+      });
+    }
+
+    dataController.performChecks().then((value) => refreshState());
   }
 
   void finishLoading() {
@@ -42,6 +61,12 @@ class _MainPageState extends State<MainPage> {
       colorMode = dataController.getColorMode();
       amoled = dataController.getAmoled();
       dayChangeTime = dataController.getDayChangeTime();
+
+      int limit = dataController.getLimit();
+      countController = CountController(
+        limit: limit,
+        dataController: dataController,
+      );
 
       loaded = true;
     });
@@ -60,7 +85,7 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       String tempColorMode = dataController.getColorMode();
       colorMode = cycleColorMode(colorMode: tempColorMode);
-      dataController.setSettings(key: "ColorMode", value: colorMode);
+      dataController.setSetting(key: "ColorMode", value: colorMode);
     });
   }
 
@@ -68,14 +93,16 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       bool tempAmoled = dataController.getAmoled();
       amoled = !tempAmoled;
-      dataController.setSettings(key: "Amoled", value: amoled);
+      dataController.setSetting(key: "Amoled", value: amoled);
     });
   }
 
   void updateFactoredTime({required String newFactoredTime}) {
     setState(() {
       dayChangeTime = newFactoredTime;
-      dataController.setSettings(key: "DayChangeTime", value: dayChangeTime);
+      dataController
+          .setSetting(key: "DayChangeTime", value: dayChangeTime)
+          .then((value) => updateCounter());
     });
   }
 
@@ -98,6 +125,8 @@ class _MainPageState extends State<MainPage> {
                     isAmoled: amoled,
                     factoredTime: dayChangeTime,
                     firstDate: dataController.getFirstDate(),
+                    countController: countController,
+                    dataController: dataController,
                   ),
                   MorePage(
                     colorMode: colorMode,

@@ -56,7 +56,6 @@ class CalendarState extends State<Calendar> {
 
   void setLoaded() {
     setState(() {
-      //! loaded = true;
       loaded = true;
     });
   }

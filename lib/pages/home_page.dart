@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:smoking_regulator_v2/systems/count_controller.dart';
 import 'package:smoking_regulator_v2/systems/custom_colors.dart';
+import 'package:smoking_regulator_v2/systems/data_controller.dart';
 import 'package:smoking_regulator_v2/widgets/button.dart';
 import 'package:smoking_regulator_v2/widgets/calendar.dart';
 import 'package:smoking_regulator_v2/widgets/counter.dart';
@@ -13,11 +15,15 @@ class HomePage extends StatefulWidget {
     required this.isAmoled,
     required this.factoredTime,
     required this.firstDate,
+    required this.countController,
+    required this.dataController,
   }) : super(key: key);
   final String colorMode;
   final bool isAmoled;
   final String factoredTime;
   final String firstDate;
+  final CountController countController;
+  final DataController dataController;
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -92,6 +98,8 @@ class HomePageState extends State<HomePage> {
               SizedBox(height: height * 0.05),
               Counter(
                 key: counterkey,
+                countController: widget.countController,
+                dataController: widget.dataController,
                 width: counterWidth,
                 height: counterHeight,
                 textColor: getColor(
@@ -108,11 +116,11 @@ class HomePageState extends State<HomePage> {
                     dark: CColors.lightGrey,
                     amoled: CColors.darkGrey),
                 setSum: (int sum) {
-                  statsState.currentState!.setSum(sumValue: sum);
+                  widget.dataController.setData(key: "CountSum", value: sum);
                 },
                 setPopulation: (int population) {
-                  statsState.currentState!
-                      .setPopulation(populationValue: population);
+                  widget.dataController
+                      .setData(key: "DaysSum", value: population);
                 },
                 factoredTime: widget.factoredTime,
               ),
@@ -185,10 +193,12 @@ class HomePageState extends State<HomePage> {
                   amoled: CColors.lightGrey,
                 ),
                 increase: () {
-                  counterkey.currentState!.increase();
+                  widget.countController.increase();
+                  counterkey.currentState!.refresh();
                 },
                 decrease: () {
-                  counterkey.currentState!.decrease();
+                  widget.countController.decrease();
+                  counterkey.currentState!.refresh();
                 },
                 refreshCalendar: ({bool forceBuild = false}) {
                   calendarkey.currentState!.refresh(forceBuild: forceBuild);

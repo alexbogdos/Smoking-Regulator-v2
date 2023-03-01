@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:smoking_regulator_v2/systems/data_controller.dart';
 
 List<int> toIntYMD({required String date}) {
   date = date.replaceAll("-", "");
@@ -38,7 +40,7 @@ bool _bigger(
   }
 }
 
-String getTimetoString(DateTime dateTime) {
+String timetoString(DateTime dateTime, {clear = false}) {
   int hour = dateTime.hour;
   int minute = dateTime.minute;
 
@@ -52,11 +54,13 @@ String getTimetoString(DateTime dateTime) {
     strMinute = "0$strMinute";
   }
 
-  String time = "$strHour:$strMinute";
-  return time;
+  if (clear) {
+    return "$strHour$strMinute";
+  }
+  return "$strHour:$strMinute";
 }
 
-String getDatetoString(DateTime dateTime) {
+String datetoString(DateTime dateTime, {clean = false}) {
   int year = dateTime.year;
   int month = dateTime.month;
   int day = dateTime.day;
@@ -72,8 +76,11 @@ String getDatetoString(DateTime dateTime) {
     strDay = "0$strDay";
   }
 
-  String date = "$strYear-$strMonth-$strDay";
-  return date;
+  if (clean) {
+    return "$strYear$strMonth$strDay";
+  }
+
+  return "$strYear-$strMonth-$strDay";
 }
 
 bool dateIsBigger({
@@ -98,8 +105,40 @@ bool dateBiggerString({
   return _bigger(list1: list1, list2: list2, equals: equals);
 }
 
+bool dateTimeIsBigger(DateTime datetime1, DateTime datetime2, {equal = false}) {
+  int datetime1int = int.parse(datetoString(datetime1, clean: true));
+  int datetime2int = int.parse(datetoString(datetime2, clean: true));
+
+  if (equal) {
+    return datetime1int >= datetime2int;
+  } else {
+    return datetime1int > datetime2int;
+  }
+}
+
 void log({String title = "LOG", required var value}) {
   if (kDebugMode) {
     print("$title: $value");
   }
+}
+
+DateTime getDateTime(DataController dataController) {
+  DateTime datenow = DateTime.now();
+  String dayChangeTime = dataController.getDayChangeTime();
+  if (dayChangeTime == dataController.defaultDayChangeTime) {
+    return datenow;
+  }
+
+  String timeString = timetoString(datenow, clear: true);
+  log(title: "Custom Function (getDateTime)", value: timeString);
+  int time = int.parse(timeString);
+  int changeTimeInt = int.parse(dataController.getDayChangeTime());
+
+  if (0000 <= time && time < changeTimeInt) {
+    return datenow.subtract(const Duration(days: 1));
+  } else if (1200 <= changeTimeInt && 1200 <= time && time <= changeTimeInt) {
+    return datenow.add(const Duration(days: 1));
+  }
+
+  return datenow;
 }
