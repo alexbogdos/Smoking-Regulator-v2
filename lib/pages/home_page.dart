@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smoking_regulator_v2/systems/calendar_controller.dart';
 import 'package:smoking_regulator_v2/systems/count_controller.dart';
 import 'package:smoking_regulator_v2/systems/custom_colors.dart';
 import 'package:smoking_regulator_v2/systems/data_controller.dart';
@@ -15,15 +16,17 @@ class HomePage extends StatefulWidget {
     required this.isAmoled,
     required this.factoredTime,
     required this.firstDate,
-    required this.countController,
     required this.dataController,
+    required this.calendarController,
+    required this.countController,
   }) : super(key: key);
   final String colorMode;
   final bool isAmoled;
   final String factoredTime;
   final String firstDate;
-  final CountController countController;
   final DataController dataController;
+  final CalendarController calendarController;
+  final CountController countController;
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -94,6 +97,7 @@ class HomePageState extends State<HomePage> {
                 infoTabHeight: infoTabHeight,
                 colorMode: colorMode,
                 isAmoled: isAmoled,
+                calendarController: widget.calendarController,
               ),
               SizedBox(height: height * 0.05),
               Counter(
@@ -129,6 +133,10 @@ class HomePageState extends State<HomePage> {
                 key: calendarkey,
                 width: calendarWidth,
                 height: calendarHeight,
+                calendarController: widget.calendarController,
+                refreshStats: () {
+                  statsState.currentState!.refresh();
+                },
                 background: getColor(
                   colorMode: colorMode,
                   isAmoled: isAmoled,
@@ -164,8 +172,6 @@ class HomePageState extends State<HomePage> {
                   dark: CColors.lightGrey,
                   amoled: CColors.darkGrey,
                 ),
-                factoredTime: widget.factoredTime,
-                firstDate: widget.firstDate,
               ),
               SizedBox(height: height * 0.06),
               Button(
@@ -195,13 +201,15 @@ class HomePageState extends State<HomePage> {
                 increase: () {
                   widget.countController.increase();
                   counterkey.currentState!.refresh();
+                  statsState.currentState!.refresh();
                 },
                 decrease: () {
                   widget.countController.decrease();
                   counterkey.currentState!.refresh();
+                  statsState.currentState!.refresh();
                 },
-                refreshCalendar: ({bool forceBuild = false}) {
-                  calendarkey.currentState!.refresh(forceBuild: forceBuild);
+                refreshCalendar: () {
+                  calendarkey.currentState!.refresh();
                 },
               ),
             ],

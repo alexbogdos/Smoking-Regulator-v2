@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:smoking_regulator_v2/systems/calendar_controller.dart';
 import 'package:smoking_regulator_v2/systems/count_controller.dart';
 import 'package:smoking_regulator_v2/systems/custom_colors.dart';
 import 'package:smoking_regulator_v2/pages/more_page.dart';
@@ -28,6 +29,9 @@ class _MainPageState extends State<MainPage> {
   // Count Controller
   late CountController countController;
 
+  // Count Controller
+  late CalendarController calendarController;
+
   // Page Controller for scroling between the MainPage and MorePage
   final PageController pageController = PageController(initialPage: 0);
 
@@ -37,8 +41,8 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    grantPermissions().then((value) => dataController.load().then((value) =>
-        dataController.performChecks().then((value) => finishLoading())));
+    grantPermissions().then(
+        (value) => dataController.load().then((value) => finishLoading()));
   }
 
   void updateCounter() {
@@ -61,6 +65,8 @@ class _MainPageState extends State<MainPage> {
       colorMode = dataController.getColorMode();
       amoled = dataController.getAmoled();
       dayChangeTime = dataController.getDayChangeTime();
+
+      calendarController = CalendarController(dataController: dataController);
 
       int limit = dataController.getLimit();
       countController = CountController(
@@ -125,8 +131,9 @@ class _MainPageState extends State<MainPage> {
                     isAmoled: amoled,
                     factoredTime: dayChangeTime,
                     firstDate: dataController.getFirstDate(),
-                    countController: countController,
                     dataController: dataController,
+                    calendarController: calendarController,
+                    countController: countController,
                   ),
                   MorePage(
                     colorMode: colorMode,

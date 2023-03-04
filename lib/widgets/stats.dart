@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smoking_regulator_v2/systems/calendar_controller.dart';
 import 'package:smoking_regulator_v2/systems/custom_colors.dart';
-import 'package:smoking_regulator_v2/systems/custom_functions.dart';
 import 'package:smoking_regulator_v2/widgets/info_tab.dart';
 
 class Stats extends StatefulWidget {
@@ -11,6 +10,7 @@ class Stats extends StatefulWidget {
     required this.infoTabHeight,
     required this.colorMode,
     required this.isAmoled,
+    required this.calendarController,
   }) : super(key: key);
 
   final double infoTabWidth;
@@ -18,91 +18,34 @@ class Stats extends StatefulWidget {
   final String colorMode;
   final bool isAmoled;
 
+  final CalendarController calendarController;
+
   @override
   State<Stats> createState() => StatsState();
 }
 
 class StatsState extends State<Stats> {
   late bool loaded = false;
+  late int countSum = 0;
+  late int population = 1;
 
   @override
   void initState() {
     super.initState();
-    refresh();
+    getStatsData();
   }
 
-  void refresh() async {
-    retrieveSum().then(
-      (value) => retrievePopulation().then(
-        (value) => setState(
-          () {
-            //! loaded = true;
-            loaded = true;
-          },
-        ),
-      ),
-    );
+  void getStatsData() {
+    loaded = true;
   }
 
-  late int sum = 0;
-  late int population = 1;
-
-  Future<void> retrieveSum() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (prefs.containsKey("Sum")) {
-      final int? value = prefs.getInt("Sum");
-
-      if (value != null) {
-        sum = value;
-        return;
-      }
-    }
-  }
-
-  Future<void> retrievePopulation() async {
-    final prefs = await SharedPreferences.getInstance();
-    // prefs.clear();
-    if (prefs.containsKey("Population")) {
-      final int? value = prefs.getInt("Population");
-      if (value != null) {
-        population = value;
-
-        if (prefs.containsKey("LastDate")) {
-          final String? lastDate = prefs.getString("LastDate");
-          if (dateIsBigger(date1: DateTime.now(), date2: lastDate!)) {
-            await prefs.setInt("Population", value + 1);
-            await prefs.setString("LastDate", toStr(date: DateTime.now()));
-            population = value + 1;
-          }
-        } else {
-          await prefs.setString("LastDate", toStr(date: DateTime.now()));
-        }
-
-        setState(() {});
-        return;
-      }
-    }
-  }
-
-  void setSum({required int sumValue}) {
-    // log(title: "Sum", value: sumValue);
-    setState(() {
-      sum = sumValue;
-    });
-  }
-
-  void setPopulation({required int populationValue}) {
-    // log(title: "Population", value: populationValue);
-    setState(() {
-      population = populationValue;
-    });
+  late double divValue = 0;
+  void refresh() {
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final divValue = sum / population;
-
     return loaded
         ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -125,7 +68,9 @@ class StatsState extends State<Stats> {
                   amoled: CColors.lightGrey,
                 ),
                 title: "Day\nAverage",
-                value: divValue.round(),
+                value: (widget.calendarController.sum /
+                        widget.calendarController.pop)
+                    .round(),
               ),
               InfoTab(
                 width: widget.infoTabWidth,
@@ -144,8 +89,8 @@ class StatsState extends State<Stats> {
                   dark: CColors.white,
                   amoled: CColors.lightGrey,
                 ),
-                title: "Week\nAverage",
-                value: divValue.round() * 7,
+                title: "Week\nMax",
+                value: widget.calendarController.max,
               ),
               InfoTab(
                 width: widget.infoTabWidth,
@@ -164,8 +109,8 @@ class StatsState extends State<Stats> {
                   dark: CColors.white,
                   amoled: CColors.lightGrey,
                 ),
-                title: "Month\nAverage",
-                value: divValue.round() * 30,
+                title: "Week\nSum",
+                value: widget.calendarController.sum,
               ),
             ],
           )

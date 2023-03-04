@@ -4,16 +4,26 @@ import 'package:smoking_regulator_v2/systems/save_system.dart';
 class DataController {
   late Map<String, dynamic> data = {};
   late Map<String, dynamic> settings = {};
+  late Map<String, dynamic> week = {};
+  late int weekgroup = 0;
   final SaveSystem saveSystem = SaveSystem();
 
   // ----- Editing and Saving System ---------------
   Future<void> setData({required String key, required dynamic value}) async {
-    data[key] = value;
+    week[key] = value;
+    data[weekgroup.toString()] = week;
     await saveSystem.save(filename: saveSystem.data, data: data);
   }
 
-  dynamic getfromData({required String key}) {
-    return data[key];
+  dynamic getfromWeek({required String date}) {
+    return week[date];
+  }
+
+  dynamic getfromData({int? weekgroupkey}) {
+    if (weekgroupkey == null) {
+      return data[weekgroup.toString()];
+    }
+    return data[weekgroupkey.toString()];
   }
 
   Future<void> setSetting({required String key, required dynamic value}) async {
@@ -84,14 +94,14 @@ class DataController {
   }
 
   Map<String, dynamic>? getDayData(String date) {
-    if (getfromData(key: date) == null) {
+    if (getfromWeek(date: date) == null) {
       return null;
     }
 
     log(
         title: "Data Controller (getDayData)",
-        value: "$date : ${getfromData(key: date)}");
-    return getfromData(key: date);
+        value: "$date : ${getfromWeek(date: date)}");
+    return getfromWeek(date: date);
   }
 
   int getCountSum() {
@@ -103,14 +113,23 @@ class DataController {
     return getfromSettings(key: "CountSum");
   }
 
+  int getPopulation() {
+    if (getfromSettings(key: "Population") == null) {
+      setSetting(key: "Population", value: 1);
+      return 1;
+    }
+
+    return getfromSettings(key: "Population");
+  }
+
   int defaultLimit = 5;
   int getLimit() {
-    if (getfromSettings(key: "limit") == null) {
-      setSetting(key: "limit", value: defaultLimit);
+    if (getfromSettings(key: "DailyLimit") == null) {
+      setSetting(key: "DailyLimit", value: defaultLimit);
       return defaultLimit;
     }
 
-    return getfromSettings(key: "limit");
+    return getfromSettings(key: "DailyLimit");
   }
 
   // ----- Loading System ---------------
@@ -126,7 +145,7 @@ class DataController {
 
     if (tempSettings != null) {
       settings = tempSettings;
-      log(title: "Data Controller (loadSettings)", value: "Operation Succeded");
+      log(title: "Data Controller (loadSettings)", value: "Settings Loaded");
     } else {
       settings = {};
       log(title: "Data Controller (loadSettings)", value: "Did not load");
@@ -134,12 +153,23 @@ class DataController {
   }
 
   Future<void> loadData() async {
+    await performChecks();
+
     Map<String, dynamic>? tempData =
         await saveSystem.load(filename: saveSystem.data);
 
     if (tempData != null) {
       data = tempData;
-      log(title: "Data Controller (loadData)", value: "Operation Succeded");
+      weekgroup = getWeekGroup();
+      Map<String, dynamic>? tempWeek = getfromData();
+      if (tempWeek == null) {
+        week = {};
+        log(title: "Data Controller (loadData)", value: "Did not load");
+      } else {
+        week = tempWeek;
+        // log(title: "Data Controller (loadData)", value: "Current Week: $week");
+        log(title: "Data Controller (loadData)", value: "Data Loaded");
+      }
     } else {
       data = {};
       log(title: "Data Controller (loadData)", value: "Did not load");
@@ -148,19 +178,47 @@ class DataController {
 
   // ----- Checks ---------------
   Future<void> performChecks() async {
+    checkPopulation();
+    checkLastDate();
     checkWeekGroup();
+
+    log(title: "Data Controller (performChecks)", value: "Checks Performed");
+  }
+
+  void checkPopulation() {
+    DateTime datenow = getDateTime(this);
+    DateTime lastdate = DateTime.parse(getLastDate());
+
+    bool isAfter = dateTimeIsBigger(datenow, lastdate);
+    int popvalue = getPopulation();
+    if (isAfter) {
+      setSetting(key: "Population", value: popvalue + 1);
+    }
+  }
+
+  void checkLastDate() {
+    DateTime datenow = getDateTime(this);
+    DateTime lastdate = DateTime.parse(getLastDate());
+
+    bool isAfter = dateTimeIsBigger(datenow, lastdate);
+    if (isAfter) {
+      setSetting(key: "LastDate", value: datetoString(datenow));
+    }
   }
 
   void checkWeekGroup() {
-    int weekday = getDateTime(this).weekday;
-    String lastDate = getLastDate();
+    DateTime datenow = getDateTime(this);
+    DateTime firstdate = DateTime.parse(getFirstDate());
 
-    bool weekdayIsBefore = weekday <= getLastWeekDay();
-    bool datesDifferent =
-        dateTimeIsBigger(getDateTime(this), DateTime.parse(lastDate));
-    if (weekdayIsBefore && datesDifferent) {
-      int group = getWeekGroup() + 1;
-      setSetting(key: "WeekGroup", value: group);
+    int difference = datenow.difference(firstdate).inDays;
+    difference += firstdate.day + 1;
+
+    int newWeekgroup = difference ~/ 7;
+
+    weekgroup = newWeekgroup;
+
+    if (newWeekgroup != getWeekGroup()) {
+      setSetting(key: "WeekGroup", value: newWeekgroup);
     }
   }
 }

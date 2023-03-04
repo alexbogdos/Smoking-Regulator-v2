@@ -39,7 +39,7 @@ class Counter extends StatefulWidget {
 class CounterState extends State<Counter> {
   void refresh() {
     setState(() {
-      log(value: "Counter Widget (refresh)");
+      // log(title: "Counter Widget (refresh)", value: "Refreshed");
     });
   }
 

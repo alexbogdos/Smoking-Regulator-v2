@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smoking_regulator_v2/systems/custom_functions.dart';
+import 'package:smoking_regulator_v2/systems/calendar_controller.dart';
 import 'package:smoking_regulator_v2/widgets/day_calendar.dart';
 
 class Calendar extends StatefulWidget {
@@ -14,8 +13,8 @@ class Calendar extends StatefulWidget {
     required this.disabled,
     required this.symbol,
     required this.subText,
-    required this.factoredTime,
-    required this.firstDate,
+    required this.calendarController,
+    required this.refreshStats,
   }) : super(key: key);
 
   final double width;
@@ -27,105 +26,42 @@ class Calendar extends StatefulWidget {
   final Color symbol;
   final Color subText;
 
-  final String factoredTime;
-  final String firstDate;
+  final CalendarController calendarController;
+
+  final Function() refreshStats;
 
   @override
   State<Calendar> createState() => CalendarState();
 }
 
 class CalendarState extends State<Calendar> {
-  bool loaded = false;
+  late bool loaded = false;
+
+  late List<int> values = [-1, -1, -1, -1, -1, -1, -1];
+  late List<double> oldHeights = [0, 0, 0, 0, 0, 0, 0];
 
   @override
   void initState() {
     super.initState();
-    getDataAtStart();
+    loadWeekData();
   }
 
-  void getDataAtStart() async {
-    await refresh();
-    if (caseHELL) {
-      await getDataPerDay(1);
-    } else {
-      await getDataPerDay(0);
-    }
-    max = getMax(list: values);
-    setLoaded();
+  Future<void> loadWeekData() async {
+    getWeekData();
+
+    loaded = true;
   }
 
-  void setLoaded() {
+  void getWeekData() {
+    widget.calendarController.getData();
+    values = widget.calendarController.values;
+  }
+
+  void refresh() {
     setState(() {
-      loaded = true;
+      setOldHeights();
+      getWeekData();
     });
-  }
-
-  late bool caseHELL = false;
-
-  late int pastWeekOffset = 0;
-  late int weekOffset = 0;
-  late String firstDateofWeek = "";
-  Future<void> refresh({bool forceBuild = false}) async {
-    // if (pastWeekOffset == weekOffset && forceBuild == false) {
-    //   return;
-    // }
-
-    setOldHeights();
-
-    await getDataPerDay(weekOffset);
-    if (weekOffset == 0) {
-      late bool isCase2 = false;
-      late bool isCase0 = true;
-
-      late String wholeDate = DateTime.now().toString();
-      late String date = wholeDate.substring(0, 10);
-      late int currentDayIndex = DateTime.now().weekday - 1;
-
-      late String hour = wholeDate.substring(11, 16);
-      hour = hour.replaceAll(":", "");
-      final intHour = int.parse(hour);
-      int changeDay = int.parse(widget.factoredTime);
-
-      if ((0000 <= changeDay && changeDay < 1200) &&
-          (0000 <= intHour && intHour < changeDay)) {
-        values[currentDayIndex] = -1;
-        if (currentDayIndex > 0) {
-          currentDayIndex -= 1;
-          wholeDate =
-              DateTime.now().subtract(const Duration(days: 1)).toString();
-          date = wholeDate.substring(0, 10);
-          isCase0 = false;
-        } else {
-          caseHELL = true;
-          getDataPerDay(1);
-          weekOffset = 1;
-          return;
-        }
-      } else if (1200 <= changeDay &&
-          (1200 <= intHour && changeDay <= intHour)) {
-        if (currentDayIndex < 6) {
-          currentDayIndex += 1;
-          wholeDate = DateTime.now().add(const Duration(days: 1)).toString();
-          date = wholeDate.substring(0, 10);
-          isCase2 = true;
-          isCase0 = false;
-        }
-      }
-      caseHELL = false;
-
-      final newCount =
-          await retrieveCount(key: date, isCase2: isCase2, isCase0: isCase0);
-      if (weekOffset == 0) {
-        setState(() {
-          if (values[currentDayIndex] == -1) {}
-          values[currentDayIndex] = newCount;
-        });
-      }
-      // return;
-    }
-    // log(title: "VALUES", value: values);
-    // log(title: "OLD HEIGHTS", value: oldHeights);
-    pastWeekOffset = weekOffset;
   }
 
   final double centerScaleFactor = 0.74;
@@ -134,9 +70,6 @@ class CalendarState extends State<Calendar> {
 
   final double dayCalendarWidthFactor = 0.08;
   final double dayCalendarHeightFactor = 1;
-
-  final List<int> values = [-1, -1, -1, -1, -1, -1, -1];
-  late List<double> oldHeights = [0, 0, 0, 0, 0, 0, 0];
 
   void setOldHeights() {
     for (int i = 0; i <= 6; i++) {
@@ -150,103 +83,20 @@ class CalendarState extends State<Calendar> {
     }
   }
 
-  //
-  //
-  //
-
-  Future<void> getDataPerDay(int offset) async {
-    // final String wholeDate = DateTime.now().toString();
-    // final String date = wholeDate.substring(0, 10);
-
-    final int currentDayIndex = DateTime.now().weekday - 1;
-    if (offset < 0) {
-      offset = 0;
-    }
-
-    if (offset == 0) {
-      late int daysBefore = 0;
-      for (int index = 6; index >= 0; index--) {
-        if (index > currentDayIndex) {
-          values[index] = -1;
-        } else if (index == currentDayIndex) {
-          // oldValues[index] = values[index];
-          // values[index] = await retrieveCount(key: date);
-          // if (values[index] < 0) {
-          //   oldValues[index] = values[index];
-          //   values[index] = 0;
-          // }
-        } else {
-          daysBefore += 1;
-          String kDate =
-              DateTime.now().subtract(Duration(days: daysBefore)).toString();
-          kDate = kDate.substring(0, 10);
-          // oldValues[index] = -1;
-          values[index] = await retrieveCount(key: kDate);
-        }
-      }
-      // setState(() {
-      // refresh(forceBuild: true);
-      // });
-    } else {
-      late int daysBefore = (DateTime.now().weekday - 1) + (offset - 1) * 7;
-      // print(DateTime.now().weekday);
-      // print(daysBefore);
-      for (int index = 6; index >= 0; index--) {
-        daysBefore += 1;
-        if (weekOffset > 0) {
-          String kDate =
-              DateTime.now().subtract(Duration(days: daysBefore)).toString();
-          kDate = kDate.substring(0, 10);
-          values[index] = await retrieveCount(key: kDate);
-        }
-      }
-    }
-
-    setState(() {});
-  }
-
-  Future<int> retrieveCount(
-      {required String key, bool isCase2 = false, bool isCase0 = false}) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (prefs.containsKey(key)) {
-      final int? value = prefs.getInt(key);
-      if (value != null) {
-        return value;
-      }
-    }
-
-    if (isCase2 || isCase0) {
-      return 0;
-    }
-    return -1;
-  }
-
-  int getMax({required List<int> list}) {
-    int kMax = -1;
-    for (int val in values) {
-      if (val > kMax) {
-        kMax = val;
-      }
-    }
-
-    if (kMax > 0) {
-      return kMax;
-    } else {
-      return 1;
-    }
-  }
-
   String getText() {
-    if (weekOffset == 0 || (weekOffset == 1 && caseHELL)) {
-      return "Showing stats from current week";
-    } else if (weekOffset == 1 && caseHELL == false) {
-      return "Showing stats from $weekOffset week in the past";
-    } else if (caseHELL) {
-      return "Showing stats from ${weekOffset - 1} weeks in the past";
-    } else {
-      return "Showing stats from $weekOffset weeks in the past";
-    }
+    return widget.calendarController.range;
+
+    // if (widget.calendarController.weekoffset ==
+    //     widget.calendarController.weekgroup) {
+    //   return "Showing stats from current week";
+    // } else if (widget.calendarController.weekoffset + 1 ==
+    //     widget.calendarController.weekgroup) {
+    //   return "Showing stats from 1 week in the past";
+    // } else {
+    //   int diff = widget.calendarController.weekgroup -
+    //       widget.calendarController.weekoffset;
+    //   return "Showing stats from ${diff} weeks in the past";
+    // }
   }
 
   late List<GlobalKey<DayCallendarState>> dayCalendarkeys = [];
@@ -278,11 +128,10 @@ class CalendarState extends State<Calendar> {
     );
   }
 
-  late int max = 1;
-
+  late int max;
   @override
   Widget build(BuildContext context) {
-    max = getMax(list: values);
+    max = widget.calendarController.max;
 
     return loaded
         ? Column(
@@ -297,18 +146,17 @@ class CalendarState extends State<Calendar> {
                       //! Left Button
                       child: IconButton(
                         onPressed: () {
-                          log(title: "FDW", value: firstDateofWeek);
-                          log(title: "FD", value: widget.firstDate);
-                          // if (DTools().dateIsBigger_String(
-                          // date1: firstDateofWeek,
-                          // date2: widget.firstDate)) {
-                          weekOffset += 1;
-                          refresh();
-                          // }
+                          setState(() {
+                            setOldHeights();
+                            widget.calendarController.moveBack();
+                            widget.refreshStats();
+                          });
                         },
                         icon: Icon(
                           Icons.arrow_back_ios_new_rounded,
-                          color: widget.subText.withOpacity(0.8),
+                          color: widget.calendarController.weekoffset == 0
+                              ? widget.subText.withOpacity(0.25)
+                              : widget.subText.withOpacity(0.8),
                         ),
                       ),
                     ),
@@ -373,18 +221,18 @@ class CalendarState extends State<Calendar> {
                       //! Right Button
                       child: IconButton(
                         onPressed: () {
-                          if (weekOffset > 0 &&
-                              (weekOffset == 1 && caseHELL) == false) {
-                            weekOffset -= 1;
-                            refresh();
-                          }
+                          setState(() {
+                            setOldHeights();
+                            widget.calendarController.moveForward();
+                            widget.refreshStats();
+                          });
                         },
                         icon: Icon(
                           Icons.arrow_forward_ios_rounded,
-                          color:
-                              weekOffset == 0 || (weekOffset == 1 && caseHELL)
-                                  ? widget.subText.withOpacity(0.25)
-                                  : widget.subText.withOpacity(0.8),
+                          color: widget.calendarController.weekoffset ==
+                                  widget.calendarController.weekgroup
+                              ? widget.subText.withOpacity(0.25)
+                              : widget.subText.withOpacity(0.8),
                         ),
                       ),
                     ),

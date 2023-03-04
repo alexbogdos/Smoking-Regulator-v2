@@ -1,6 +1,16 @@
 import 'package:smoking_regulator_v2/systems/custom_functions.dart';
 import 'package:smoking_regulator_v2/systems/data_controller.dart';
 
+Map<int, String> dayNames = {
+  1: "Monday",
+  2: "Tuesday",
+  3: "Wednesday",
+  4: "Thursday",
+  5: "Friday",
+  6: "Saturday",
+  7: "Sunday"
+};
+
 class CountController {
   CountController({
     required this.limit,
@@ -40,21 +50,22 @@ class CountController {
   }
 
   void save() {
-    Map<String, dynamic> formatted = getSaveFormat();
+    DateTime datenow = getDateTime(dataController);
+    Map<String, dynamic> formatted = getSaveFormat(datenow);
+    String key = (datenow.weekday + 1).toString();
     log(
-        title: "Counter Controller (save)",
-        value: "${getDateTime(dataController)} $formatted");
-    String date = datetoString(getDateTime(dataController));
-    dataController.setData(key: date, value: formatted);
+        title: "Count Controller (save)",
+        value: "${datetoString(datenow)} ${datenow.weekday}  $formatted");
+    dataController.setData(key: key, value: formatted);
     dataController.setSetting(key: "CountSum", value: countSum);
   }
 
-  Map<String, dynamic> getSaveFormat() {
+  Map<String, dynamic> getSaveFormat(DateTime date) {
     return {
-      "weekgroup": dataController.getWeekGroup(),
-      "weekday": getDateTime(dataController).weekday,
-      "count": count,
-      "timetable": timetable
+      "Date": datetoString(date),
+      "Day": dayNames[date.weekday + 1],
+      "Count": count,
+      "TimeTable": timetable,
     };
   }
 }
