@@ -90,7 +90,9 @@ class StatsState extends State<Stats> {
                   amoled: CColors.lightGrey,
                 ),
                 title: "Week\nMax",
-                value: widget.calendarController.max,
+                value: widget.calendarController.sum == 0
+                    ? 0
+                    : widget.calendarController.max,
               ),
               InfoTab(
                 width: widget.infoTabWidth,

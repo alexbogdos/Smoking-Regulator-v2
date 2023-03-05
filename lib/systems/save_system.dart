@@ -5,8 +5,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:smoking_regulator_v2/systems/custom_functions.dart';
 
 class SaveSystem {
-  final String data = "user-data.json";
-  final String settings = "user-setting.json";
+  final String data = "userdata.json";
+  final String settings = "usersetting.json";
   late String path = "/Smoking Regulator";
 
   Future<void> initializePath() async {
@@ -40,7 +40,7 @@ class SaveSystem {
     bool exists = await checkExistance(completeFilename);
     if (!exists) {
       File(completeFilename).createSync(recursive: true);
-      log(value: "Created $data in $path");
+      log(title: "Save System (load)", value: "Created $data in $path");
       return null;
     }
 
@@ -61,7 +61,6 @@ class SaveSystem {
   }
 
   String getCompleteFilename(String filename) {
-    String p = "$path/$filename";
-    return p;
+    return "$path/$filename";
   }
 }

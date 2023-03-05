@@ -65,11 +65,12 @@ DateTime getDateTime(DataController dataController) {
   DateTime datenow = DateTime.now();
   String dayChangeTime = dataController.getDayChangeTime();
   if (dayChangeTime == dataController.defaultDayChangeTime) {
-    return datenow.add(Duration(days: 18));
+    return datenow;
   }
 
   String timeString = timetoString(datenow, clear: true);
-  log(title: "Custom Function (getDateTime)", value: timeString);
+  log(title: "Custom Functions (getDateTime)", value: timeString);
+
   int time = int.parse(timeString);
   int changeTimeInt = int.parse(dataController.getDayChangeTime());
 

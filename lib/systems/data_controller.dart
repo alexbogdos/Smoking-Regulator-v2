@@ -5,18 +5,19 @@ class DataController {
   late Map<String, dynamic> data = {};
   late Map<String, dynamic> settings = {};
   late Map<String, dynamic> week = {};
+
   late int weekgroup = 0;
   final SaveSystem saveSystem = SaveSystem();
 
   // ----- Editing and Saving System ---------------
   Future<void> setData({required String key, required dynamic value}) async {
     week[key] = value;
-    data[weekgroup.toString()] = week;
+    data[getWeekGroup().toString()] = week;
     await saveSystem.save(filename: saveSystem.data, data: data);
   }
 
-  dynamic getfromWeek({required String date}) {
-    return week[date];
+  dynamic getfromWeek({required String weekdayKey}) {
+    return week[weekdayKey];
   }
 
   dynamic getfromData({int? weekgroupkey}) {
@@ -93,15 +94,15 @@ class DataController {
     return getfromSettings(key: "WeekGroup");
   }
 
-  Map<String, dynamic>? getDayData(String date) {
-    if (getfromWeek(date: date) == null) {
+  Map<String, dynamic>? getDayData(String weekdayKey) {
+    if (getfromWeek(weekdayKey: weekdayKey) == null) {
       return null;
     }
 
     log(
         title: "Data Controller (getDayData)",
-        value: "$date : ${getfromWeek(date: date)}");
-    return getfromWeek(date: date);
+        value: "$weekdayKey : ${getfromWeek(weekdayKey: weekdayKey)}");
+    return getfromWeek(weekdayKey: weekdayKey);
   }
 
   int getCountSum() {
@@ -170,6 +171,7 @@ class DataController {
         // log(title: "Data Controller (loadData)", value: "Current Week: $week");
         log(title: "Data Controller (loadData)", value: "Data Loaded");
       }
+      log(title: "Data Controller (loadData)", value: data);
     } else {
       data = {};
       log(title: "Data Controller (loadData)", value: "Did not load");
@@ -204,6 +206,7 @@ class DataController {
     if (isAfter) {
       setSetting(key: "LastDate", value: datetoString(datenow));
     }
+    log(title: "Data Controller (checkLastDate)", value: datetoString(datenow));
   }
 
   void checkWeekGroup() {
@@ -216,6 +219,7 @@ class DataController {
     int newWeekgroup = difference ~/ 7;
 
     weekgroup = newWeekgroup;
+    log(title: "Data Controller (checkWeekGroup)", value: weekgroup);
 
     if (newWeekgroup != getWeekGroup()) {
       setSetting(key: "WeekGroup", value: newWeekgroup);

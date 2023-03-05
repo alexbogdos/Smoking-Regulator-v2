@@ -27,6 +27,11 @@ class CalendarController {
     Map<String, dynamic>? tempweek =
         dataController.getfromData(weekgroupkey: weekoffset);
 
+    log(
+        title: "Calendar Controller (getData)",
+        value:
+            "WeekGroup: $weekgroup  WeekOffset: $weekoffset  Week: $tempweek");
+
     if (tempweek == null) {
       week = {};
     } else {

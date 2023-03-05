@@ -13,15 +13,20 @@ Map<int, String> dayNames = {
 
 class CountController {
   CountController({
-    required this.limit,
     required this.dataController,
   }) {
-    String date = datetoString(getDateTime(dataController));
-    Map<String, dynamic>? dayData = dataController.getDayData(date);
-    count = dayData?["count"] ?? 0;
-    timetable = dayData?["timetable"] ?? [];
+    limit = dataController.getLimit();
+
+    DateTime datenow = getDateTime(dataController);
+    String key = datenow.weekday.toString();
+    Map<String, dynamic>? dayData = dataController.getDayData(key);
+    count = dayData?["Count"] ?? 0;
+    timetable = dayData?["TimeTable"] ?? [];
     countSum = dataController.getCountSum();
-    save();
+
+    if (dayData == null) {
+      save();
+    }
   }
 
   final DataController dataController;
@@ -52,10 +57,10 @@ class CountController {
   void save() {
     DateTime datenow = getDateTime(dataController);
     Map<String, dynamic> formatted = getSaveFormat(datenow);
-    String key = (datenow.weekday + 1).toString();
+    String key = datenow.weekday.toString();
     log(
         title: "Count Controller (save)",
-        value: "${datetoString(datenow)} ${datenow.weekday}  $formatted");
+        value: "${datetoString(datenow)} ${datenow.weekday}: $formatted");
     dataController.setData(key: key, value: formatted);
     dataController.setSetting(key: "CountSum", value: countSum);
   }
@@ -63,7 +68,8 @@ class CountController {
   Map<String, dynamic> getSaveFormat(DateTime date) {
     return {
       "Date": datetoString(date),
-      "Day": dayNames[date.weekday + 1],
+      "Day": dayNames[date.weekday],
+      "WeekGroup": dataController.getWeekGroup(),
       "Count": count,
       "TimeTable": timetable,
     };

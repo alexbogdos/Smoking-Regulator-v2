@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:smoking_regulator_v2/systems/calendar_controller.dart';
 import 'package:smoking_regulator_v2/systems/count_controller.dart';
 import 'package:smoking_regulator_v2/systems/custom_colors.dart';
@@ -48,12 +51,8 @@ class _MainPageState extends State<MainPage> {
   void updateCounter() {
     void refreshState() {
       setState(() {
-        int limit = dataController.getLimit();
-
-        countController = CountController(
-          limit: limit,
-          dataController: dataController,
-        );
+        calendarController = CalendarController(dataController: dataController);
+        countController = CountController(dataController: dataController);
       });
     }
 
@@ -67,24 +66,29 @@ class _MainPageState extends State<MainPage> {
       dayChangeTime = dataController.getDayChangeTime();
 
       calendarController = CalendarController(dataController: dataController);
-
-      int limit = dataController.getLimit();
-      countController = CountController(
-        limit: limit,
-        dataController: dataController,
-      );
+      countController = CountController(dataController: dataController);
 
       loaded = true;
     });
   }
 
   Future<void> grantPermissions() async {
-    // if (Platform.isAndroid) {
-    //   bool granted = await Permission.accessMediaLocation.request().isGranted;
-    //   while (!granted) {
-    //     granted = await Permission.accessMediaLocation.request().isGranted;
-    //   }
-    // }
+    if (Platform.isAndroid) {
+      // bool granted = await Permission.accessMediaLocation.request().isGranted;
+      // while (!granted) {
+      //   granted = await Permission.accessMediaLocation.request().isGranted;
+      // }
+
+      bool granted = await Permission.manageExternalStorage.request().isGranted;
+      while (!granted) {
+        granted = await Permission.manageExternalStorage.request().isGranted;
+      }
+
+      // granted = await Permission.storage.request().isGranted;
+      // while (!granted) {
+      //   granted = await Permission.storage.request().isGranted;
+      // }
+    }
   }
 
   void changeColorMode() {

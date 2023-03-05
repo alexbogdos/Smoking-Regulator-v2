@@ -45,7 +45,7 @@ class CounterState extends State<Counter> {
 
   Color getTextColor(int count, int limit, List<Color> colors) {
     if (count == 0) {
-      return colors[0];
+      return colors[1];
     }
 
     if (count < limit * 0.6) {
