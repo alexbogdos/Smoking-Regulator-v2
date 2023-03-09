@@ -63,7 +63,7 @@ class CountController {
     log(
         title: "Count Controller (save)",
         value: "${datetoString(datenow)} ${datenow.weekday}: $formatted");
-    dataController.setData(key: key, value: formatted);
+    dataController.setData(weekGroup: weekGroup, key: key, value: formatted);
     dataController.setSetting(key: "CountSum", value: countSum);
   }
 

@@ -36,7 +36,10 @@ class StatsState extends State<Stats> {
   }
 
   void getStatsData() {
-    loaded = true;
+    setState(() {
+      widget.calendarController.getData();
+      loaded = true;
+    });
   }
 
   late double divValue = 0;

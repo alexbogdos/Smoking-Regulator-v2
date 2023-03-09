@@ -116,10 +116,18 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  void updateSunSetTime({required String newSunSetTime}) {
+    setState(() {
+      sunSetTime = newSunSetTime;
+      dataController.setSetting(key: "SunSetTime", value: dayChangeTime);
+    });
+  }
+
   // Build Assets
   late String colorMode = dataController.defaultColorMode;
   late bool amoled = dataController.defaultAmoled;
   late String dayChangeTime = dataController.defaultDayChangeTime;
+  late String sunSetTime = dataController.defaultSunSetTime;
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +154,8 @@ class _MainPageState extends State<MainPage> {
                     changeAmoledMode: changeAmoledMode,
                     factoredTimeString: dayChangeTime,
                     updateFactoredTime: updateFactoredTime,
+                    updateSunSetTime: updateSunSetTime,
+                    countController: countController,
                   )
                 ],
               )

@@ -9,8 +9,6 @@ class Counter extends StatefulWidget {
     required this.height,
     required this.textColor,
     required this.subTextColor,
-    required this.setSum,
-    required this.setPopulation,
     required this.factoredTime,
     required this.countController,
     required this.dataController,
@@ -22,9 +20,6 @@ class Counter extends StatefulWidget {
 
   final Color textColor;
   final Color subTextColor;
-
-  final Function(int value) setSum;
-  final Function(int value) setPopulation;
 
   final String factoredTime;
 

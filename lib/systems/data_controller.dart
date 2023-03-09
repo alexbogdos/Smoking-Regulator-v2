@@ -9,9 +9,13 @@ class DataController {
   final SaveSystem saveSystem = SaveSystem();
 
   // ----- Editing and Saving System ---------------
-  Future<void> setData({required String key, required dynamic value}) async {
+  Future<void> setData({
+    required int weekGroup,
+    required String key,
+    required dynamic value,
+  }) async {
     week[key] = value;
-    data[getWeekGroup().toString()] = week;
+    data[weekGroup.toString()] = week;
     await saveSystem.save(filename: saveSystem.data, data: data);
   }
 
@@ -52,6 +56,12 @@ class DataController {
   String getDayChangeTime() {
     String value =
         getfromSettings(key: "DayChangeTime") ?? defaultDayChangeTime;
+    return value;
+  }
+
+  String defaultSunSetTime = "1730";
+  String getSunSetTime() {
+    String value = getfromSettings(key: "SunSetTime") ?? defaultSunSetTime;
     return value;
   }
 

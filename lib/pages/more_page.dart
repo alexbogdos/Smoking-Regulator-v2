@@ -1,9 +1,10 @@
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smoking_regulator_v2/systems/count_controller.dart';
 import 'package:smoking_regulator_v2/systems/custom_colors.dart';
 import 'package:smoking_regulator_v2/widgets/settings_togle.dart';
+import 'package:smoking_regulator_v2/widgets/time_table.dart';
 import 'package:tuple/tuple.dart';
 
 class MorePage extends StatefulWidget {
@@ -15,6 +16,8 @@ class MorePage extends StatefulWidget {
     required this.changeAmoledMode,
     required this.factoredTimeString,
     required this.updateFactoredTime,
+    required this.updateSunSetTime,
+    required this.countController,
   }) : super(key: key);
 
   final String colorMode;
@@ -24,6 +27,9 @@ class MorePage extends StatefulWidget {
 
   final String factoredTimeString;
   final Function({required String newFactoredTime}) updateFactoredTime;
+  final Function({required String newSunSetTime}) updateSunSetTime;
+
+  final CountController countController;
 
   @override
   State<MorePage> createState() => _MorePageState();
@@ -55,6 +61,8 @@ class _MorePageState extends State<MorePage> {
 
     final double spaceBetween = height * 0.016;
 
+    const double timetableHeightMultiplier = 0.275;
+
     final String val = widget.factoredTimeString.replaceAll(":", "");
     final String val1 = val.substring(0, 2);
     final String val2 = val.substring(2, 4);
@@ -68,101 +76,137 @@ class _MorePageState extends State<MorePage> {
         dark: CColors.dark,
         amoled: CColors.black,
       ),
-      body: Align(
-        alignment: const Alignment(0, 0.9),
-        child: SizedBox(
-          height: height,
-          child: Column(
-            children: [
-              SizedBox(
-                height: pageTitleHeight,
-                child: Text(
-                  pageTitle,
-                  style: GoogleFonts.poppins(
-                    color: getColor(
-                      colorMode: widget.colorMode,
-                      isAmoled: widget.isAmoled,
-                      light: CColors.dark,
-                      dark: CColors.white,
-                      amoled: CColors.white,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            // color: Colors.red,
+            padding: EdgeInsets.only(top: height * 0.072),
+            height: 5 * toggleHeight +
+                4 * spaceBetween +
+                pageTitleHeight +
+                height * 0.011 +
+                height * 0.072,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: pageTitleHeight,
+                  child: Text(
+                    pageTitle,
+                    style: GoogleFonts.poppins(
+                      color: getColor(
+                        colorMode: widget.colorMode,
+                        isAmoled: widget.isAmoled,
+                        light: CColors.dark,
+                        dark: CColors.white,
+                        amoled: CColors.white,
+                      ),
+                      fontSize: 34,
+                      fontWeight: FontWeight.w500,
                     ),
-                    fontSize: 34,
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
-              ),
-              SizedBox(height: height * 0.011),
-              Toggle(
-                width: width,
-                toggleHeight: toggleHeight,
-                colorMode: widget.colorMode,
-                isAmoled: widget.isAmoled,
-                title: "Color Mode",
-                value: widget.colorMode,
-                action: widget.changeColorMode,
-              ),
-              SizedBox(height: spaceBetween),
-              Toggle(
-                width: width,
-                toggleHeight: toggleHeight,
-                colorMode: widget.colorMode,
-                isAmoled: widget.isAmoled,
-                title: "Amoled",
-                value: widget.isAmoled ? "On" : "Off",
-                action: widget.changeAmoledMode,
-              ),
-              SizedBox(height: spaceBetween),
-              Toggle(
-                width: width,
-                toggleHeight: toggleHeight,
-                colorMode: widget.colorMode,
-                isAmoled: widget.isAmoled,
-                title: "Day Change",
-                value: displayFactoredTime(),
-                action: () {
-                  showBottomPicker(context: context, initialTime: factoredTime);
-                },
-                secondaryAction: () {
-                  setFactoredTime(value: "00:00");
-                },
-              ),
-            ],
+                Toggle(
+                  width: width,
+                  toggleHeight: toggleHeight,
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  title: "Color Mode",
+                  value: widget.colorMode,
+                  action: widget.changeColorMode,
+                ),
+                SizedBox(height: spaceBetween),
+                Toggle(
+                  width: width,
+                  toggleHeight: toggleHeight,
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  title: "Amoled",
+                  value: widget.isAmoled ? "On" : "Off",
+                  action: widget.changeAmoledMode,
+                ),
+                SizedBox(height: spaceBetween),
+                Toggle(
+                  width: width,
+                  active: false,
+                  toggleHeight: toggleHeight,
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  title: "Daily Limit",
+                  value: "5",
+                  action: () {},
+                  secondaryAction: () {},
+                ),
+                SizedBox(height: spaceBetween),
+                Toggle(
+                  width: width,
+                  toggleHeight: toggleHeight,
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  title: "Day Change",
+                  value: displayFactoredTime(),
+                  action: () {
+                    showBottomPicker(
+                        context: context, initialTime: factoredTime);
+                  },
+                  secondaryAction: () {
+                    setFactoredTime(value: "00:00");
+                  },
+                ),
+                SizedBox(height: spaceBetween),
+                Toggle(
+                  width: width,
+                  active: false,
+                  toggleHeight: toggleHeight,
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  title: "Sun Set",
+                  value: "17:00",
+                  action: () {},
+                  secondaryAction: () {},
+                ),
+              ],
+            ),
           ),
-        ),
+          TimeTable(
+            width: width,
+            height: height * timetableHeightMultiplier,
+            countController: widget.countController,
+            background: getColor(
+              colorMode: widget.colorMode,
+              isAmoled: widget.isAmoled,
+              light: CColors.white,
+              dark: CColors.darkGrey,
+              amoled: CColors.dark,
+            ),
+            text: getColor(
+              colorMode: widget.colorMode,
+              isAmoled: widget.isAmoled,
+              light: CColors.dark,
+              dark: CColors.white,
+              amoled: CColors.white,
+            ),
+            divider: getColor(
+              colorMode: widget.colorMode,
+              isAmoled: widget.isAmoled,
+              light: CColors.dark,
+              dark: CColors.dark,
+              amoled: CColors.darkGrey,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Future<void> setFactoredTime({required String value}) async {
     widget.updateFactoredTime(newFactoredTime: value.replaceAll(":", ""));
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("Factored Time", value);
-
-    final String val1 = value.substring(0, 2);
-    final String val2 = value.substring(3, 5);
-    final Tuple2 tuple = Tuple2(int.parse(val1), int.parse(val2));
-    setState(() {
-      factoredTime = tuple;
-    });
   }
 
-  // Future<void> retrieveFactoredTime() async {
-  //   final prefs = await SharedPreferences.getInstance();
-
-  //   if (prefs.containsKey("Factored Time")) {
-  //     final String? value = prefs.getString("Factored Time");
-
-  //     if (value != null) {
-  //       final String val1 = value.substring(0, 2);
-  //       final String val2 = value.substring(3, 5);
-  //       final Tuple2 tuple = Tuple2(int.parse(val1), int.parse(val2));
-
-  //       factoredTime = tuple;
-  //     }
-  //   }
-
-  //   setState(() {});
-  // }
+  Future<void> setSunSetTime({required String value}) async {
+    widget.updateFactoredTime(newFactoredTime: value.replaceAll(":", ""));
+  }
 
   String displayFactoredTime() {
     int value1 = factoredTime.item1;
@@ -172,7 +216,7 @@ class _MorePageState extends State<MorePage> {
     String text2 = "$value2";
 
     if (value1 == 0) {
-      text1 = "0$value1";
+      text1 = "00";
     }
 
     if (value2 < 10) {
@@ -236,7 +280,7 @@ class _MorePageState extends State<MorePage> {
         isAmoled: widget.isAmoled,
         light: CColors.white,
         dark: CColors.dark,
-        amoled: CColors.dark.withOpacity(0.25),
+        amoled: Color.lerp(CColors.dark, CColors.black, 0.6) as Color,
       ),
       buttonSingleColor: getColor(
         colorMode: widget.colorMode,

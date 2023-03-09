@@ -119,13 +119,6 @@ class HomePageState extends State<HomePage> {
                     light: CColors.darkGrey,
                     dark: CColors.lightGrey,
                     amoled: CColors.darkGrey),
-                setSum: (int sum) {
-                  widget.dataController.setData(key: "CountSum", value: sum);
-                },
-                setPopulation: (int population) {
-                  widget.dataController
-                      .setData(key: "DaysSum", value: population);
-                },
                 factoredTime: widget.factoredTime,
               ),
               SizedBox(height: height * 0.03),
