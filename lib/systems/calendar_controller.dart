@@ -3,7 +3,7 @@ import 'package:smoking_regulator_v2/systems/data_controller.dart';
 
 class CalendarController {
   CalendarController({required this.dataController}) {
-    weekgroup = dataController.weekgroup;
+    weekgroup = dataController.getWeekGroup();
     weekoffset = weekgroup;
     getData();
   }
@@ -85,7 +85,7 @@ class CalendarController {
     int tsum = 0;
     int tpop = 0;
     for (int val in values) {
-      if (val > 0) {
+      if (val >= 0) {
         tsum += val;
         tpop += 1;
       }

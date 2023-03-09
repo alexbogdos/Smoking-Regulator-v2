@@ -23,6 +23,7 @@ class CountController {
     count = dayData?["Count"] ?? 0;
     timetable = dayData?["TimeTable"] ?? [];
     countSum = dataController.getCountSum();
+    weekGroup = dataController.getWeekGroup();
 
     if (dayData == null) {
       save();
@@ -33,6 +34,7 @@ class CountController {
   late int count;
   late int countSum;
   late int limit;
+  late int weekGroup;
   late List<dynamic> timetable;
 
   void increase() {
@@ -69,7 +71,7 @@ class CountController {
     return {
       "Date": datetoString(date),
       "Day": dayNames[date.weekday],
-      "WeekGroup": dataController.getWeekGroup(),
+      "WeekGroup": weekGroup,
       "Count": count,
       "TimeTable": timetable,
     };

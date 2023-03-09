@@ -6,7 +6,6 @@ class DataController {
   late Map<String, dynamic> settings = {};
   late Map<String, dynamic> week = {};
 
-  late int weekgroup = 0;
   final SaveSystem saveSystem = SaveSystem();
 
   // ----- Editing and Saving System ---------------
@@ -22,7 +21,7 @@ class DataController {
 
   dynamic getfromData({int? weekgroupkey}) {
     if (weekgroupkey == null) {
-      return data[weekgroup.toString()];
+      return data[getWeekGroup().toString()];
     }
     return data[weekgroupkey.toString()];
   }
@@ -86,12 +85,33 @@ class DataController {
   }
 
   int getWeekGroup() {
-    if (getfromSettings(key: "WeekGroup") == null) {
-      setSetting(key: "WeekGroup", value: 0);
-      return 0;
-    }
+    DateTime datenow = getDateTime(this);
+    DateTime firstdate = DateTime.parse(getFirstDate());
+    DateTime firstWeekDate =
+        firstdate.subtract(Duration(days: firstdate.weekday - 1));
 
-    return getfromSettings(key: "WeekGroup");
+    // log(
+    //     title: "Data Controller (getWeekGroup)",
+    //     value:
+    //         "First Week Date: $firstWeekDate  First Date: $firstdate  Date Now: $datenow");
+
+    int difference = datenow.difference(firstWeekDate).inDays;
+
+    // log(
+    //     title: "Data Controller (getWeekGroup)",
+    //     value: "Difference: $difference");
+
+    // log(
+    //     title: "Data Controller (getWeekGroup)",
+    //     value: "First Date Day: ${firstdate.weekday}");
+
+    // difference += firstdate.weekday + 1;
+
+    int newWeekgroup = difference ~/ 7;
+
+    log(title: "Data Controller (getWeekGroup)", value: newWeekgroup);
+
+    return newWeekgroup;
   }
 
   Map<String, dynamic>? getDayData(String weekdayKey) {
@@ -161,7 +181,6 @@ class DataController {
 
     if (tempData != null) {
       data = tempData;
-      weekgroup = getWeekGroup();
       Map<String, dynamic>? tempWeek = getfromData();
       if (tempWeek == null) {
         week = {};
@@ -182,7 +201,6 @@ class DataController {
   Future<void> performChecks() async {
     checkPopulation();
     checkLastDate();
-    checkWeekGroup();
 
     log(title: "Data Controller (performChecks)", value: "Checks Performed");
   }
@@ -207,22 +225,5 @@ class DataController {
       setSetting(key: "LastDate", value: datetoString(datenow));
     }
     log(title: "Data Controller (checkLastDate)", value: datetoString(datenow));
-  }
-
-  void checkWeekGroup() {
-    DateTime datenow = getDateTime(this);
-    DateTime firstdate = DateTime.parse(getFirstDate());
-
-    int difference = datenow.difference(firstdate).inDays;
-    difference += firstdate.day + 1;
-
-    int newWeekgroup = difference ~/ 7;
-
-    weekgroup = newWeekgroup;
-    log(title: "Data Controller (checkWeekGroup)", value: weekgroup);
-
-    if (newWeekgroup != getWeekGroup()) {
-      setSetting(key: "WeekGroup", value: newWeekgroup);
-    }
   }
 }
