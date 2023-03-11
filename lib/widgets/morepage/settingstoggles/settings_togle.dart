@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smoking_regulator_v2/systems/custom_colors.dart';
+import 'package:smoking_regulator_v2/systems/helpers/custom_colors.dart';
 
 class Toggle extends StatelessWidget {
   const Toggle({

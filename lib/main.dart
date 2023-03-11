@@ -5,9 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smoking_regulator_v2/systems/calendar_controller.dart';
 import 'package:smoking_regulator_v2/systems/count_controller.dart';
-import 'package:smoking_regulator_v2/systems/custom_colors.dart';
+import 'package:smoking_regulator_v2/systems/helpers/custom_colors.dart';
 import 'package:smoking_regulator_v2/pages/more_page.dart';
 import 'package:smoking_regulator_v2/pages/home_page.dart';
+import 'package:smoking_regulator_v2/systems/helpers/custom_functions.dart';
 import 'package:smoking_regulator_v2/systems/data_controller.dart';
 
 void main() {
@@ -64,6 +65,10 @@ class _MainPageState extends State<MainPage> {
       colorMode = dataController.getColorMode();
       amoled = dataController.getAmoled();
       dayChangeTime = dataController.getDayChangeTime();
+      sunSetTime = dataController.getSunSetTime();
+      dailyLimit = dataController.getLimit();
+
+      setNewSunSetTime(int.parse(sunSetTime.replaceAll(":", "")));
 
       calendarController = CalendarController(dataController: dataController);
       countController = CountController(dataController: dataController);
@@ -74,20 +79,10 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> grantPermissions() async {
     if (Platform.isAndroid) {
-      // bool granted = await Permission.accessMediaLocation.request().isGranted;
-      // while (!granted) {
-      //   granted = await Permission.accessMediaLocation.request().isGranted;
-      // }
-
       bool granted = await Permission.manageExternalStorage.request().isGranted;
       while (!granted) {
         granted = await Permission.manageExternalStorage.request().isGranted;
       }
-
-      // granted = await Permission.storage.request().isGranted;
-      // while (!granted) {
-      //   granted = await Permission.storage.request().isGranted;
-      // }
     }
   }
 
@@ -95,7 +90,7 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       String tempColorMode = dataController.getColorMode();
       colorMode = cycleColorMode(colorMode: tempColorMode);
-      dataController.setSetting(key: "ColorMode", value: colorMode);
+      dataController.setSetting(key: "Color Mode", value: colorMode);
     });
   }
 
@@ -111,7 +106,7 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       dayChangeTime = newFactoredTime;
       dataController
-          .setSetting(key: "DayChangeTime", value: dayChangeTime)
+          .setSetting(key: "Day Change Time", value: dayChangeTime)
           .then((value) => updateCounter());
     });
   }
@@ -119,7 +114,19 @@ class _MainPageState extends State<MainPage> {
   void updateSunSetTime({required String newSunSetTime}) {
     setState(() {
       sunSetTime = newSunSetTime;
-      dataController.setSetting(key: "SunSetTime", value: dayChangeTime);
+      dataController.setSetting(key: "Sun Set Time", value: sunSetTime);
+      setNewSunSetTime(int.parse(sunSetTime.replaceAll(":", "")));
+    });
+  }
+
+  void updateDailyLimit({required int newDailyLimit}) {
+    setState(() {
+      dailyLimit = newDailyLimit;
+      log(title: "Main (updateDailyLimit)", value: dailyLimit);
+      dataController.setSetting(key: "Daily Limit", value: dailyLimit);
+      dataController
+          .setSetting(key: "Daily Limit", value: dailyLimit)
+          .then((value) => updateCounter());
     });
   }
 
@@ -128,10 +135,12 @@ class _MainPageState extends State<MainPage> {
   late bool amoled = dataController.defaultAmoled;
   late String dayChangeTime = dataController.defaultDayChangeTime;
   late String sunSetTime = dataController.defaultSunSetTime;
+  late int dailyLimit = dataController.defaultLimit;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: CColors.black,
       body: Center(
         child: loaded
@@ -141,7 +150,6 @@ class _MainPageState extends State<MainPage> {
                   HomePage(
                     colorMode: colorMode,
                     isAmoled: amoled,
-                    factoredTime: dayChangeTime,
                     firstDate: dataController.getFirstDate(),
                     dataController: dataController,
                     calendarController: calendarController,
@@ -154,8 +162,11 @@ class _MainPageState extends State<MainPage> {
                     changeAmoledMode: changeAmoledMode,
                     factoredTimeString: dayChangeTime,
                     updateFactoredTime: updateFactoredTime,
+                    sunSetTimeString: sunSetTime,
                     updateSunSetTime: updateSunSetTime,
                     countController: countController,
+                    dailyLimit: dailyLimit,
+                    updateDailyLimit: updateDailyLimit,
                   )
                 ],
               )

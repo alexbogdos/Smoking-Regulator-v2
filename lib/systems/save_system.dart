@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
-import 'package:smoking_regulator_v2/systems/custom_functions.dart';
+import 'package:smoking_regulator_v2/systems/helpers/custom_functions.dart';
 
 class SaveSystem {
   final String data = "userdata.json";

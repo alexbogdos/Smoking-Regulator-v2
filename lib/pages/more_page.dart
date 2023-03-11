@@ -2,10 +2,11 @@ import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smoking_regulator_v2/systems/count_controller.dart';
-import 'package:smoking_regulator_v2/systems/custom_colors.dart';
-import 'package:smoking_regulator_v2/widgets/settings_togle.dart';
-import 'package:smoking_regulator_v2/widgets/time_table.dart';
-import 'package:tuple/tuple.dart';
+import 'package:smoking_regulator_v2/systems/helpers/custom_colors.dart';
+import 'package:smoking_regulator_v2/systems/helpers/custom_functions.dart';
+import 'package:smoking_regulator_v2/widgets/morepage/settingstoggles/input_settings_togle.dart';
+import 'package:smoking_regulator_v2/widgets/morepage/settingstoggles/settings_togle.dart';
+import 'package:smoking_regulator_v2/widgets/morepage/historyview/time_table.dart';
 
 class MorePage extends StatefulWidget {
   const MorePage({
@@ -16,7 +17,10 @@ class MorePage extends StatefulWidget {
     required this.changeAmoledMode,
     required this.factoredTimeString,
     required this.updateFactoredTime,
+    required this.sunSetTimeString,
     required this.updateSunSetTime,
+    required this.dailyLimit,
+    required this.updateDailyLimit,
     required this.countController,
   }) : super(key: key);
 
@@ -27,7 +31,12 @@ class MorePage extends StatefulWidget {
 
   final String factoredTimeString;
   final Function({required String newFactoredTime}) updateFactoredTime;
+
+  final String sunSetTimeString;
   final Function({required String newSunSetTime}) updateSunSetTime;
+
+  final int dailyLimit;
+  final Function({required int newDailyLimit}) updateDailyLimit;
 
   final CountController countController;
 
@@ -42,7 +51,8 @@ class _MorePageState extends State<MorePage> {
     // retrieveFactoredTime();
   }
 
-  late Tuple2 factoredTime = const Tuple2(0, 0);
+  late List<int> factoredTime = const [0, 0];
+  late List<int> sunSetTime = const [17, 30];
 
   @override
   Widget build(BuildContext context) {
@@ -63,12 +73,18 @@ class _MorePageState extends State<MorePage> {
 
     const double timetableHeightMultiplier = 0.275;
 
-    final String val = widget.factoredTimeString.replaceAll(":", "");
-    final String val1 = val.substring(0, 2);
-    final String val2 = val.substring(2, 4);
-    factoredTime = Tuple2(int.parse(val1), int.parse(val2));
+    final List<String> factoredTimeParts = widget.factoredTimeString.split(":");
+    final int factoredTimeHour = int.parse(factoredTimeParts[0]);
+    final int factoredTimeMinute = int.parse(factoredTimeParts[1]);
+    factoredTime = [factoredTimeHour, factoredTimeMinute];
+
+    final List<String> sunSetTimeParts = widget.sunSetTimeString.split(":");
+    final int sunSetTimeHour = int.parse(sunSetTimeParts[0]);
+    final int sunSetTimeMinute = int.parse(sunSetTimeParts[1]);
+    sunSetTime = [sunSetTimeHour, sunSetTimeMinute];
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: getColor(
         colorMode: widget.colorMode,
         isAmoled: widget.isAmoled,
@@ -127,16 +143,27 @@ class _MorePageState extends State<MorePage> {
                   action: widget.changeAmoledMode,
                 ),
                 SizedBox(height: spaceBetween),
-                Toggle(
+                InputToggle(
+                  // active: false,
                   width: width,
-                  active: false,
                   toggleHeight: toggleHeight,
                   colorMode: widget.colorMode,
                   isAmoled: widget.isAmoled,
                   title: "Daily Limit",
-                  value: "5",
-                  action: () {},
-                  secondaryAction: () {},
+                  value: widget.dailyLimit.toString(),
+                  action: (value) {
+                    final String cleared = value
+                        .trim()
+                        .replaceAll(" ", "")
+                        .replaceAll(".", "")
+                        .replaceAll(",", "")
+                        .replaceAll("-", "");
+
+                    if (cleared != "") {
+                      widget.updateDailyLimit(
+                          newDailyLimit: int.parse(cleared));
+                    }
+                  },
                 ),
                 SizedBox(height: spaceBetween),
                 Toggle(
@@ -145,9 +172,9 @@ class _MorePageState extends State<MorePage> {
                   colorMode: widget.colorMode,
                   isAmoled: widget.isAmoled,
                   title: "Day Change",
-                  value: displayFactoredTime(),
+                  value: displayTime(factoredTime),
                   action: () {
-                    showBottomPicker(
+                    showBottomPickerFactoredTime(
                         context: context, initialTime: factoredTime);
                   },
                   secondaryAction: () {
@@ -157,14 +184,18 @@ class _MorePageState extends State<MorePage> {
                 SizedBox(height: spaceBetween),
                 Toggle(
                   width: width,
-                  active: false,
                   toggleHeight: toggleHeight,
                   colorMode: widget.colorMode,
                   isAmoled: widget.isAmoled,
                   title: "Sun Set",
-                  value: "17:00",
-                  action: () {},
-                  secondaryAction: () {},
+                  value: displayTime(sunSetTime),
+                  action: () {
+                    showBottomPickerSunSetTime(
+                        context: context, initialTime: sunSetTime);
+                  },
+                  secondaryAction: () {
+                    setSunSetTime(value: "17:30");
+                  },
                 ),
               ],
             ),
@@ -201,33 +232,103 @@ class _MorePageState extends State<MorePage> {
   }
 
   Future<void> setFactoredTime({required String value}) async {
-    widget.updateFactoredTime(newFactoredTime: value.replaceAll(":", ""));
+    widget.updateFactoredTime(newFactoredTime: value);
   }
 
   Future<void> setSunSetTime({required String value}) async {
-    widget.updateFactoredTime(newFactoredTime: value.replaceAll(":", ""));
+    widget.updateSunSetTime(newSunSetTime: value);
   }
 
-  String displayFactoredTime() {
-    int value1 = factoredTime.item1;
-    int value2 = factoredTime.item2;
+  String displayTime(List<int> time) {
+    int hour = time[0];
+    int minute = time[1];
 
-    String text1 = "$value1";
-    String text2 = "$value2";
+    String hourString = "$hour";
+    String minuteString = "$minute";
 
-    if (value1 == 0) {
-      text1 = "00";
+    if (hour == 0) {
+      hourString = "00";
     }
 
-    if (value2 < 10) {
-      text2 = "0$value2";
+    if (minute < 10) {
+      minuteString = "0$minute";
     }
 
-    return "$text1:$text2";
+    return "$hourString:$minuteString";
   }
 
-  void showBottomPicker(
-      {required BuildContext context, required Tuple2 initialTime}) {
+  void showBottomPickerSunSetTime(
+      {required BuildContext context, required List<int> initialTime}) {
+    BottomPicker.time(
+      title: "The hour at which the sun sets:",
+      //                         ..., hour, minutes)
+      initialDateTime: DateTime(
+        0,
+        0,
+        0,
+        initialTime[0],
+        initialTime[1],
+      ),
+      titleStyle: GoogleFonts.poppins(
+        color: getColor(
+          colorMode: widget.colorMode,
+          isAmoled: widget.isAmoled,
+          light: CColors.dark,
+          dark: CColors.white,
+          amoled: CColors.white,
+        ),
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+      ),
+      use24hFormat: true,
+      pickerTextStyle: GoogleFonts.poppins(
+        color: getColor(
+          colorMode: widget.colorMode,
+          isAmoled: widget.isAmoled,
+          light: CColors.dark,
+          dark: CColors.white,
+          amoled: CColors.white,
+        ),
+        fontSize: 14,
+        fontWeight: FontWeight.w300,
+      ),
+      closeIconColor: getColor(
+        colorMode: widget.colorMode,
+        isAmoled: widget.isAmoled,
+        light: CColors.dark,
+        dark: CColors.white,
+        amoled: CColors.lightGrey,
+      ),
+      iconColor: getColor(
+        colorMode: widget.colorMode,
+        isAmoled: widget.isAmoled,
+        light: CColors.white,
+        dark: CColors.dark,
+        amoled: CColors.black,
+      ),
+      backgroundColor: getColor(
+        colorMode: widget.colorMode,
+        isAmoled: widget.isAmoled,
+        light: CColors.white,
+        dark: CColors.dark,
+        amoled: Color.lerp(CColors.dark, CColors.black, 0.6) as Color,
+      ),
+      buttonSingleColor: getColor(
+        colorMode: widget.colorMode,
+        isAmoled: widget.isAmoled,
+        light: CColors.dark,
+        dark: CColors.white,
+        amoled: CColors.lightGrey,
+      ),
+      onSubmit: (p1) {
+        final String value = timetoString(p1);
+        setSunSetTime(value: value);
+      },
+    ).show(context);
+  }
+
+  void showBottomPickerFactoredTime(
+      {required BuildContext context, required List<int> initialTime}) {
     BottomPicker.time(
       title: "The hour at which the day changes:",
       //                         ..., hour, minutes)
@@ -235,8 +336,8 @@ class _MorePageState extends State<MorePage> {
         0,
         0,
         0,
-        initialTime.item1,
-        initialTime.item2,
+        initialTime[0],
+        initialTime[1],
       ),
       titleStyle: GoogleFonts.poppins(
         color: getColor(

@@ -1,4 +1,4 @@
-import 'package:smoking_regulator_v2/systems/custom_functions.dart';
+import 'package:smoking_regulator_v2/systems/helpers/custom_functions.dart';
 import 'package:smoking_regulator_v2/systems/save_system.dart';
 
 class DataController {
@@ -42,7 +42,7 @@ class DataController {
   // ----- Defaults ---------------
   String defaultColorMode = "Light";
   String getColorMode() {
-    String value = getfromSettings(key: "ColorMode") ?? defaultColorMode;
+    String value = getfromSettings(key: "Color Mode") ?? defaultColorMode;
     return value;
   }
 
@@ -52,46 +52,46 @@ class DataController {
     return value;
   }
 
-  String defaultDayChangeTime = "0000";
+  String defaultDayChangeTime = "00:00";
   String getDayChangeTime() {
     String value =
-        getfromSettings(key: "DayChangeTime") ?? defaultDayChangeTime;
+        getfromSettings(key: "Day Change Time") ?? defaultDayChangeTime;
     return value;
   }
 
-  String defaultSunSetTime = "1730";
+  String defaultSunSetTime = "17:30";
   String getSunSetTime() {
-    String value = getfromSettings(key: "SunSetTime") ?? defaultSunSetTime;
+    String value = getfromSettings(key: "Sun Set Time") ?? defaultSunSetTime;
     return value;
   }
 
   String getFirstDate() {
     String defaultValue = datetoString(getDateTime(this));
-    if (getfromSettings(key: "FirstDate") == null) {
-      setSetting(key: "FirstDate", value: defaultValue);
+    if (getfromSettings(key: "First Date") == null) {
+      setSetting(key: "First Date", value: defaultValue);
       return defaultValue;
     }
 
-    return getfromSettings(key: "FirstDate");
+    return getfromSettings(key: "First Date");
   }
 
   String getLastDate() {
     String defaultValue = datetoString(getDateTime(this));
-    if (getfromSettings(key: "LastDate") == null) {
-      setSetting(key: "LastDate", value: defaultValue);
+    if (getfromSettings(key: "Last Date") == null) {
+      setSetting(key: "Last Date", value: defaultValue);
       return defaultValue;
     }
 
-    return getfromSettings(key: "LastDate");
+    return getfromSettings(key: "Last Date");
   }
 
   int getLastWeekDay() {
-    if (getfromSettings(key: "LastWeekDay") == null) {
-      setSetting(key: "LastWeekDay", value: 0);
+    if (getfromSettings(key: "Last Week Day") == null) {
+      setSetting(key: "Last Week Day", value: 0);
       return 0;
     }
 
-    return getfromSettings(key: "LastWeekDay");
+    return getfromSettings(key: "Last Week Day");
   }
 
   int getWeekGroup() {
@@ -100,22 +100,7 @@ class DataController {
     DateTime firstWeekDate =
         firstdate.subtract(Duration(days: firstdate.weekday - 1));
 
-    // log(
-    //     title: "Data Controller (getWeekGroup)",
-    //     value:
-    //         "First Week Date: $firstWeekDate  First Date: $firstdate  Date Now: $datenow");
-
     int difference = datenow.difference(firstWeekDate).inDays;
-
-    // log(
-    //     title: "Data Controller (getWeekGroup)",
-    //     value: "Difference: $difference");
-
-    // log(
-    //     title: "Data Controller (getWeekGroup)",
-    //     value: "First Date Day: ${firstdate.weekday}");
-
-    // difference += firstdate.weekday + 1;
 
     int newWeekgroup = difference ~/ 7;
 
@@ -136,12 +121,12 @@ class DataController {
   }
 
   int getCountSum() {
-    if (getfromSettings(key: "CountSum") == null) {
-      setSetting(key: "CountSum", value: 0);
+    if (getfromSettings(key: "Count Sum") == null) {
+      setSetting(key: "Count Sum", value: 0);
       return 0;
     }
 
-    return getfromSettings(key: "CountSum");
+    return getfromSettings(key: "Count Sum");
   }
 
   int getPopulation() {
@@ -155,12 +140,12 @@ class DataController {
 
   int defaultLimit = 5;
   int getLimit() {
-    if (getfromSettings(key: "DailyLimit") == null) {
-      setSetting(key: "DailyLimit", value: defaultLimit);
+    if (getfromSettings(key: "Daily Limit") == null) {
+      setSetting(key: "Daily Limit", value: defaultLimit);
       return defaultLimit;
     }
 
-    return getfromSettings(key: "DailyLimit");
+    return getfromSettings(key: "Daily Limit");
   }
 
   // ----- Loading System ---------------
@@ -232,7 +217,7 @@ class DataController {
 
     bool isAfter = dateTimeIsBigger(datenow, lastdate);
     if (isAfter) {
-      setSetting(key: "LastDate", value: datetoString(datenow));
+      setSetting(key: "Last Date", value: datetoString(datenow));
     }
     log(title: "Data Controller (checkLastDate)", value: datetoString(datenow));
   }

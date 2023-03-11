@@ -72,7 +72,8 @@ DateTime getDateTime(DataController dataController) {
   log(title: "Custom Functions (getDateTime)", value: timeString);
 
   int time = int.parse(timeString);
-  int changeTimeInt = int.parse(dataController.getDayChangeTime());
+  int changeTimeInt =
+      int.parse(dataController.getDayChangeTime().replaceAll(":", ""));
 
   if (0000 <= time && time < changeTimeInt) {
     return datenow.subtract(const Duration(days: 1));

@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:smoking_regulator_v2/systems/calendar_controller.dart';
 import 'package:smoking_regulator_v2/systems/count_controller.dart';
-import 'package:smoking_regulator_v2/systems/custom_colors.dart';
+import 'package:smoking_regulator_v2/systems/helpers/custom_colors.dart';
 import 'package:smoking_regulator_v2/systems/data_controller.dart';
-import 'package:smoking_regulator_v2/widgets/button.dart';
-import 'package:smoking_regulator_v2/widgets/calendar.dart';
-import 'package:smoking_regulator_v2/widgets/counter.dart';
-import 'package:smoking_regulator_v2/widgets/stats.dart';
-import 'package:smoking_regulator_v2/widgets/title.dart';
+import 'package:smoking_regulator_v2/widgets/homepage/counter/button.dart';
+import 'package:smoking_regulator_v2/widgets/homepage/calendar/calendar.dart';
+import 'package:smoking_regulator_v2/widgets/homepage/counter/counter.dart';
+import 'package:smoking_regulator_v2/widgets/homepage/stats/stats.dart';
+import 'package:smoking_regulator_v2/widgets/Shared/title.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
     required this.colorMode,
     required this.isAmoled,
-    required this.factoredTime,
     required this.firstDate,
     required this.dataController,
     required this.calendarController,
@@ -22,7 +21,6 @@ class HomePage extends StatefulWidget {
   }) : super(key: key);
   final String colorMode;
   final bool isAmoled;
-  final String factoredTime;
   final String firstDate;
   final DataController dataController;
   final CalendarController calendarController;
@@ -64,6 +62,7 @@ class HomePageState extends State<HomePage> {
     final String colorMode = widget.colorMode;
     final bool isAmoled = widget.isAmoled;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: getColor(
         colorMode: colorMode,
         isAmoled: isAmoled,
@@ -99,7 +98,7 @@ class HomePageState extends State<HomePage> {
                 isAmoled: isAmoled,
                 calendarController: widget.calendarController,
               ),
-              SizedBox(height: height * 0.05),
+              SizedBox(height: height * 0.04),
               Counter(
                 key: counterkey,
                 countController: widget.countController,
@@ -119,7 +118,6 @@ class HomePageState extends State<HomePage> {
                     light: CColors.darkGrey,
                     dark: CColors.lightGrey,
                     amoled: CColors.darkGrey),
-                factoredTime: widget.factoredTime,
               ),
               SizedBox(height: height * 0.03),
               Calendar(

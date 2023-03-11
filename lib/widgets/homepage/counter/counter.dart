@@ -9,7 +9,6 @@ class Counter extends StatefulWidget {
     required this.height,
     required this.textColor,
     required this.subTextColor,
-    required this.factoredTime,
     required this.countController,
     required this.dataController,
     Key? key,
@@ -20,8 +19,6 @@ class Counter extends StatefulWidget {
 
   final Color textColor;
   final Color subTextColor;
-
-  final String factoredTime;
 
   final CountController countController;
   final DataController dataController;
@@ -61,28 +58,50 @@ class CounterState extends State<Counter> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            count.toString(),
-            style: GoogleFonts.poppins(
-              color: getTextColor(
-                count,
-                widget.countController.limit,
-                [
-                  widget.textColor,
-                  const Color(0xFF54ba89),
-                  const Color(0xFFFFAB40),
-                  const Color(0xFFFF5252)
-                ],
-              ),
-              decoration: count > widget.countController.limit
-                  ? TextDecoration.underline
-                  : null,
-              fontSize: 56,
-              fontWeight: FontWeight.w500,
+          SizedBox(
+            // width: widget.width * 0.5,
+            height: widget.height * 0.5,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Text(
+                    count.toString(),
+                    style: GoogleFonts.poppins(
+                      color: getTextColor(
+                        count,
+                        widget.countController.limit,
+                        [
+                          widget.textColor,
+                          const Color(0xFF54ba89),
+                          const Color(0xFFFFAB40),
+                          const Color(0xFFFF5252)
+                        ],
+                      ),
+                      fontSize: 56,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                count > widget.countController.limit
+                    ? Align(
+                        alignment: const Alignment(
+                            0, -0.95), // X: count < 10 ? 0.11 : 0.15
+                        child: Container(
+                          height: widget.height * 0.075,
+                          width: widget.height * 0.075,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFFF5252),
+                            shape: BoxShape.circle,
+                          ),
+                        ))
+                    : const SizedBox.shrink()
+              ],
             ),
           ),
           Text(
-            "Cigaretes Smoked Today",
+            "Cigarettes Smoked Today",
             style: GoogleFonts.poppins(
               color: widget.subTextColor.withOpacity(0.8),
               fontSize: 18,
