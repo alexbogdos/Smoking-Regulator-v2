@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smoking_regulator_v2/widgets/morepage/historyview/time_card.dart';
+import 'package:smoking_regulator_v2/widgets/more_page/history_view/time_card.dart';
 
 class HistoryList extends StatelessWidget {
   HistoryList({

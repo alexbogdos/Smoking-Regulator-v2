@@ -3,11 +3,11 @@ import 'package:smoking_regulator_v2/systems/calendar_controller.dart';
 import 'package:smoking_regulator_v2/systems/count_controller.dart';
 import 'package:smoking_regulator_v2/systems/helpers/custom_colors.dart';
 import 'package:smoking_regulator_v2/systems/data_controller.dart';
-import 'package:smoking_regulator_v2/widgets/homepage/counter/button.dart';
-import 'package:smoking_regulator_v2/widgets/homepage/calendar/calendar.dart';
-import 'package:smoking_regulator_v2/widgets/homepage/counter/counter.dart';
-import 'package:smoking_regulator_v2/widgets/homepage/stats/stats.dart';
-import 'package:smoking_regulator_v2/widgets/Shared/title.dart';
+import 'package:smoking_regulator_v2/widgets/home_page/counter/button.dart';
+import 'package:smoking_regulator_v2/widgets/home_page/calendar/calendar.dart';
+import 'package:smoking_regulator_v2/widgets/home_page/counter/counter.dart';
+import 'package:smoking_regulator_v2/widgets/home_page/stats/stats.dart';
+import 'package:smoking_regulator_v2/widgets/shared/title.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({

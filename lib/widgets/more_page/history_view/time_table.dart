@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smoking_regulator_v2/systems/count_controller.dart';
-import 'package:smoking_regulator_v2/widgets/morepage/historyview/history_list.dart';
-import 'package:smoking_regulator_v2/widgets/morepage/historyview/table_divider.dart';
+import 'package:smoking_regulator_v2/widgets/more_page/history_view/history_list.dart';
+import 'package:smoking_regulator_v2/widgets/more_page/history_view/table_divider.dart';
 
 class TimeTable extends StatelessWidget {
   const TimeTable({

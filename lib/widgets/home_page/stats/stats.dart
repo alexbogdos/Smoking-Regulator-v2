@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smoking_regulator_v2/systems/calendar_controller.dart';
 import 'package:smoking_regulator_v2/systems/helpers/custom_colors.dart';
-import 'package:smoking_regulator_v2/widgets/homepage/stats/info_tab.dart';
+import 'package:smoking_regulator_v2/widgets/home_page/stats/info_tab.dart';
 
 class Stats extends StatefulWidget {
   const Stats({

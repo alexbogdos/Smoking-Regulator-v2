@@ -4,9 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smoking_regulator_v2/systems/count_controller.dart';
 import 'package:smoking_regulator_v2/systems/helpers/custom_colors.dart';
 import 'package:smoking_regulator_v2/systems/helpers/custom_functions.dart';
-import 'package:smoking_regulator_v2/widgets/morepage/settingstoggles/input_settings_togle.dart';
-import 'package:smoking_regulator_v2/widgets/morepage/settingstoggles/settings_togle.dart';
-import 'package:smoking_regulator_v2/widgets/morepage/historyview/time_table.dart';
+import 'package:smoking_regulator_v2/widgets/more_page/settings_toggles/input_settings_togle.dart';
+import 'package:smoking_regulator_v2/widgets/more_page/settings_toggles/settings_togle.dart';
+import 'package:smoking_regulator_v2/widgets/more_page/history_view/time_table.dart';
 
 class MorePage extends StatefulWidget {
   const MorePage({
