@@ -3,12 +3,19 @@ import 'package:smoking_regulator_v2/systems/data_controller.dart';
 
 class CalendarController {
   CalendarController({required this.dataController}) {
+    globalCountSum = dataController.getCountSum();
+    globalPopulation = dataController.getPopulation();
+
     weekgroup = dataController.getWeekGroup();
     weekoffset = weekgroup;
+
     getData();
   }
 
   final DataController dataController;
+
+  late int globalCountSum = 0;
+  late int globalPopulation = 1;
 
   late Map<String, dynamic> week = {};
   late int weekoffset = 0;
@@ -50,6 +57,9 @@ class CalendarController {
     getRange();
     getWeekSum();
     getMax();
+
+    globalCountSum = dataController.getCountSum();
+    globalPopulation = dataController.getPopulation();
   }
 
   void getMax() {
@@ -79,6 +89,16 @@ class CalendarController {
       weekoffset += 1;
       getData();
     }
+  }
+
+  void moveToFirst() {
+    weekoffset = 0;
+    getData();
+  }
+
+  void moveToLast() {
+    weekoffset = weekgroup;
+    getData();
   }
 
   void getWeekSum() {

@@ -101,11 +101,10 @@ class CalendarState extends State<Calendar> {
 
   late List<GlobalKey<DayCallendarState>> dayCalendarkeys = [];
 
+  static const List<String> symbols = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
   Widget instansiateDC({
-    required String symbol,
-    required int max,
-    required int value,
-    required double oldHeight,
+    required int index,
   }) {
     final GlobalKey<DayCallendarState> key = GlobalKey();
     dayCalendarkeys.add(key);
@@ -116,14 +115,14 @@ class CalendarState extends State<Calendar> {
         key: key,
         width: widget.width * 0.076,
         height: widget.height * dayCalendarHeightFactor,
-        symbol: symbol,
+        symbol: symbols[index],
         background: widget.background,
         fill: widget.fill,
         disabled: widget.disabled,
         symbolColor: widget.symbol,
         max: max,
-        value: value,
-        oldHeight: oldHeight,
+        value: values[index],
+        oldHeight: oldHeights[index],
       ),
     );
   }
@@ -144,7 +143,7 @@ class CalendarState extends State<Calendar> {
                     height: widget.height,
                     child: Center(
                       //! Left Button
-                      child: IconButton(
+                      child: TextButton(
                         onPressed: () {
                           setState(() {
                             setOldHeights();
@@ -152,7 +151,23 @@ class CalendarState extends State<Calendar> {
                             widget.refreshStats();
                           });
                         },
-                        icon: Icon(
+                        onLongPress: () {
+                          setState(() {
+                            setOldHeights();
+                            widget.calendarController.moveToFirst();
+                            widget.refreshStats();
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                            fixedSize: Size(
+                              widget.width * sidesScaleFactor,
+                              widget.width * sidesScaleFactor,
+                            ),
+                            foregroundColor: widget.subText.withOpacity(0.25),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(45),
+                            )),
+                        child: Icon(
                           Icons.arrow_back_ios_new_rounded,
                           color: widget.calendarController.weekoffset == 0
                               ? widget.subText.withOpacity(0.25)
@@ -166,52 +181,10 @@ class CalendarState extends State<Calendar> {
                     width: widget.width * centerScaleFactor,
                     height: widget.height,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        instansiateDC(
-                          symbol: "M",
-                          value: values[0],
-                          max: max,
-                          oldHeight: oldHeights[0],
-                        ),
-                        instansiateDC(
-                          symbol: "T",
-                          value: values[1],
-                          max: max,
-                          oldHeight: oldHeights[1],
-                        ),
-                        instansiateDC(
-                          symbol: "W",
-                          value: values[2],
-                          max: max,
-                          oldHeight: oldHeights[2],
-                        ),
-                        instansiateDC(
-                          symbol: "T",
-                          value: values[3],
-                          max: max,
-                          oldHeight: oldHeights[3],
-                        ),
-                        instansiateDC(
-                          symbol: "F",
-                          value: values[4],
-                          max: max,
-                          oldHeight: oldHeights[4],
-                        ),
-                        instansiateDC(
-                          symbol: "S",
-                          value: values[5],
-                          max: max,
-                          oldHeight: oldHeights[5],
-                        ),
-                        instansiateDC(
-                          symbol: "S",
-                          value: values[6],
-                          max: max,
-                          oldHeight: oldHeights[6],
-                        ),
-                      ],
-                    ),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          for (int i = 0; i < 7; i++) instansiateDC(index: i),
+                        ]),
                   ),
                   SizedBox(
                     // color: Colors.red.withOpacity(0.4),
@@ -219,7 +192,7 @@ class CalendarState extends State<Calendar> {
                     height: widget.height,
                     child: Center(
                       //! Right Button
-                      child: IconButton(
+                      child: TextButton(
                         onPressed: () {
                           setState(() {
                             setOldHeights();
@@ -227,7 +200,24 @@ class CalendarState extends State<Calendar> {
                             widget.refreshStats();
                           });
                         },
-                        icon: Icon(
+                        onLongPress: () {
+                          setState(() {
+                            setOldHeights();
+                            widget.calendarController.moveToLast();
+                            widget.refreshStats();
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                          fixedSize: Size(
+                            widget.width * sidesScaleFactor,
+                            widget.width * sidesScaleFactor,
+                          ),
+                          foregroundColor: widget.subText.withOpacity(0.25),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(45),
+                          ),
+                        ),
+                        child: Icon(
                           Icons.arrow_forward_ios_rounded,
                           color: widget.calendarController.weekoffset ==
                                   widget.calendarController.weekgroup

@@ -65,6 +65,10 @@ class DataController {
     return value;
   }
 
+  int getStatsView() {
+    return getfromSettings(key: "Stats View") ?? 0;
+  }
+
   String getFirstDate() {
     String defaultValue = datetoString(getDateTime(this));
     if (getfromSettings(key: "First Date") == null) {

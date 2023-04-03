@@ -48,6 +48,8 @@ class HomePageState extends State<HomePage> {
 
     final double infoTabWidth = width * 0.3;
     final double infoTabHeight = height * 0.16;
+    final double chipHeight = height * 0.04;
+    final double seperatorHeight = height * 0.02;
 
     final double counterWidth = width;
     final double counterHeight = height * 0.16;
@@ -77,7 +79,6 @@ class HomePageState extends State<HomePage> {
           height: height,
           child: Column(
             children: [
-              SizedBox(height: height * 0.02),
               PageTitle(
                 width: width,
                 height: pageTitleHeight,
@@ -89,16 +90,32 @@ class HomePageState extends State<HomePage> {
                   amoled: CColors.lightGrey,
                 ),
               ),
-              SizedBox(height: height * 0.01),
+              SizedBox(height: height * 0.016),
               Stats(
                 key: statsState,
+                width: width,
                 infoTabWidth: infoTabWidth,
                 infoTabHeight: infoTabHeight,
-                colorMode: colorMode,
-                isAmoled: isAmoled,
+                chipHeight: chipHeight,
+                seperatorHeight: seperatorHeight,
+                dataController: widget.dataController,
                 calendarController: widget.calendarController,
+                textColor: getColor(
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  light: CColors.dark,
+                  dark: CColors.white,
+                  amoled: CColors.lightGrey,
+                ),
+                boxColor: getColor(
+                  colorMode: widget.colorMode,
+                  isAmoled: widget.isAmoled,
+                  light: CColors.white,
+                  dark: CColors.darkGrey,
+                  amoled: CColors.dark,
+                ),
               ),
-              SizedBox(height: height * 0.04),
+              SizedBox(height: height * 0.030),
               Counter(
                 key: counterkey,
                 countController: widget.countController,
@@ -119,7 +136,7 @@ class HomePageState extends State<HomePage> {
                     dark: CColors.lightGrey,
                     amoled: CColors.darkGrey),
               ),
-              SizedBox(height: height * 0.03),
+              SizedBox(height: height * 0.025),
               Calendar(
                 key: calendarkey,
                 width: calendarWidth,
@@ -164,7 +181,7 @@ class HomePageState extends State<HomePage> {
                   amoled: CColors.darkGrey,
                 ),
               ),
-              SizedBox(height: height * 0.06),
+              SizedBox(height: height * 0.04),
               Button(
                 width: buttonWidth,
                 height: buttonHeight,
