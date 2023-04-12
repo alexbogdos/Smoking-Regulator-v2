@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smoking_regulator_v2/systems/helpers/custom_functions.dart';
 
 class CColors {
   static const Color white = Color.fromARGB(255, 255, 255, 255);
@@ -9,8 +10,12 @@ class CColors {
 }
 
 // Color Mode Cycle Bounds
-const int max = 17;
-const int min = 7;
+const int min = 0700;
+int sunSetTime = 1730;
+
+void setNewSunSetTime(int newTime) {
+  sunSetTime = newTime;
+}
 
 // Get corresponding color according to the color mode
 Color getColor({
@@ -19,26 +24,28 @@ Color getColor({
   required Color light,
   required Color dark,
   required Color amoled,
+  double? opacity,
 }) {
   if (colorMode == "Dark") {
     if (isAmoled == true) {
-      return amoled;
+      return amoled.withOpacity(opacity ?? 1);
     } else {
-      return dark;
+      return dark.withOpacity(opacity ?? 1);
     }
   } else if (colorMode == "Cycle") {
-    final int hour = DateTime.now().hour;
-    if (min <= hour && hour < max) {
-      return light;
+    final int timenow = int.parse(timetoString(DateTime.now(), clear: true));
+    log(title: "Custom Colors (getColor)", value: "$timenow  $sunSetTime");
+    if (min <= timenow && timenow < sunSetTime) {
+      return light.withOpacity(opacity ?? 1);
     } else {
       if (isAmoled == true) {
-        return amoled;
+        return amoled.withOpacity(opacity ?? 1);
       } else {
-        return dark;
+        return dark.withOpacity(opacity ?? 1);
       }
     }
   } else {
-    return light;
+    return light.withOpacity(opacity ?? 1);
   }
 }
 
