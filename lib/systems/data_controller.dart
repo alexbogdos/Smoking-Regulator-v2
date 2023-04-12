@@ -98,13 +98,30 @@ class DataController {
     return getfromSettings(key: "Last Week Day");
   }
 
+  // FIXME
+  // ! ERROR: When first day is Monday and current day Tusday : 00:00 < time < 1:00
+  // ! given week group = correct week group -1
   int getWeekGroup() {
-    DateTime datenow = getDateTime(this);
-    DateTime firstdate = DateTime.parse(getFirstDate());
+    DateTime dt = getDateTime(this);
+    DateTime datenowRaw = DateTime(dt.year, dt.month, dt.day, 12, 00);
+    DateTime datenow =
+        datenowRaw.subtract(Duration(days: datenowRaw.weekday - 1));
+
+    DateTime fd = DateTime.parse(getFirstDate());
+    DateTime firstdate = DateTime(fd.year, fd.month, fd.day, 12, 00);
     DateTime firstWeekDate =
         firstdate.subtract(Duration(days: firstdate.weekday - 1));
 
+    log(title: "Data Controller (getWeekGroup) fd", value: firstdate);
+    log(
+        title: "Data Controller (getWeekGroup) dn",
+        value: DateTime(datenow.year, datenow.month, datenow.day));
+
     int difference = datenow.difference(firstWeekDate).inDays;
+
+    log(title: "Data Controller (getWeekGroup) diff", value: difference);
+
+    log(title: "Data Controller (getWeekGroup) raw", value: difference / 7);
 
     int newWeekgroup = difference ~/ 7;
 
