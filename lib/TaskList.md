@@ -1,15 +1,15 @@
 # Remaining Tasks
 
 - [ ] **<mark>Clean up code</mark>**
-- [ ] **<mark>Run tests</mark>**
+- [ ] **<mark>Create & Run tests</mark>**
   
   
-- [ ] Merge branch to main
+- [X] Merge branch to main
 
-- [ ] Create "adjust limit" button in settings (like the daychange button) 
+- [X] Create "adjust limit" button in settings (like the daychange button) 
 
-- [ ] Add options for showing stats (per week, global)
+- [X] Add options for showing stats (per week, global)
 
-- [ ] Create day time list
+- [X] Create day time list
 
 - [ ] Create export to csv
