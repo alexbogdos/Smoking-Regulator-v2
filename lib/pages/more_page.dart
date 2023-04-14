@@ -11,8 +11,6 @@ import 'package:smoking_regulator_v2/widgets/more_page/history_view/time_table.d
 class MorePage extends StatefulWidget {
   const MorePage({
     Key? key,
-    required this.colorMode,
-    required this.isAmoled,
     required this.changeColorMode,
     required this.changeAmoledMode,
     required this.factoredTimeString,
@@ -24,8 +22,6 @@ class MorePage extends StatefulWidget {
     required this.countController,
   }) : super(key: key);
 
-  final String colorMode;
-  final bool isAmoled;
   final Function() changeColorMode;
   final Function() changeAmoledMode;
 
@@ -86,8 +82,6 @@ class _MorePageState extends State<MorePage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: getColor(
-        colorMode: widget.colorMode,
-        isAmoled: widget.isAmoled,
         light: CColors.lightGrey,
         dark: CColors.dark,
         amoled: CColors.black,
@@ -112,8 +106,6 @@ class _MorePageState extends State<MorePage> {
                     pageTitle,
                     style: GoogleFonts.poppins(
                       color: getColor(
-                        colorMode: widget.colorMode,
-                        isAmoled: widget.isAmoled,
                         light: CColors.dark,
                         dark: CColors.white,
                         amoled: CColors.white,
@@ -126,20 +118,16 @@ class _MorePageState extends State<MorePage> {
                 Toggle(
                   width: width,
                   toggleHeight: toggleHeight,
-                  colorMode: widget.colorMode,
-                  isAmoled: widget.isAmoled,
                   title: "Color Mode",
-                  value: widget.colorMode,
+                  value: CColors.colorMode(),
                   action: widget.changeColorMode,
                 ),
                 SizedBox(height: spaceBetween),
                 Toggle(
                   width: width,
                   toggleHeight: toggleHeight,
-                  colorMode: widget.colorMode,
-                  isAmoled: widget.isAmoled,
-                  title: "Amoled",
-                  value: widget.isAmoled ? "On" : "Off",
+                  title: "True Black",
+                  value: CColors.isAmoled() ? "On" : "Off",
                   action: widget.changeAmoledMode,
                 ),
                 SizedBox(height: spaceBetween),
@@ -147,8 +135,6 @@ class _MorePageState extends State<MorePage> {
                   // active: false,
                   width: width,
                   toggleHeight: toggleHeight,
-                  colorMode: widget.colorMode,
-                  isAmoled: widget.isAmoled,
                   title: "Daily Limit",
                   value: widget.dailyLimit.toString(),
                   action: (value) {
@@ -169,8 +155,6 @@ class _MorePageState extends State<MorePage> {
                 Toggle(
                   width: width,
                   toggleHeight: toggleHeight,
-                  colorMode: widget.colorMode,
-                  isAmoled: widget.isAmoled,
                   title: "Day Change",
                   value: displayTime(factoredTime),
                   action: () {
@@ -185,8 +169,6 @@ class _MorePageState extends State<MorePage> {
                 Toggle(
                   width: width,
                   toggleHeight: toggleHeight,
-                  colorMode: widget.colorMode,
-                  isAmoled: widget.isAmoled,
                   title: "Sun Set",
                   value: displayTime(sunSetTime),
                   action: () {
@@ -205,22 +187,16 @@ class _MorePageState extends State<MorePage> {
             height: height * timetableHeightMultiplier,
             countController: widget.countController,
             background: getColor(
-              colorMode: widget.colorMode,
-              isAmoled: widget.isAmoled,
               light: CColors.white,
               dark: CColors.darkGrey,
               amoled: CColors.dark,
             ),
             text: getColor(
-              colorMode: widget.colorMode,
-              isAmoled: widget.isAmoled,
               light: CColors.dark,
               dark: CColors.white,
               amoled: CColors.white,
             ),
             divider: getColor(
-              colorMode: widget.colorMode,
-              isAmoled: widget.isAmoled,
               light: CColors.dark,
               dark: CColors.dark,
               amoled: CColors.darkGrey,
@@ -271,8 +247,6 @@ class _MorePageState extends State<MorePage> {
       ),
       titleStyle: GoogleFonts.poppins(
         color: getColor(
-          colorMode: widget.colorMode,
-          isAmoled: widget.isAmoled,
           light: CColors.dark,
           dark: CColors.white,
           amoled: CColors.white,
@@ -283,8 +257,6 @@ class _MorePageState extends State<MorePage> {
       use24hFormat: true,
       pickerTextStyle: GoogleFonts.poppins(
         color: getColor(
-          colorMode: widget.colorMode,
-          isAmoled: widget.isAmoled,
           light: CColors.dark,
           dark: CColors.white,
           amoled: CColors.white,
@@ -293,29 +265,21 @@ class _MorePageState extends State<MorePage> {
         fontWeight: FontWeight.w300,
       ),
       closeIconColor: getColor(
-        colorMode: widget.colorMode,
-        isAmoled: widget.isAmoled,
         light: CColors.dark,
         dark: CColors.white,
         amoled: CColors.lightGrey,
       ),
       iconColor: getColor(
-        colorMode: widget.colorMode,
-        isAmoled: widget.isAmoled,
         light: CColors.white,
         dark: CColors.dark,
         amoled: CColors.black,
       ),
       backgroundColor: getColor(
-        colorMode: widget.colorMode,
-        isAmoled: widget.isAmoled,
         light: CColors.white,
         dark: CColors.dark,
         amoled: Color.lerp(CColors.dark, CColors.black, 0.6) as Color,
       ),
       buttonSingleColor: getColor(
-        colorMode: widget.colorMode,
-        isAmoled: widget.isAmoled,
         light: CColors.dark,
         dark: CColors.white,
         amoled: CColors.lightGrey,
@@ -341,8 +305,6 @@ class _MorePageState extends State<MorePage> {
       ),
       titleStyle: GoogleFonts.poppins(
         color: getColor(
-          colorMode: widget.colorMode,
-          isAmoled: widget.isAmoled,
           light: CColors.dark,
           dark: CColors.white,
           amoled: CColors.white,
@@ -353,8 +315,6 @@ class _MorePageState extends State<MorePage> {
       use24hFormat: true,
       pickerTextStyle: GoogleFonts.poppins(
         color: getColor(
-          colorMode: widget.colorMode,
-          isAmoled: widget.isAmoled,
           light: CColors.dark,
           dark: CColors.white,
           amoled: CColors.white,
@@ -363,29 +323,21 @@ class _MorePageState extends State<MorePage> {
         fontWeight: FontWeight.w300,
       ),
       closeIconColor: getColor(
-        colorMode: widget.colorMode,
-        isAmoled: widget.isAmoled,
         light: CColors.dark,
         dark: CColors.white,
         amoled: CColors.lightGrey,
       ),
       iconColor: getColor(
-        colorMode: widget.colorMode,
-        isAmoled: widget.isAmoled,
         light: CColors.white,
         dark: CColors.dark,
         amoled: CColors.black,
       ),
       backgroundColor: getColor(
-        colorMode: widget.colorMode,
-        isAmoled: widget.isAmoled,
         light: CColors.white,
         dark: CColors.dark,
         amoled: Color.lerp(CColors.dark, CColors.black, 0.6) as Color,
       ),
       buttonSingleColor: getColor(
-        colorMode: widget.colorMode,
-        isAmoled: widget.isAmoled,
         light: CColors.dark,
         dark: CColors.white,
         amoled: CColors.lightGrey,

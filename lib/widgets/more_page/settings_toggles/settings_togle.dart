@@ -8,8 +8,6 @@ class Toggle extends StatelessWidget {
     this.active = true,
     required this.width,
     required this.toggleHeight,
-    required this.colorMode,
-    required this.isAmoled,
     required this.title,
     required this.value,
     required this.action,
@@ -18,8 +16,6 @@ class Toggle extends StatelessWidget {
 
   final double width;
   final double toggleHeight;
-  final String colorMode;
-  final bool isAmoled;
 
   final bool active;
 
@@ -42,8 +38,6 @@ class Toggle extends StatelessWidget {
       height: toggleHeight,
       decoration: BoxDecoration(
         color: getColor(
-          colorMode: colorMode,
-          isAmoled: isAmoled,
           light: active
               ? CColors.white
               : Color.lerp(CColors.white, CColors.lightGrey, 0.60) as Color,
@@ -66,8 +60,6 @@ class Toggle extends StatelessWidget {
               textAlign: TextAlign.end,
               style: GoogleFonts.poppins(
                 color: getColor(
-                  colorMode: colorMode,
-                  isAmoled: isAmoled,
                   light: active ? CColors.dark : CColors.darkGrey,
                   dark: active
                       ? CColors.white
@@ -85,8 +77,6 @@ class Toggle extends StatelessWidget {
           ),
           Container(
             color: getColor(
-              colorMode: colorMode,
-              isAmoled: isAmoled,
               light: CColors.lightGrey,
               dark: CColors.dark,
               amoled: CColors.black,
@@ -97,8 +87,6 @@ class Toggle extends StatelessWidget {
             type: MaterialType.transparency,
             child: InkWell(
               splashColor: getColor(
-                colorMode: colorMode,
-                isAmoled: isAmoled,
                 light: CColors.dark,
                 dark: CColors.lightGrey,
                 amoled: CColors.white,
@@ -118,8 +106,6 @@ class Toggle extends StatelessWidget {
                   value,
                   style: GoogleFonts.poppins(
                     color: getColor(
-                      colorMode: colorMode,
-                      isAmoled: isAmoled,
                       light: active ? CColors.dark : CColors.darkGrey,
                       dark: active
                           ? CColors.white

@@ -12,15 +12,12 @@ import 'package:smoking_regulator_v2/widgets/shared/title.dart';
 class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
-    required this.colorMode,
-    required this.isAmoled,
     required this.firstDate,
     required this.dataController,
     required this.calendarController,
     required this.countController,
   }) : super(key: key);
-  final String colorMode;
-  final bool isAmoled;
+
   final String firstDate;
   final DataController dataController;
   final CalendarController calendarController;
@@ -61,13 +58,9 @@ class HomePageState extends State<HomePage> {
     final double buttonHeight = height * 0.1;
 
     // Color Mode Assets
-    final String colorMode = widget.colorMode;
-    final bool isAmoled = widget.isAmoled;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: getColor(
-        colorMode: colorMode,
-        isAmoled: isAmoled,
         light: CColors.lightGrey,
         dark: CColors.dark,
         amoled: CColors.black,
@@ -83,8 +76,6 @@ class HomePageState extends State<HomePage> {
                 width: width,
                 height: pageTitleHeight,
                 textColor: getColor(
-                  colorMode: colorMode,
-                  isAmoled: isAmoled,
                   light: CColors.dark,
                   dark: CColors.white,
                   amoled: CColors.lightGrey,
@@ -101,15 +92,11 @@ class HomePageState extends State<HomePage> {
                 dataController: widget.dataController,
                 calendarController: widget.calendarController,
                 textColor: getColor(
-                  colorMode: widget.colorMode,
-                  isAmoled: widget.isAmoled,
                   light: CColors.dark,
                   dark: CColors.white,
                   amoled: CColors.lightGrey,
                 ),
                 boxColor: getColor(
-                  colorMode: widget.colorMode,
-                  isAmoled: widget.isAmoled,
                   light: CColors.white,
                   dark: CColors.darkGrey,
                   amoled: CColors.dark,
@@ -123,15 +110,11 @@ class HomePageState extends State<HomePage> {
                 width: counterWidth,
                 height: counterHeight,
                 textColor: getColor(
-                  colorMode: colorMode,
-                  isAmoled: isAmoled,
                   light: CColors.dark,
                   dark: CColors.white,
                   amoled: CColors.lightGrey,
                 ),
                 subTextColor: getColor(
-                    colorMode: colorMode,
-                    isAmoled: isAmoled,
                     light: CColors.darkGrey,
                     dark: CColors.lightGrey,
                     amoled: CColors.darkGrey),
@@ -146,36 +129,26 @@ class HomePageState extends State<HomePage> {
                   statsState.currentState!.refresh();
                 },
                 background: getColor(
-                  colorMode: colorMode,
-                  isAmoled: isAmoled,
                   light: CColors.white,
                   dark: CColors.darkGrey,
                   amoled: CColors.dark,
                 ),
                 fill: getColor(
-                  colorMode: colorMode,
-                  isAmoled: isAmoled,
                   light: CColors.dark,
                   dark: CColors.white,
                   amoled: CColors.lightGrey,
                 ),
                 disabled: getColor(
-                  colorMode: colorMode,
-                  isAmoled: isAmoled,
                   light: CColors.darkGrey,
                   dark: CColors.lightGrey,
                   amoled: CColors.darkGrey,
                 ),
                 symbol: getColor(
-                  colorMode: colorMode,
-                  isAmoled: isAmoled,
                   light: CColors.darkGrey,
                   dark: CColors.lightGrey,
                   amoled: CColors.lightGrey,
                 ),
                 subText: getColor(
-                  colorMode: colorMode,
-                  isAmoled: isAmoled,
                   light: CColors.darkGrey,
                   dark: CColors.lightGrey,
                   amoled: CColors.darkGrey,
@@ -186,22 +159,16 @@ class HomePageState extends State<HomePage> {
                 width: buttonWidth,
                 height: buttonHeight,
                 background: getColor(
-                  colorMode: colorMode,
-                  isAmoled: isAmoled,
                   light: CColors.white,
                   dark: CColors.darkGrey,
                   amoled: CColors.dark,
                 ),
                 textColor: getColor(
-                  colorMode: colorMode,
-                  isAmoled: isAmoled,
                   light: CColors.dark,
                   dark: CColors.white,
                   amoled: CColors.lightGrey,
                 ),
                 fill: getColor(
-                  colorMode: colorMode,
-                  isAmoled: isAmoled,
                   light: CColors.darkGrey,
                   dark: CColors.lightGrey,
                   amoled: CColors.lightGrey,

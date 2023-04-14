@@ -62,13 +62,13 @@ class _MainPageState extends State<MainPage> {
 
   void finishLoading() {
     setState(() {
-      colorMode = dataController.getColorMode();
-      amoled = dataController.getAmoled();
+      CColors.setColorMode(dataController.getColorMode());
+      CColors.setIsAmoled(dataController.getAmoled());
       dayChangeTime = dataController.getDayChangeTime();
       sunSetTime = dataController.getSunSetTime();
       dailyLimit = dataController.getLimit();
 
-      setNewSunSetTime(int.parse(sunSetTime.replaceAll(":", "")));
+      setSunSetTime(int.parse(sunSetTime.replaceAll(":", "")));
 
       calendarController = CalendarController(dataController: dataController);
       countController = CountController(dataController: dataController);
@@ -88,17 +88,15 @@ class _MainPageState extends State<MainPage> {
 
   void changeColorMode() {
     setState(() {
-      String tempColorMode = dataController.getColorMode();
-      colorMode = cycleColorMode(colorMode: tempColorMode);
-      dataController.setSetting(key: "Color Mode", value: colorMode);
+      CColors.toggleColorMode(dataController.getColorMode());
+      dataController.setSetting(key: "Color Mode", value: CColors.colorMode());
     });
   }
 
   void changeAmoledMode() {
     setState(() {
-      bool tempAmoled = dataController.getAmoled();
-      amoled = !tempAmoled;
-      dataController.setSetting(key: "Amoled", value: amoled);
+      CColors.toggleAmoled();
+      dataController.setSetting(key: "Amoled", value: CColors.isAmoled());
     });
   }
 
@@ -115,7 +113,7 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       sunSetTime = newSunSetTime;
       dataController.setSetting(key: "Sun Set Time", value: sunSetTime);
-      setNewSunSetTime(int.parse(sunSetTime.replaceAll(":", "")));
+      setSunSetTime(int.parse(sunSetTime.replaceAll(":", "")));
     });
   }
 
@@ -131,8 +129,6 @@ class _MainPageState extends State<MainPage> {
   }
 
   // Build Assets
-  late String colorMode = dataController.defaultColorMode;
-  late bool amoled = dataController.defaultAmoled;
   late String dayChangeTime = dataController.defaultDayChangeTime;
   late String sunSetTime = dataController.defaultSunSetTime;
   late int dailyLimit = dataController.defaultLimit;
@@ -148,16 +144,12 @@ class _MainPageState extends State<MainPage> {
                 controller: pageController,
                 children: [
                   HomePage(
-                    colorMode: colorMode,
-                    isAmoled: amoled,
                     firstDate: dataController.getFirstDate(),
                     dataController: dataController,
                     calendarController: calendarController,
                     countController: countController,
                   ),
                   MorePage(
-                    colorMode: colorMode,
-                    isAmoled: amoled,
                     changeColorMode: changeColorMode,
                     changeAmoledMode: changeAmoledMode,
                     factoredTimeString: dayChangeTime,

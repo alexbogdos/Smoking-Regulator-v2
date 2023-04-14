@@ -8,8 +8,6 @@ class InputToggle extends StatefulWidget {
     this.active = true,
     required this.width,
     required this.toggleHeight,
-    required this.colorMode,
-    required this.isAmoled,
     required this.title,
     required this.value,
     required this.action,
@@ -18,8 +16,6 @@ class InputToggle extends StatefulWidget {
 
   final double width;
   final double toggleHeight;
-  final String colorMode;
-  final bool isAmoled;
 
   final bool active;
 
@@ -52,8 +48,6 @@ class _InputToggleState extends State<InputToggle> {
     const double fontSize = 20;
 
     final Color textColor = getColor(
-      colorMode: widget.colorMode,
-      isAmoled: widget.isAmoled,
       light: widget.active ? CColors.dark : CColors.darkGrey,
       dark: widget.active
           ? CColors.white
@@ -68,8 +62,6 @@ class _InputToggleState extends State<InputToggle> {
       height: widget.toggleHeight,
       decoration: BoxDecoration(
         color: getColor(
-          colorMode: widget.colorMode,
-          isAmoled: widget.isAmoled,
           light: widget.active
               ? CColors.white
               : Color.lerp(CColors.white, CColors.lightGrey, 0.60) as Color,
@@ -92,8 +84,6 @@ class _InputToggleState extends State<InputToggle> {
               textAlign: TextAlign.end,
               style: GoogleFonts.poppins(
                 color: getColor(
-                  colorMode: widget.colorMode,
-                  isAmoled: widget.isAmoled,
                   light: widget.active ? CColors.dark : CColors.darkGrey,
                   dark: widget.active
                       ? CColors.white
@@ -111,8 +101,6 @@ class _InputToggleState extends State<InputToggle> {
           ),
           Container(
             color: getColor(
-              colorMode: widget.colorMode,
-              isAmoled: widget.isAmoled,
               light: CColors.lightGrey,
               dark: CColors.dark,
               amoled: CColors.black,
