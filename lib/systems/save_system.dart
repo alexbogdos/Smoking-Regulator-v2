@@ -5,11 +5,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:smoking_regulator_v2/systems/helpers/custom_functions.dart';
 
 class SaveSystem {
-  final String data = "userdata.json";
-  final String settings = "usersetting.json";
-  late String path = "/Smoking Regulator";
+  static String data = "userdata.json";
+  static String settings = "usersetting.json";
+  static String path = "/Smoking Regulator";
 
-  Future<void> initializePath() async {
+  static Future<void> initializePath() async {
     if (Platform.isAndroid) {
       Directory directory = Directory("/storage/emulated/0/Documents");
       path = "${directory.path}$path";
@@ -20,7 +20,8 @@ class SaveSystem {
     path = "${directory.path}$path";
   }
 
-  Future<void> save({required String filename, required Map data}) async {
+  static Future<void> save(
+      {required String filename, required Map data}) async {
     String completeFilename = getCompleteFilename(filename);
     File file = File(completeFilename);
 
@@ -32,7 +33,7 @@ class SaveSystem {
     file.writeAsString(formatted);
   }
 
-  Future<Map<String, dynamic>?> load({required String filename}) async {
+  static Future<Map<String, dynamic>?> load({required String filename}) async {
     String completeFilename = getCompleteFilename(filename);
     log(
         title: "Save System (load)",
@@ -54,13 +55,13 @@ class SaveSystem {
     return rawdata;
   }
 
-  Future<bool> checkExistance(String filepath) async {
+  static Future<bool> checkExistance(String filepath) async {
     File file = File(filepath);
     bool exists = await file.exists();
     return exists;
   }
 
-  String getCompleteFilename(String filename) {
+  static String getCompleteFilename(String filename) {
     return "$path/$filename";
   }
 }
