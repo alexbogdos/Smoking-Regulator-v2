@@ -20,29 +20,17 @@ void showBottomTimePicker({
       initialTime[1],
     ),
     titleStyle: GoogleFonts.poppins(
-      color: getColor(
-        light: CColors.dark,
-        dark: CColors.white,
-        amoled: CColors.white,
-      ),
+      color: ColorProfiles.text(),
       fontSize: 14,
       fontWeight: FontWeight.w400,
     ),
     use24hFormat: true,
     pickerTextStyle: GoogleFonts.poppins(
-      color: getColor(
-        light: CColors.dark,
-        dark: CColors.white,
-        amoled: CColors.white,
-      ),
+      color: ColorProfiles.text(),
       fontSize: 14,
       fontWeight: FontWeight.w300,
     ),
-    closeIconColor: getColor(
-      light: CColors.dark,
-      dark: CColors.white,
-      amoled: CColors.lightGrey,
-    ),
+    closeIconColor: ColorProfiles.text(),
     iconColor: getColor(
       light: CColors.white,
       dark: CColors.dark,
@@ -53,11 +41,7 @@ void showBottomTimePicker({
       dark: CColors.dark,
       amoled: Color.lerp(CColors.dark, CColors.black, 0.6) as Color,
     ),
-    buttonSingleColor: getColor(
-      light: CColors.dark,
-      dark: CColors.white,
-      amoled: CColors.lightGrey,
-    ),
+    buttonSingleColor: ColorProfiles.boxAlt(),
     onSubmit: onSubmit,
   ).show(context);
 }

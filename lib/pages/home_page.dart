@@ -60,11 +60,7 @@ class HomePageState extends State<HomePage> {
     // Color Mode Assets
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: getColor(
-        light: CColors.lightGrey,
-        dark: CColors.dark,
-        amoled: CColors.black,
-      ),
+      backgroundColor: ColorProfiles.background(),
       body: Align(
         alignment: const Alignment(0, 0.3),
         child: SizedBox(
@@ -75,11 +71,7 @@ class HomePageState extends State<HomePage> {
               PageTitle(
                 width: width,
                 height: pageTitleHeight,
-                textColor: getColor(
-                  light: CColors.dark,
-                  dark: CColors.white,
-                  amoled: CColors.lightGrey,
-                ),
+                textColor: ColorProfiles.text(),
               ),
               SizedBox(height: height * 0.016),
               Stats(
@@ -91,16 +83,8 @@ class HomePageState extends State<HomePage> {
                 seperatorHeight: seperatorHeight,
                 dataController: widget.dataController,
                 calendarController: widget.calendarController,
-                textColor: getColor(
-                  light: CColors.dark,
-                  dark: CColors.white,
-                  amoled: CColors.lightGrey,
-                ),
-                boxColor: getColor(
-                  light: CColors.white,
-                  dark: CColors.darkGrey,
-                  amoled: CColors.dark,
-                ),
+                textColor: ColorProfiles.text(),
+                boxColor: ColorProfiles.box(),
               ),
               SizedBox(height: height * 0.030),
               Counter(
@@ -109,15 +93,8 @@ class HomePageState extends State<HomePage> {
                 dataController: widget.dataController,
                 width: counterWidth,
                 height: counterHeight,
-                textColor: getColor(
-                  light: CColors.dark,
-                  dark: CColors.white,
-                  amoled: CColors.lightGrey,
-                ),
-                subTextColor: getColor(
-                    light: CColors.darkGrey,
-                    dark: CColors.lightGrey,
-                    amoled: CColors.darkGrey),
+                textColor: ColorProfiles.text(),
+                subTextColor: ColorProfiles.subText(),
               ),
               SizedBox(height: height * 0.025),
               Calendar(
@@ -128,51 +105,19 @@ class HomePageState extends State<HomePage> {
                 refreshStats: () {
                   statsState.currentState!.refresh();
                 },
-                background: getColor(
-                  light: CColors.white,
-                  dark: CColors.darkGrey,
-                  amoled: CColors.dark,
-                ),
-                fill: getColor(
-                  light: CColors.dark,
-                  dark: CColors.white,
-                  amoled: CColors.lightGrey,
-                ),
-                disabled: getColor(
-                  light: CColors.darkGrey,
-                  dark: CColors.lightGrey,
-                  amoled: CColors.darkGrey,
-                ),
-                symbol: getColor(
-                  light: CColors.darkGrey,
-                  dark: CColors.lightGrey,
-                  amoled: CColors.lightGrey,
-                ),
-                subText: getColor(
-                  light: CColors.darkGrey,
-                  dark: CColors.lightGrey,
-                  amoled: CColors.darkGrey,
-                ),
+                background: ColorProfiles.box(),
+                fill: ColorProfiles.text(),
+                disabled: ColorProfiles.subText(),
+                symbol: ColorProfiles.symbol(),
+                subText: ColorProfiles.subText(),
               ),
               SizedBox(height: height * 0.04),
               Button(
                 width: buttonWidth,
                 height: buttonHeight,
-                background: getColor(
-                  light: CColors.white,
-                  dark: CColors.darkGrey,
-                  amoled: CColors.dark,
-                ),
-                textColor: getColor(
-                  light: CColors.dark,
-                  dark: CColors.white,
-                  amoled: CColors.lightGrey,
-                ),
-                fill: getColor(
-                  light: CColors.darkGrey,
-                  dark: CColors.lightGrey,
-                  amoled: CColors.lightGrey,
-                ),
+                background: ColorProfiles.box(),
+                textColor: ColorProfiles.text(),
+                fill: ColorProfiles.boxAlt(),
                 increase: () {
                   widget.countController.increase();
                   counterkey.currentState!.refresh();

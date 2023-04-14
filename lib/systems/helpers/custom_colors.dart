@@ -1,10 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:smoking_regulator_v2/systems/helpers/custom_functions.dart';
 
 class ColorModes {
   static const String light = "Light";
   static const String dark = "Dark";
   static const String cycle = "Cycle";
+}
+
+class ColorProfiles {
+  static Color text({double? opacity}) {
+    return getColor(
+      light: CColors.dark,
+      dark: CColors.white,
+      amoled: CColors.lightGrey,
+      opacity: opacity,
+    );
+  }
+
+  static Color subText({double? opacity}) {
+    return getColor(
+      light: CColors.darkGrey,
+      dark: CColors.lightGrey,
+      amoled: CColors.darkGrey,
+      opacity: opacity,
+    );
+  }
+
+  static Color symbol({double? opacity}) {
+    return getColor(
+      light: CColors.darkGrey,
+      dark: CColors.lightGrey,
+      amoled: CColors.lightGrey,
+      opacity: opacity,
+    );
+  }
+
+  static Color background({double? opacity}) {
+    return getColor(
+      light: CColors.lightGrey,
+      dark: CColors.dark,
+      amoled: CColors.black,
+    );
+  }
+
+  static Color box({double? opacity}) {
+    return getColor(
+      light: CColors.white,
+      dark: CColors.darkGrey,
+      amoled: CColors.dark,
+      opacity: opacity,
+    );
+  }
+
+  static Color boxAlt({double? opacity}) {
+    return getColor(
+      light: CColors.dark,
+      dark: CColors.lightGrey,
+      amoled: CColors.lightGrey,
+      opacity: opacity,
+    );
+  }
 }
 
 class CColors {

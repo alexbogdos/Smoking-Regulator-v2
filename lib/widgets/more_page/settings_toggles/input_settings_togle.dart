@@ -100,11 +100,7 @@ class _InputToggleState extends State<InputToggle> {
             ),
           ),
           Container(
-            color: getColor(
-              light: CColors.lightGrey,
-              dark: CColors.dark,
-              amoled: CColors.black,
-            ),
+            color: ColorProfiles.background(),
             width: lineWidth,
           ),
           Container(

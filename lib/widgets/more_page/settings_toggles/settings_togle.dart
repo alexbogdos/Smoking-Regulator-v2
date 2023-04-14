@@ -76,21 +76,13 @@ class Toggle extends StatelessWidget {
             ),
           ),
           Container(
-            color: getColor(
-              light: CColors.lightGrey,
-              dark: CColors.dark,
-              amoled: CColors.black,
-            ),
+            color: ColorProfiles.background(),
             width: lineWidth,
           ),
           Material(
             type: MaterialType.transparency,
             child: InkWell(
-              splashColor: getColor(
-                light: CColors.dark,
-                dark: CColors.lightGrey,
-                amoled: CColors.white,
-              ),
+              splashColor: ColorProfiles.text(),
               onTap: active ? action : () {},
               onLongPress: active ? secondaryAction : () {},
               borderRadius: const BorderRadius.only(

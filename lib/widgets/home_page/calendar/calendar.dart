@@ -83,22 +83,6 @@ class CalendarState extends State<Calendar> {
     }
   }
 
-  String getText() {
-    return widget.calendarController.range;
-
-    // if (widget.calendarController.weekoffset ==
-    //     widget.calendarController.weekgroup) {
-    //   return "Showing stats from current week";
-    // } else if (widget.calendarController.weekoffset + 1 ==
-    //     widget.calendarController.weekgroup) {
-    //   return "Showing stats from 1 week in the past";
-    // } else {
-    //   int diff = widget.calendarController.weekgroup -
-    //       widget.calendarController.weekoffset;
-    //   return "Showing stats from ${diff} weeks in the past";
-    // }
-  }
-
   late List<GlobalKey<DayCallendarState>> dayCalendarkeys = [];
 
   static const List<String> symbols = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
@@ -235,7 +219,7 @@ class CalendarState extends State<Calendar> {
                 height: widget.height * bottomScaleFactor,
                 alignment: Alignment.bottomCenter,
                 child: Text(
-                  getText(),
+                  widget.calendarController.range,
                   style: GoogleFonts.poppins(
                     color: widget.subText.withOpacity(0.8),
                     fontSize: 15,
