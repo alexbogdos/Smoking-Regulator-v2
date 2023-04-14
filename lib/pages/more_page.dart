@@ -1,9 +1,9 @@
-import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smoking_regulator_v2/systems/count_controller.dart';
 import 'package:smoking_regulator_v2/systems/helpers/custom_colors.dart';
 import 'package:smoking_regulator_v2/systems/helpers/custom_functions.dart';
+import 'package:smoking_regulator_v2/widgets/more_page/bottom_picker.dart';
 import 'package:smoking_regulator_v2/widgets/more_page/settings_toggles/input_settings_togle.dart';
 import 'package:smoking_regulator_v2/widgets/more_page/settings_toggles/settings_togle.dart';
 import 'package:smoking_regulator_v2/widgets/more_page/history_view/time_table.dart';
@@ -158,8 +158,15 @@ class _MorePageState extends State<MorePage> {
                   title: "Day Change",
                   value: displayTime(factoredTime),
                   action: () {
-                    showBottomPickerFactoredTime(
-                        context: context, initialTime: factoredTime);
+                    showBottomTimePicker(
+                        context: context,
+                        initialTime: factoredTime,
+                        title: "The hour at which the day changes:",
+                        onSubmit: (value) {
+                          final String time =
+                              value.toString().substring(12, 17);
+                          setFactoredTime(value: time);
+                        });
                   },
                   secondaryAction: () {
                     setFactoredTime(value: "00:00");
@@ -172,8 +179,14 @@ class _MorePageState extends State<MorePage> {
                   title: "Sun Set",
                   value: displayTime(sunSetTime),
                   action: () {
-                    showBottomPickerSunSetTime(
-                        context: context, initialTime: sunSetTime);
+                    showBottomTimePicker(
+                        context: context,
+                        initialTime: sunSetTime,
+                        title: "The hour at which the sun sets:",
+                        onSubmit: (value) {
+                          final String time = timetoString(value);
+                          setSunSetTime(value: time);
+                        });
                   },
                   secondaryAction: () {
                     setSunSetTime(value: "17:30");
@@ -216,136 +229,17 @@ class _MorePageState extends State<MorePage> {
   }
 
   String displayTime(List<int> time) {
-    int hour = time[0];
-    int minute = time[1];
+    String hourString = time[0].toString();
+    String minuteString = time[1].toString();
 
-    String hourString = "$hour";
-    String minuteString = "$minute";
-
-    if (hour == 0) {
+    if (time[0] == 0) {
       hourString = "00";
     }
 
-    if (minute < 10) {
-      minuteString = "0$minute";
+    if (time[1] < 10) {
+      minuteString = "0${time[1]}";
     }
 
     return "$hourString:$minuteString";
-  }
-
-  void showBottomPickerSunSetTime(
-      {required BuildContext context, required List<int> initialTime}) {
-    BottomPicker.time(
-      title: "The hour at which the sun sets:",
-      //                         ..., hour, minutes)
-      initialDateTime: DateTime(
-        0,
-        0,
-        0,
-        initialTime[0],
-        initialTime[1],
-      ),
-      titleStyle: GoogleFonts.poppins(
-        color: getColor(
-          light: CColors.dark,
-          dark: CColors.white,
-          amoled: CColors.white,
-        ),
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-      ),
-      use24hFormat: true,
-      pickerTextStyle: GoogleFonts.poppins(
-        color: getColor(
-          light: CColors.dark,
-          dark: CColors.white,
-          amoled: CColors.white,
-        ),
-        fontSize: 14,
-        fontWeight: FontWeight.w300,
-      ),
-      closeIconColor: getColor(
-        light: CColors.dark,
-        dark: CColors.white,
-        amoled: CColors.lightGrey,
-      ),
-      iconColor: getColor(
-        light: CColors.white,
-        dark: CColors.dark,
-        amoled: CColors.black,
-      ),
-      backgroundColor: getColor(
-        light: CColors.white,
-        dark: CColors.dark,
-        amoled: Color.lerp(CColors.dark, CColors.black, 0.6) as Color,
-      ),
-      buttonSingleColor: getColor(
-        light: CColors.dark,
-        dark: CColors.white,
-        amoled: CColors.lightGrey,
-      ),
-      onSubmit: (p1) {
-        final String value = timetoString(p1);
-        setSunSetTime(value: value);
-      },
-    ).show(context);
-  }
-
-  void showBottomPickerFactoredTime(
-      {required BuildContext context, required List<int> initialTime}) {
-    BottomPicker.time(
-      title: "The hour at which the day changes:",
-      //                         ..., hour, minutes)
-      initialDateTime: DateTime(
-        0,
-        0,
-        0,
-        initialTime[0],
-        initialTime[1],
-      ),
-      titleStyle: GoogleFonts.poppins(
-        color: getColor(
-          light: CColors.dark,
-          dark: CColors.white,
-          amoled: CColors.white,
-        ),
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-      ),
-      use24hFormat: true,
-      pickerTextStyle: GoogleFonts.poppins(
-        color: getColor(
-          light: CColors.dark,
-          dark: CColors.white,
-          amoled: CColors.white,
-        ),
-        fontSize: 14,
-        fontWeight: FontWeight.w300,
-      ),
-      closeIconColor: getColor(
-        light: CColors.dark,
-        dark: CColors.white,
-        amoled: CColors.lightGrey,
-      ),
-      iconColor: getColor(
-        light: CColors.white,
-        dark: CColors.dark,
-        amoled: CColors.black,
-      ),
-      backgroundColor: getColor(
-        light: CColors.white,
-        dark: CColors.dark,
-        amoled: Color.lerp(CColors.dark, CColors.black, 0.6) as Color,
-      ),
-      buttonSingleColor: getColor(
-        light: CColors.dark,
-        dark: CColors.white,
-        amoled: CColors.lightGrey,
-      ),
-      onSubmit: (p0) {
-        final String value = p0.toString().substring(12, 17);
-        setFactoredTime(value: value);
-      },
-    ).show(context);
   }
 }
