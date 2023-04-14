@@ -68,25 +68,18 @@ Color getColor({
   required Color amoled,
   double? opacity,
 }) {
-  if (CColors._colorMode == ColorModes.dark) {
-    if (CColors._isAmoled) {
-      return amoled.withOpacity(opacity ?? 1);
-    } else {
-      return dark.withOpacity(opacity ?? 1);
-    }
-  } else if (CColors._colorMode == ColorModes.cycle) {
-    final int timenow = int.parse(timetoString(DateTime.now(), clear: true));
-    log(title: "Custom Colors (getColor)", value: "$timenow  $sunSetTime");
-    if (min <= timenow && timenow < sunSetTime) {
-      return light.withOpacity(opacity ?? 1);
-    } else {
-      if (CColors._isAmoled) {
-        return amoled.withOpacity(opacity ?? 1);
-      } else {
-        return dark.withOpacity(opacity ?? 1);
-      }
-    }
-  } else {
-    return light.withOpacity(opacity ?? 1);
+  final int timenow = int.parse(timetoString(DateTime.now(), clear: true));
+
+  bool isCycle = CColors.colorMode() == ColorModes.cycle;
+  bool isAfterSunSet = !(min <= timenow && timenow < sunSetTime);
+  bool isCycleAndAfter = isCycle && isAfterSunSet;
+
+  bool isDark = CColors.colorMode() == ColorModes.dark;
+
+  Color color = light;
+  if (isCycleAndAfter || isDark) {
+    color = CColors.isAmoled() ? amoled : dark;
   }
+
+  return color.withOpacity(opacity ?? 1);
 }
