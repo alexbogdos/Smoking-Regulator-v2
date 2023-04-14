@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smoking_regulator_v2/systems/calendar_controller.dart';
+import 'package:smoking_regulator_v2/widgets/home_page/calendar/arrow_button.dart';
 import 'package:smoking_regulator_v2/widgets/home_page/calendar/day_calendar.dart';
 
 class Calendar extends StatefulWidget {
@@ -116,6 +117,11 @@ class CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     max = widget.calendarController.max;
 
+    final Size size = Size(
+      widget.width * sidesScaleFactor,
+      widget.width * sidesScaleFactor,
+    );
+
     return loaded
         ? Column(
             children: [
@@ -127,7 +133,15 @@ class CalendarState extends State<Calendar> {
                     height: widget.height,
                     child: Center(
                       //! Left Button
-                      child: TextButton(
+                      child: ArrowButton(
+                        size: size,
+                        foreground: widget.subText.withOpacity(0.25),
+                        icon: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: widget.calendarController.weekoffset == 0
+                              ? widget.subText.withOpacity(0.25)
+                              : widget.subText.withOpacity(0.8),
+                        ),
                         onPressed: () {
                           setState(() {
                             setOldHeights();
@@ -142,21 +156,6 @@ class CalendarState extends State<Calendar> {
                             widget.refreshStats();
                           });
                         },
-                        style: TextButton.styleFrom(
-                            fixedSize: Size(
-                              widget.width * sidesScaleFactor,
-                              widget.width * sidesScaleFactor,
-                            ),
-                            foregroundColor: widget.subText.withOpacity(0.25),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(45),
-                            )),
-                        child: Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          color: widget.calendarController.weekoffset == 0
-                              ? widget.subText.withOpacity(0.25)
-                              : widget.subText.withOpacity(0.8),
-                        ),
                       ),
                     ),
                   ),
@@ -176,39 +175,30 @@ class CalendarState extends State<Calendar> {
                     height: widget.height,
                     child: Center(
                       //! Right Button
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            setOldHeights();
-                            widget.calendarController.moveForward();
-                            widget.refreshStats();
-                          });
-                        },
-                        onLongPress: () {
-                          setState(() {
-                            setOldHeights();
-                            widget.calendarController.moveToLast();
-                            widget.refreshStats();
-                          });
-                        },
-                        style: TextButton.styleFrom(
-                          fixedSize: Size(
-                            widget.width * sidesScaleFactor,
-                            widget.width * sidesScaleFactor,
+                      child: ArrowButton(
+                          size: size,
+                          foreground: widget.subText.withOpacity(0.25),
+                          icon: Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: widget.calendarController.weekoffset ==
+                                    widget.calendarController.weekgroup
+                                ? widget.subText.withOpacity(0.25)
+                                : widget.subText.withOpacity(0.8),
                           ),
-                          foregroundColor: widget.subText.withOpacity(0.25),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(45),
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          color: widget.calendarController.weekoffset ==
-                                  widget.calendarController.weekgroup
-                              ? widget.subText.withOpacity(0.25)
-                              : widget.subText.withOpacity(0.8),
-                        ),
-                      ),
+                          onPressed: () {
+                            setState(() {
+                              setOldHeights();
+                              widget.calendarController.moveForward();
+                              widget.refreshStats();
+                            });
+                          },
+                          onLongPress: () {
+                            setState(() {
+                              setOldHeights();
+                              widget.calendarController.moveToLast();
+                              widget.refreshStats();
+                            });
+                          }),
                     ),
                   ),
                 ],

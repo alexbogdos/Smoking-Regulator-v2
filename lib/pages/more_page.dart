@@ -44,7 +44,6 @@ class _MorePageState extends State<MorePage> {
   @override
   void initState() {
     super.initState();
-    // retrieveFactoredTime();
   }
 
   late List<int> factoredTime = const [0, 0];
@@ -69,29 +68,17 @@ class _MorePageState extends State<MorePage> {
 
     const double timetableHeightMultiplier = 0.275;
 
-    final List<String> factoredTimeParts = widget.factoredTimeString.split(":");
-    final int factoredTimeHour = int.parse(factoredTimeParts[0]);
-    final int factoredTimeMinute = int.parse(factoredTimeParts[1]);
-    factoredTime = [factoredTimeHour, factoredTimeMinute];
-
-    final List<String> sunSetTimeParts = widget.sunSetTimeString.split(":");
-    final int sunSetTimeHour = int.parse(sunSetTimeParts[0]);
-    final int sunSetTimeMinute = int.parse(sunSetTimeParts[1]);
-    sunSetTime = [sunSetTimeHour, sunSetTimeMinute];
+    factoredTime = parseStringTime(widget.factoredTimeString);
+    sunSetTime = parseStringTime(widget.sunSetTimeString);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: getColor(
-        light: CColors.lightGrey,
-        dark: CColors.dark,
-        amoled: CColors.black,
-      ),
+      backgroundColor: ColorProfiles.background(),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            // color: Colors.red,
             padding: EdgeInsets.only(top: height * 0.072),
             height: 5 * toggleHeight +
                 4 * spaceBetween +
@@ -105,11 +92,7 @@ class _MorePageState extends State<MorePage> {
                   child: Text(
                     pageTitle,
                     style: GoogleFonts.poppins(
-                      color: getColor(
-                        light: CColors.dark,
-                        dark: CColors.white,
-                        amoled: CColors.white,
-                      ),
+                      color: ColorProfiles.text(),
                       fontSize: 34,
                       fontWeight: FontWeight.w500,
                     ),
@@ -132,7 +115,6 @@ class _MorePageState extends State<MorePage> {
                 ),
                 SizedBox(height: spaceBetween),
                 InputToggle(
-                  // active: false,
                   width: width,
                   toggleHeight: toggleHeight,
                   title: "Daily Limit",
@@ -163,13 +145,11 @@ class _MorePageState extends State<MorePage> {
                         initialTime: factoredTime,
                         title: "The hour at which the day changes:",
                         onSubmit: (value) {
-                          final String time =
-                              value.toString().substring(12, 17);
-                          setFactoredTime(value: time);
+                          setFactoredTime(timetoString(value));
                         });
                   },
                   secondaryAction: () {
-                    setFactoredTime(value: "00:00");
+                    setFactoredTime("00:00");
                   },
                 ),
                 SizedBox(height: spaceBetween),
@@ -184,12 +164,11 @@ class _MorePageState extends State<MorePage> {
                         initialTime: sunSetTime,
                         title: "The hour at which the sun sets:",
                         onSubmit: (value) {
-                          final String time = timetoString(value);
-                          setSunSetTime(value: time);
+                          setSunSetTime(timetoString(value));
                         });
                   },
                   secondaryAction: () {
-                    setSunSetTime(value: "17:30");
+                    setSunSetTime("17:30");
                   },
                 ),
               ],
@@ -199,16 +178,8 @@ class _MorePageState extends State<MorePage> {
             width: width,
             height: height * timetableHeightMultiplier,
             countController: widget.countController,
-            background: getColor(
-              light: CColors.white,
-              dark: CColors.darkGrey,
-              amoled: CColors.dark,
-            ),
-            text: getColor(
-              light: CColors.dark,
-              dark: CColors.white,
-              amoled: CColors.white,
-            ),
+            background: ColorProfiles.box(),
+            text: ColorProfiles.text(),
             divider: getColor(
               light: CColors.dark,
               dark: CColors.dark,
@@ -220,26 +191,23 @@ class _MorePageState extends State<MorePage> {
     );
   }
 
-  Future<void> setFactoredTime({required String value}) async {
+  Future<void> setFactoredTime(String value) async {
     widget.updateFactoredTime(newFactoredTime: value);
   }
 
-  Future<void> setSunSetTime({required String value}) async {
+  Future<void> setSunSetTime(String value) async {
     widget.updateSunSetTime(newSunSetTime: value);
   }
 
   String displayTime(List<int> time) {
-    String hourString = time[0].toString();
-    String minuteString = time[1].toString();
-
-    if (time[0] == 0) {
-      hourString = "00";
-    }
-
-    if (time[1] < 10) {
-      minuteString = "0${time[1]}";
-    }
+    String hourString = time[0] == 0 ? "00" : time[0].toString();
+    String minuteString = time[1] < 10 ? "0${time[1]}" : time[1].toString();
 
     return "$hourString:$minuteString";
+  }
+
+  List<int> parseStringTime(String time, {String? pattern}) {
+    List<String> parts = time.split(pattern ?? ":");
+    return [int.parse(parts[0]), int.parse(parts[1])];
   }
 }
