@@ -27,6 +27,7 @@ class CalendarController {
   late String range = "";
 
   late int max = 1;
+  late int globalMax = 1;
 
   late List<int> values = [-1, -1, -1, -1, -1, -1, -1];
 
@@ -60,6 +61,7 @@ class CalendarController {
 
     globalCountSum = dataController.getCountSum();
     globalPopulation = dataController.getPopulation();
+    globalMax = (globalCountSum / globalPopulation).round();
   }
 
   void getMax() {

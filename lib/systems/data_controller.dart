@@ -2,11 +2,9 @@ import 'package:smoking_regulator_v2/systems/helpers/custom_functions.dart';
 import 'package:smoking_regulator_v2/systems/save_system.dart';
 
 class DataController {
-  late Map<String, dynamic> data = {};
-  late Map<String, dynamic> settings = {};
-  late Map<String, dynamic> week = {};
-
-  final SaveSystem saveSystem = SaveSystem();
+  static Map<String, dynamic> data = {};
+  static Map<String, dynamic> settings = {};
+  static Map<String, dynamic> week = {};
 
   // ----- Editing and Saving System ---------------
   Future<void> setData({
@@ -16,7 +14,7 @@ class DataController {
   }) async {
     week[key] = value;
     data[weekGroup.toString()] = week;
-    await saveSystem.save(filename: saveSystem.data, data: data);
+    await SaveSystem.save(filename: SaveSystem.data, data: data);
   }
 
   dynamic getfromWeek({required String weekdayKey}) {
@@ -32,7 +30,7 @@ class DataController {
 
   Future<void> setSetting({required String key, required dynamic value}) async {
     settings[key] = value;
-    await saveSystem.save(filename: saveSystem.settings, data: settings);
+    await SaveSystem.save(filename: SaveSystem.settings, data: settings);
   }
 
   dynamic getfromSettings({required String key}) {
@@ -165,14 +163,14 @@ class DataController {
 
   // ----- Loading System ---------------
   Future<void> load() async {
-    await saveSystem.initializePath();
+    await SaveSystem.initializePath();
     await loadSettings();
     await loadData();
   }
 
   Future<void> loadSettings() async {
     Map<String, dynamic>? tempSettings =
-        await saveSystem.load(filename: saveSystem.settings);
+        await SaveSystem.load(filename: SaveSystem.settings);
 
     if (tempSettings != null) {
       settings = tempSettings;
@@ -187,7 +185,7 @@ class DataController {
     await performChecks();
 
     Map<String, dynamic>? tempData =
-        await saveSystem.load(filename: saveSystem.data);
+        await SaveSystem.load(filename: SaveSystem.data);
 
     if (tempData != null) {
       data = tempData;

@@ -115,7 +115,10 @@ class CalendarState extends State<Calendar> {
   late int max;
   @override
   Widget build(BuildContext context) {
-    max = widget.calendarController.max;
+    max = widget.calendarController.globalMax;
+    if (widget.calendarController.max > max) {
+      max = widget.calendarController.max;
+    }
 
     final Size size = Size(
       widget.width * sidesScaleFactor,
